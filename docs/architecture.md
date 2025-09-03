@@ -34,7 +34,7 @@ palmer-penguins-explorer/
 │   │   │   ├── TablePagination.tsx
 │   │   │   ├── ColumnSort.tsx     # Sort indicators
 │   │   │   ├── EmptyState.tsx     # "No penguins match" message
-│   │   │   └── MobileTable.tsx    # Responsive table view
+│   │   │   └── CardView.tsx    # Card-based responsive layout
 │   │   ├── visualizations/
 │   │   │   ├── VisualizationPanel.tsx
 │   │   │   ├── ChartTypeSelector.tsx  # Icon-based selection
@@ -429,7 +429,6 @@ export default defineConfig({
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom', 'zustand'],
           'strudel': ['@strudel-ui/react'],
-          'charts': ['d3-scale', 'd3-shape', 'd3-array'],
           'export': ['html2canvas', 'file-saver']
         }
       }

@@ -73,9 +73,7 @@ We need a compelling demonstration of Strudel Kit's capabilities for building sc
 
 ### If Time Permits
 
-- Simple statistical summary cards
 - Comparison mode (side-by-side species)
-- Dark mode toggle
 - CSV data download
 
 ## 4. Success Metrics (Demo Goals)

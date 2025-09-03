@@ -126,6 +126,7 @@ Create a best-in-class demonstration of how modern, accessible data exploration 
   - All interactive elements reachable
   - Visual focus indicators meet WCAG standards
   - Skip to main content link
+  - Keyboard shortcuts: / focuses search, ? opens help, Esc closes modals
   - Escape closes modals/dropdowns
 
 **US4.2: As a screen reader user, I want appropriate announcements**
@@ -142,7 +143,7 @@ Create a best-in-class demonstration of how modern, accessible data exploration 
 - **Acceptance Criteria:**
   - Single column layout below 768px
   - Touch-friendly tap targets (44x44px min)
-  - Horizontal scroll for table
+  - Card-based layout for table data
   - Collapsible filter panel
   - Charts resize appropriately
 
@@ -159,7 +160,7 @@ Create a best-in-class demonstration of how modern, accessible data exploration 
 **US5.2: As a user, I want to share my filtered view**
 
 - **Acceptance Criteria:**
-  - URL updates with filter state
+  - URL structure: /visualize/[chartType]?[filters] (e.g., /visualize/scatter?x=bill_length&y=body_mass)
   - Copy URL button with confirmation
   - Loading shared URL restores exact state
   - Social sharing preview metadata
@@ -170,10 +171,10 @@ Create a best-in-class demonstration of how modern, accessible data exploration 
 
 - **Framework:** React with Strudel Kit components
 - **Build Tool:** Vite
-- **State Management:** React Context or Zustand
+- **State Management:** Zustand
 - **Routing:** React Router for URL state
 - **Styling:** Strudel Design System + CSS Modules
-- **Charts:** Strudel Chart components (or D3 if needed)
+- **Charts:** Strudel Chart components
 
 ### Performance Requirements
 

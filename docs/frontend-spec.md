@@ -47,7 +47,7 @@ START → Welcome Modal (Learn Dataset)
 ### Flow 3: Educator Preparing Lesson
 
 ```
-START → Direct URL (Pre-filtered)
+START → Direct URL (e.g., /visualize/scatter?x=bill_length&y=body_mass)
   ├─→ Review Filtered View
   ├─→ Create Visualization
   │   └─→ Box Plot by Species
@@ -167,9 +167,9 @@ START → Skip to Main Content
 │  Content        │
 │  (Full Width)   │
 │                 │
-│  Horizontal     │
-│  scroll for     │
-│  table          │
+│  Card-based      │
+│  layout for     │
+│  table data     │
 │                 │
 └─────────────────┘
 ```
