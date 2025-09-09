@@ -54,7 +54,7 @@ Example URLs:
 App
 ├── Router
 │   ├── MainLayout
-│   │   ├── AppHeader (Strudel AppBar)
+│   │   ├── AppHeader (MUI AppBar)
 │   │   │   ├── Logo/Title
 │   │   │   ├── HelpButton
 │   │   │   └── ExportMenu
@@ -70,7 +70,7 @@ App
 │   │   │   ├── TabNavigation
 │   │   │   └── Routes
 │   │   │       ├── TableRoute
-│   │   │       │   ├── DataTable (Strudel Table)
+│   │   │       │   ├── DataTable (MUI X DataGrid)
 │   │   │       │   ├── TablePagination
 │   │   │       │   └── MobileCardView
 │   │   │       └── VisualizationRoute
@@ -93,13 +93,13 @@ App
 #### Layout Components
 
 - **MainLayout**: Primary application container with responsive grid
-- **AppHeader**: Top navigation using Strudel AppBar component
+- **AppHeader**: Top navigation using MUI AppBar component
 - **FilterPanel**: Collapsible sidebar containing all filter controls
 - **MainContent**: Primary content area with routing
 
 #### Data Components
 
-- **DataTable**: Table display using Strudel Table with sorting and pagination
+- **DataTable**: Table display using MUI X DataGrid with sorting and pagination
 - **MobileCardView**: Card-based layout for mobile table experience
 - **ChartContainer**: Responsive wrapper for all visualization components
 

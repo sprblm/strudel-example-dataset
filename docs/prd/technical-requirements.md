@@ -6,15 +6,15 @@
 
 - **Primary Framework**: React 18 with TypeScript
 - **Build Tool**: Vite for fast development and optimized production builds
-- **State Management**: Zustand for global application state
-- **Routing**: React Router v6 for URL state management
-- **Component Library**: Strudel Kit for consistent UI components
-- **Styling**: Strudel Design System tokens + CSS Modules for custom components
+- **State Management**: React Query (@tanstack/react-query) for server state management
+- **Routing**: TanStack Router (@tanstack/react-router) for type-safe routing
+- **Component Library**: MUI v5 (@mui/material, @mui/x-data-grid) for UI components
+- **Styling**: MUI theme system with Emotion CSS-in-JS
 
 ### Data Visualization
 
-- **Charts**: Strudel Chart components as primary choice
-- **Fallback Option**: D3.js utilities for custom visualizations if needed
+- **Charts**: Plotly.js with react-plotly.js wrapper for interactive visualizations
+- **Data Processing**: D3-fetch for data loading utilities
 - **Rendering**: SVG/Canvas hybrid approach for optimal performance
 - **Interactivity**: Native React event handling with D3 scales
 
@@ -23,7 +23,7 @@
 - **Package Manager**: npm (Node.js 18.18.0+ or 20.0.0+)
 - **Linting**: ESLint with TypeScript and React plugins
 - **Formatting**: Prettier for consistent code style
-- **Testing**: Vitest + React Testing Library + Cypress (if implemented)
+- **Testing**: Jest + React Testing Library for unit tests, Cypress for E2E testing
 
 ---
 

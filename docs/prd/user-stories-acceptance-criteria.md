@@ -10,7 +10,7 @@
 
 - Table displays all 344 penguins with columns: species, island, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g, sex, year
 - Missing values displayed as "—" (em dash)
-- Table uses Strudel Table component
+- Table uses MUI X DataGrid component
 - Sortable columns with visual indicators
 - Responsive horizontal scroll on mobile
 - Screen reader announces table structure
@@ -133,7 +133,7 @@
 **Acceptance Criteria:**
 
 - X/Y axis dropdowns for any numeric column
-- Points colored by species using Strudel palette
+- Points colored by species using MUI theme palette
 - Hover shows exact values and penguin details
 - Legend toggles species visibility
 - Responsive sizing with min/max dimensions
@@ -142,7 +142,7 @@
 **Definition of Done:**
 
 - [ ] Axis controls functional for all numeric columns
-- [ ] Species coloring using Strudel palette
+- [ ] Species coloring using MUI theme palette
 - [ ] Hover tooltips show complete data
 - [ ] Interactive legend toggles
 - [ ] Responsive chart sizing

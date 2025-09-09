@@ -2,10 +2,10 @@
 
 ## Core Architecture Decisions
 
-**State Management**: Zustand for filters/data, React state for UI (simpler than Context)  
-**Routing**: React Router v6 with tabs as routes (/table, /visualize/[chartType])  
-**Data Pipeline**: Static JSON → Zustand → Memoized selectors → Components  
-**Component Library**: Strudel Kit components with custom chart wrappers  
+**State Management**: React Query for data fetching/caching, Context API for app state  
+**Routing**: TanStack Router for type-safe routing with params (/table, /visualize/[chartType])  
+**Data Pipeline**: Static JSON → React Query → Memoized selectors → Components  
+**Component Library**: MUI v5 components with custom chart wrappers  
 **Accessibility**: React Aria Live for announcements, focus trap for modals  
 **Testing**: Vitest + React Testing Library for unit tests, Cypress for E2E  
 **CI/CD**: GitHub Actions for automated testing, building, and deployment  
@@ -17,31 +17,32 @@
 
 - **React 18** with TypeScript
 - **Vite** as build tool for fast development and optimized production builds
-- **React Router v6** for client-side routing with URL state management
+- **TanStack Router** for type-safe client-side routing with URL state management
 
 ### State Management
 
-- **Zustand** for global state (filters, data)
+- **React Query** for server state management (data fetching, caching)
+- **Context API** for global app state (filters, UI state)
 - **React built-in state** for component-local UI state
 - **Memoized selectors** for performance optimization
 
 ### UI Framework
 
-- **Strudel Kit** as primary component library
-- **CSS Modules** for component-specific styling
-- **Strudel Design System** tokens for consistent theming
+- **MUI v5** as primary component library (@mui/material, @mui/x-data-grid)
+- **Emotion** for CSS-in-JS styling (built into MUI)
+- **MUI theme system** for consistent theming and design tokens
 
 ### Data Visualization
 
-- **D3.js utilities** for scales, axes, and data transformations
-- **Custom React chart components** wrapping D3 functionality
-- **Canvas/SVG rendering** for performance with large datasets
+- **Plotly.js** with react-plotly.js wrapper for interactive charts
+- **D3-fetch** for data loading and processing utilities
+- **Canvas/WebGL rendering** via Plotly for performance with large datasets
 
 ### Development Tools
 
 - **TypeScript** for type safety and developer experience
 - **ESLint + Prettier** for code quality and formatting
-- **Vitest** for unit testing with modern, fast test runner
+- **Jest** for unit testing (already configured in project)
 - **React Testing Library** for component testing
 - **Cypress** for end-to-end testing
 
@@ -87,24 +88,26 @@
 ```json
 {
   "dependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router-dom": "^6.0.0",
-    "zustand": "^4.0.0",
-    "@strudel-ui/react": "latest",
-    "d3-scale": "^4.0.0",
-    "d3-selection": "^3.0.0",
-    "html2canvas": "^1.4.1",
-    "file-saver": "^2.0.5"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@tanstack/react-router": "^1.109.2",
+    "@tanstack/react-query": "^5.51.23",
+    "@mui/material": "^5.15.14",
+    "@mui/x-data-grid": "^7.0.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "plotly.js": "^2.30.1",
+    "react-plotly.js": "^2.6.0",
+    "d3-fetch": "^3.0.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^0.34.0",
-    "@testing-library/react": "^13.0.0",
-    "cypress": "^13.0.0",
-    "eslint": "^8.0.0",
-    "prettier": "^3.0.0"
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.2.2",
+    "jest": "^29.7.0",
+    "@testing-library/react": "^16.3.0",
+    "cypress": "^13.15.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3"
   }
 }
 ```
