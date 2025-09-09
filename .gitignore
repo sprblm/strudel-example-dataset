@@ -48,7 +48,9 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+
+# Backup files
+*.bak
 
 # Test taskflow configs
 _*.config.ts
