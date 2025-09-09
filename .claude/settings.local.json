@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(md-tree:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "WebSearch",
+      "Bash(npm run test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
