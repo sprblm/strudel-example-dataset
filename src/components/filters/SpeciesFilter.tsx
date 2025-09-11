@@ -6,7 +6,7 @@ import {
   Typography,
   Box
 } from '@mui/material';
-import { useAppState } from '@/context/ContextProvider.ts';
+import { useAppState } from '@/context/ContextProvider';
 
 const SPECIES_OPTIONS = ['Adelie', 'Chinstrap', 'Gentoo'] as const;
 

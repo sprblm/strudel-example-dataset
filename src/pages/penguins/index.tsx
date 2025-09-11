@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Box, Container, Typography, Grid } from '@mui/material';
-import { DataTable } from '@/components/table/DataTable.tsx';
-import { SpeciesFilter } from '@/components/filters/SpeciesFilter.tsx';
+import { DataTable } from '@/components/table/DataTable';
+import { SpeciesFilter } from '@/components/filters/SpeciesFilter';
 
 export const Route = createFileRoute('/penguins/')({
   component: PenguinsPage,

@@ -1,8 +1,8 @@
 import React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
-import { usePenguinData } from '@/hooks/usePenguinData.ts';
-import { formatValue } from '@/utils/dataHelpers.ts';
+import { usePenguinData } from '@/hooks/usePenguinData';
+import { formatValue } from '@/utils/dataHelpers';
 
 // Define columns with proper typing and formatting
 const columns: GridColDef[] = [

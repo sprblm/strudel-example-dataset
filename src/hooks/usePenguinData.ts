@@ -1,8 +1,8 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useAppState } from '@/context/ContextProvider.tsx';
-import { Penguin, RawPenguinData } from '@/types/penguin.ts';
-import { filterPenguinsBySpecies } from '@/utils/filtering.ts';
+import { useAppState } from '@/context/ContextProvider';
+import { Penguin, RawPenguinData } from '@/types/penguin';
+import { filterPenguinsBySpecies } from '@/utils/filtering';
 
 // Transform raw data to match story specification
 const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
