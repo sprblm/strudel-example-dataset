@@ -9,11 +9,14 @@ global.ResizeObserver = class ResizeObserver {
   disconnect() {}
 };
 
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
+
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  observe() {}
+const IntersectionObserverMock = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
 
-  unobserve() {}
-
-  disconnect() {}
-};
+global.IntersectionObserver = IntersectionObserverMock as any;

@@ -11,10 +11,21 @@ export const filterPenguinsByIsland = (penguins: Penguin[], selectedIsland: stri
   return penguins.filter(penguin => penguin.island === selectedIsland);
 };
 
+export const filterPenguinsBySex = (penguins: Penguin[], selectedSex: string): Penguin[] => {
+  if (!selectedSex || selectedSex === 'all') return penguins;
+  return penguins.filter(penguin => {
+    // Handle missing sex values - include them when "all" is selected
+    if (selectedSex === 'all') return true;
+    // For specific sex selection, match exactly (null/undefined values will be excluded)
+    return penguin.sex === selectedSex;
+  });
+};
+
 export const filterPenguins = (
   penguins: Penguin[], 
   selectedSpecies: string[], 
-  selectedIsland: string
+  selectedIsland: string,
+  selectedSex: string
 ): Penguin[] => {
   let filtered = penguins;
   
@@ -23,6 +34,9 @@ export const filterPenguins = (
   
   // Apply island filter
   filtered = filterPenguinsByIsland(filtered, selectedIsland);
+  
+  // Apply sex filter
+  filtered = filterPenguinsBySex(filtered, selectedSex);
   
   return filtered;
 };

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { 
   filterPenguinsBySpecies, 
   filterPenguinsByIsland, 
+  filterPenguinsBySex,
   filterPenguins 
 } from '@/utils/filtering';
 import { Penguin } from '@/types/penguin';
@@ -58,6 +59,16 @@ const mockPenguins: Penguin[] = [
     sex: 'male',
     year: 2008,
   },
+  {
+    species: 'Adelie',
+    island: 'Biscoe',
+    bill_length_mm: 40.2,
+    bill_depth_mm: 19.1,
+    flipper_length_mm: 190,
+    body_mass_g: 4000,
+    sex: null, // Missing sex value
+    year: 2008,
+  },
 ];
 
 describe('filterPenguinsBySpecies', () => {
@@ -73,13 +84,13 @@ describe('filterPenguinsBySpecies', () => {
 
   it('should filter by single species', () => {
     const result = filterPenguinsBySpecies(mockPenguins, ['Adelie']);
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(3);
     expect(result.every(p => p.species === 'Adelie')).toBe(true);
   });
 
   it('should filter by multiple species', () => {
     const result = filterPenguinsBySpecies(mockPenguins, ['Adelie', 'Gentoo']);
-    expect(result).toHaveLength(4);
+    expect(result).toHaveLength(5);
     expect(result.every(p => ['Adelie', 'Gentoo'].includes(p.species))).toBe(true);
   });
 });
@@ -99,7 +110,7 @@ describe('filterPenguinsByIsland', () => {
 
   it('should filter by specific island', () => {
     const result = filterPenguinsByIsland(mockPenguins, 'Biscoe');
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(3);
     expect(result.every(p => p.island === 'Biscoe')).toBe(true);
   });
 
@@ -113,7 +124,7 @@ describe('filterPenguinsByIsland', () => {
     const dreamResult = filterPenguinsByIsland(mockPenguins, 'Dream');
     const torgersenResult = filterPenguinsByIsland(mockPenguins, 'Torgersen');
 
-    expect(biscoeResult).toHaveLength(2);
+    expect(biscoeResult).toHaveLength(3);
     expect(dreamResult).toHaveLength(2);
     expect(torgersenResult).toHaveLength(1);
 
@@ -123,57 +134,110 @@ describe('filterPenguinsByIsland', () => {
   });
 });
 
+describe('filterPenguinsBySex', () => {
+  it('should return all penguins when "all" is selected', () => {
+    const result = filterPenguinsBySex(mockPenguins, 'all');
+    expect(result).toEqual(mockPenguins);
+  });
+
+  it('should return all penguins when sex is null or undefined', () => {
+    const resultNull = filterPenguinsBySex(mockPenguins, null as any);
+    const resultUndefined = filterPenguinsBySex(mockPenguins, undefined as any);
+    expect(resultNull).toEqual(mockPenguins);
+    expect(resultUndefined).toEqual(mockPenguins);
+  });
+
+  it('should filter by male sex only', () => {
+    const result = filterPenguinsBySex(mockPenguins, 'male');
+    expect(result).toHaveLength(2);
+    expect(result.every(p => p.sex === 'male')).toBe(true);
+  });
+
+  it('should filter by female sex only', () => {
+    const result = filterPenguinsBySex(mockPenguins, 'female');
+    expect(result).toHaveLength(3);
+    expect(result.every(p => p.sex === 'female')).toBe(true);
+  });
+
+  it('should exclude penguins with missing sex values when filtering by specific sex', () => {
+    const maleResult = filterPenguinsBySex(mockPenguins, 'male');
+    const femaleResult = filterPenguinsBySex(mockPenguins, 'female');
+    
+    expect(maleResult.some(p => p.sex === null)).toBe(false);
+    expect(femaleResult.some(p => p.sex === null)).toBe(false);
+  });
+
+  it('should include penguins with missing sex values when "all" is selected', () => {
+    const result = filterPenguinsBySex(mockPenguins, 'all');
+    expect(result.some(p => p.sex === null)).toBe(true);
+    expect(result).toHaveLength(6); // All 6 penguins including the one with null sex
+  });
+});
+
 describe('filterPenguins (combined filtering)', () => {
-  it('should apply both species and island filters', () => {
-    const result = filterPenguins(mockPenguins, ['Adelie'], 'Biscoe');
-    expect(result).toHaveLength(1);
-    expect(result[0].species).toBe('Adelie');
-    expect(result[0].island).toBe('Biscoe');
+  it('should apply species, island, and sex filters', () => {
+    const result = filterPenguins(mockPenguins, ['Adelie'], 'Biscoe', 'all');
+    expect(result).toHaveLength(2); // Both Adelie penguins on Biscoe (including one with null sex)
+    expect(result.every(p => p.species === 'Adelie')).toBe(true);
+    expect(result.every(p => p.island === 'Biscoe')).toBe(true);
   });
 
   it('should return empty array when filters don\'t match any penguins', () => {
-    const result = filterPenguins(mockPenguins, ['Chinstrap'], 'Torgersen');
+    const result = filterPenguins(mockPenguins, ['Chinstrap'], 'Torgersen', 'all');
     expect(result).toEqual([]);
   });
 
-  it('should work with "all" island selection', () => {
-    const result = filterPenguins(mockPenguins, ['Gentoo'], 'all');
+  it('should work with "all" island and sex selection', () => {
+    const result = filterPenguins(mockPenguins, ['Gentoo'], 'all', 'all');
     expect(result).toHaveLength(2);
     expect(result.every(p => p.species === 'Gentoo')).toBe(true);
   });
 
-  it('should work with all species selected', () => {
-    const result = filterPenguins(mockPenguins, ['Adelie', 'Chinstrap', 'Gentoo'], 'Dream');
+  it('should work with all species selected and specific island', () => {
+    const result = filterPenguins(mockPenguins, ['Adelie', 'Chinstrap', 'Gentoo'], 'Dream', 'all');
     expect(result).toHaveLength(2);
     expect(result.every(p => p.island === 'Dream')).toBe(true);
   });
 
   it('should handle edge case with no species selected', () => {
-    const result = filterPenguins(mockPenguins, [], 'Biscoe');
+    const result = filterPenguins(mockPenguins, [], 'Biscoe', 'all');
     expect(result).toEqual([]);
   });
 
-  it('should apply filters in correct order (species first, then island)', () => {
-    // This test ensures that the filtering logic works correctly
-    // First filter by species, then by island
-    const speciesFirst = filterPenguinsBySpecies(mockPenguins, ['Adelie', 'Gentoo']);
-    const islandSecond = filterPenguinsByIsland(speciesFirst, 'Biscoe');
-    
-    const combinedResult = filterPenguins(mockPenguins, ['Adelie', 'Gentoo'], 'Biscoe');
-    
-    expect(combinedResult).toEqual(islandSecond);
-    expect(combinedResult).toHaveLength(2);
+  it('should filter by sex while maintaining other filters', () => {
+    const result = filterPenguins(mockPenguins, ['Adelie', 'Chinstrap', 'Gentoo'], 'all', 'female');
+    expect(result).toHaveLength(3);
+    expect(result.every(p => p.sex === 'female')).toBe(true);
   });
 
-  it('should handle multiple species and specific island', () => {
-    const result = filterPenguins(mockPenguins, ['Adelie', 'Chinstrap'], 'Dream');
+  it('should exclude missing sex values when filtering by specific sex', () => {
+    const result = filterPenguins(mockPenguins, ['Adelie'], 'Biscoe', 'male');
+    expect(result).toHaveLength(1); // Only the male Adelie on Biscoe
+    expect(result[0].sex).toBe('male');
+  });
+
+  it('should apply filters in correct order (species first, then island, then sex)', () => {
+    // This test ensures that the filtering logic works correctly
+    const speciesFirst = filterPenguinsBySpecies(mockPenguins, ['Adelie', 'Gentoo']);
+    const islandSecond = filterPenguinsByIsland(speciesFirst, 'Biscoe');
+    const sexThird = filterPenguinsBySex(islandSecond, 'all');
+    
+    const combinedResult = filterPenguins(mockPenguins, ['Adelie', 'Gentoo'], 'Biscoe', 'all');
+    
+    expect(combinedResult).toEqual(sexThird);
+    expect(combinedResult).toHaveLength(3); // Updated to include the penguin with null sex
+  });
+
+  it('should handle multiple species and specific island with sex filter', () => {
+    const result = filterPenguins(mockPenguins, ['Adelie', 'Chinstrap'], 'Dream', 'female');
     expect(result).toHaveLength(2);
     expect(result.every(p => p.island === 'Dream')).toBe(true);
     expect(result.every(p => ['Adelie', 'Chinstrap'].includes(p.species))).toBe(true);
+    expect(result.every(p => p.sex === 'female')).toBe(true);
   });
 
-  it('should maintain data integrity after filtering', () => {
-    const result = filterPenguins(mockPenguins, ['Gentoo'], 'Biscoe');
+  it('should maintain data integrity after combined filtering', () => {
+    const result = filterPenguins(mockPenguins, ['Gentoo'], 'Biscoe', 'female');
     expect(result).toHaveLength(1);
     
     const penguin = result[0];

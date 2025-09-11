@@ -8,6 +8,7 @@ import { AppProvider } from '../../../../src/context/ContextProvider';
 
 const theme = createTheme();
 
+// Wrap the component in ThemeProvider and AppProvider
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ThemeProvider theme={theme}>
     <AppProvider>
@@ -16,37 +17,38 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </ThemeProvider>
 );
 
+// Test the component
 describe('SpeciesFilter', () => {
   beforeEach(() => {
     // Clear all mocks before each test
     vi.clearAllMocks();
   });
-
-  it('renders all species checkboxes', () => {
+  // Test that the component renders all checkboxes
+  it('renders all checkboxes', () => {
     render(
       <TestWrapper>
         <SpeciesFilter />
       </TestWrapper>
     );
-
+    // Test that the filter title is rendered
     expect(screen.getByText('Species Filter')).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })).toBeInTheDocument();
   });
-
+  // Test that all checkboxes are initially checked
   it('initially shows all checkboxes selected', () => {
     render(
       <TestWrapper>
         <SpeciesFilter />
       </TestWrapper>
     );
-
+    // Test that all checkboxes are checked
     expect(screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })).toBeChecked();
   });
-
+  // Test that toggling a checkbox updates the filter state  
   it('updates filter state when checkbox is toggled', () => {
     render(
       <TestWrapper>
@@ -68,7 +70,7 @@ describe('SpeciesFilter', () => {
     expect(screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })).toBeChecked();
   });
-
+  // Test that the ARIA attributes are correct
   it('has proper ARIA attributes for accessibility', () => {
     render(
       <TestWrapper>
@@ -83,13 +85,14 @@ describe('SpeciesFilter', () => {
     expect(legend).toHaveAttribute('id', 'species-filter-legend');
   });
 
+  // Test that keyboard navigation works
   it('handles keyboard navigation properly', () => {
     render(
       <TestWrapper>
         <SpeciesFilter />
       </TestWrapper>
     );
-
+    // Test that the Adelie checkbox is focused when clicked
     const adelieCheckbox = screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' });
     
     // Focus the checkbox
@@ -97,13 +100,14 @@ describe('SpeciesFilter', () => {
     expect(document.activeElement).toBe(adelieCheckbox);
   });
 
+  // Test that the data-testid attributes are correct
   it('has correct data-testid attributes', () => {
     render(
       <TestWrapper>
         <SpeciesFilter />
       </TestWrapper>
     );
-
+    // Test that the filter container has the correct data-testid
     expect(screen.getByTestId('species-filter')).toBeInTheDocument();
     // Note: The data-testid is on the FormControlLabel, not the checkbox input
     expect(screen.getByTestId('species-label-adelie')).toBeInTheDocument();

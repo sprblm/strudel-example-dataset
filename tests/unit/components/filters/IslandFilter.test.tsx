@@ -16,11 +16,7 @@ const mockDispatch = vi.fn();
 const theme = createTheme();
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      {component}
-    </ThemeProvider>
-  );
+  return render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);
 };
 
 describe('IslandFilter', () => {
@@ -31,20 +27,34 @@ describe('IslandFilter', () => {
 
   it('renders island filter with default "All" selection', () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'all' },
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      },
       dispatch: mockDispatch,
     });
 
     renderWithTheme(<IslandFilter />);
 
     expect(screen.getByText('Island Filter')).toBeInTheDocument();
-    expect(screen.getByLabelText('Filter penguins by island')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Filter penguins by island')
+    ).toBeInTheDocument();
     expect(screen.getByDisplayValue('all')).toBeInTheDocument();
   });
 
   it('displays all island options when dropdown is opened', async () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'all' },
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      },
       dispatch: mockDispatch,
     });
 
@@ -63,7 +73,13 @@ describe('IslandFilter', () => {
 
   it('calls dispatch with UPDATE_ISLAND_FILTER when selection changes', async () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'all' },
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      },
       dispatch: mockDispatch,
     });
 
@@ -95,32 +111,46 @@ describe('IslandFilter', () => {
 
   it('does not show visual feedback when "All" is selected', () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'all' },
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      },
       dispatch: mockDispatch,
     });
 
     renderWithTheme(<IslandFilter />);
 
-    expect(screen.queryByTestId('island-filter-feedback')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('island-filter-feedback')
+    ).not.toBeInTheDocument();
   });
 
   it('handles keyboard navigation properly', async () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'all' },
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      },
       dispatch: mockDispatch,
     });
 
     renderWithTheme(<IslandFilter />);
 
     const select = screen.getByLabelText('Filter penguins by island');
-    
+
     // Test keyboard focus
     select.focus();
     expect(select).toHaveFocus();
 
     // Test Enter key opens dropdown
     fireEvent.keyDown(select, { key: 'Enter' });
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('island-option-all')).toBeInTheDocument();
     });
@@ -128,7 +158,13 @@ describe('IslandFilter', () => {
 
   it('has proper ARIA attributes for accessibility', () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'all' },
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      },
       dispatch: mockDispatch,
     });
 
@@ -136,7 +172,7 @@ describe('IslandFilter', () => {
 
     const select = screen.getByLabelText('Filter penguins by island');
     expect(select).toHaveAttribute('aria-label', 'Filter penguins by island');
-    
+
     const legend = screen.getByText('Island Filter');
     expect(legend).toHaveAttribute('id', 'island-filter-legend');
   });
@@ -164,6 +200,8 @@ describe('IslandFilter', () => {
 
     // Should default to 'all' when selectedIsland is undefined
     expect(screen.getByDisplayValue('all')).toBeInTheDocument();
-    expect(screen.queryByTestId('island-filter-feedback')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('island-filter-feedback')
+    ).not.toBeInTheDocument();
   });
 });

@@ -55,7 +55,7 @@ const columns: GridColDef[] = [
     headerName: 'Sex',
     width: 100,
     sortable: true,
-    valueFormatter: (params) => params?.value || '—',
+    valueFormatter: (params) => (params.value ? (params.value as string) : '—'),
   },
   {
     field: 'year',

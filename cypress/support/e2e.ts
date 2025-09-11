@@ -13,6 +13,12 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Import cypress-axe for accessibility testing
+import 'cypress-axe';
+
+// Import cypress-real-events for real browser events
+import 'cypress-real-events';
+
 // Import commands.js using ES2015 syntax:
 import './commands';
 
