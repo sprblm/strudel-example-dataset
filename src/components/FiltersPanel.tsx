@@ -1,12 +1,19 @@
 import CloseIcon from '@mui/icons-material/Close';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Alert, IconButton, Stack, StackProps, Typography, Button } from '@mui/material';
+import {
+  Alert,
+  IconButton,
+  Stack,
+  StackProps,
+  Typography,
+  Button,
+} from '@mui/material';
 import React, { useState } from 'react';
-import { SpeciesFilter } from './SpeciesFilter';
-import { IslandFilter } from './IslandFilter';
-import { SexFilter } from './SexFilter';
+import { SpeciesFilter } from './filters/SpeciesFilter';
+import { IslandFilter } from './filters/IslandFilter';
+import { SexFilter } from './filters/SexFilter';
 import { useAppState } from '@/context/ContextProvider';
-import { useNavigate, createSearch } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 enum FilterType {
   CHECKBOX_LIST = 'CHECKBOX_LIST',
@@ -42,9 +49,6 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
 }) => {
   const { state, dispatch } = useAppState();
   const navigate = useNavigate();
-  const search = createSearch({
-    from: '/penguins/',
-  });
 
   const activeCount = getActiveFilterCount(state);
   const [announcement, setAnnouncement] = useState('');
@@ -53,7 +57,15 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
     // Reset state
     dispatch({ type: 'CLEAR_ALL_FILTERS' as any, payload: null });
     // Clear URL
-    navigate({ to: '/penguins/', search: (prev) => ({ ...prev, species: undefined, island: undefined, sex: undefined }) });
+    navigate({
+      to: '/penguins/',
+      search: (prev) => ({
+        ...prev,
+        species: undefined,
+        island: undefined,
+        sex: undefined,
+      }),
+    });
     // Announce
     setAnnouncement('All filters cleared');
     setTimeout(() => setAnnouncement(''), 2000);
@@ -90,7 +102,12 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
           </Button>
         )}
         {announcement && (
-          <Alert severity="info" role="status" aria-live="polite" sx={{ fontSize: '0.875rem' }}>
+          <Alert
+            severity="info"
+            role="status"
+            aria-live="polite"
+            sx={{ fontSize: '0.875rem' }}
+          >
             {announcement}
           </Alert>
         )}
