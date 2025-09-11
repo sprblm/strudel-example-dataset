@@ -13,7 +13,7 @@ vi.mock('@/context/ContextProvider', async () => {
     ...actual,
     useAppState: vi.fn(() => ({
       state: {
-        appTitle: '',
+        appTitle: 'Penguins Explorer',
         apiModalOpen: false,
         selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
         selectedIsland: 'all',

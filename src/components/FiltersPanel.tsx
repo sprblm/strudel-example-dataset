@@ -58,13 +58,14 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
     dispatch({ type: 'CLEAR_ALL_FILTERS' as any, payload: null });
     // Clear URL
     navigate({
-      to: '/penguins/',
-      search: (prev) => ({
-        ...prev,
-        species: undefined,
-        island: undefined,
-        sex: undefined,
-      }),
+      to: '/penguins',
+      search: (prev) => {
+        const newSearch = { ...prev };
+        delete newSearch.species;
+        delete newSearch.island;
+        delete newSearch.sex;
+        return newSearch;
+      },
     });
     // Announce
     setAnnouncement('All filters cleared');

@@ -1,9 +1,13 @@
-import { formatValue, formatNumericValue, isMissingValue } from '../dataHelpers';
+import {
+  formatValue,
+  formatNumericValue,
+  isMissingValue,
+} from '../dataHelpers';
 
 describe('dataHelpers', () => {
   describe('formatValue', () => {
     it('returns em dash for null values', () => {
-      expect(formatValue(null)).toBe('—');
+      expect(formatValue(null)).toEqual('—');
     });
 
     it('returns em dash for undefined values', () => {

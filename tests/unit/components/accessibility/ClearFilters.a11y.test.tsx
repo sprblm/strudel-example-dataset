@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import { FiltersPanel } from '@/components/FiltersPanel';
 import {
@@ -45,19 +45,26 @@ describe('ClearFilters Accessibility', () => {
   });
 
   it('announces correctly to screen readers', async () => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <RouterProvider router={router}>{children}</RouterProvider>
+    );
+
     render(
-      <RouterProvider router={router}>
+      <Wrapper>
         <FiltersPanel />
-      </RouterProvider>
+      </Wrapper>
     );
     const button = screen.getByTestId('clear-filters-button');
     fireEvent.click(button);
 
-    // Wait for the alert to appear
-    setTimeout(() => {
-      expect(screen.getByRole('status')).toHaveTextContent(
-        'All filters cleared'
-      );
-    }, 100);
+    // Wait for the announcement to appear
+    await waitFor(
+      () => {
+        expect(screen.getByRole('status')).toHaveTextContent(
+          'All filters cleared'
+        );
+      },
+      { timeout: 1000 }
+    );
   });
 });

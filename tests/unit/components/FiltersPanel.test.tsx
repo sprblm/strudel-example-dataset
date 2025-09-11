@@ -29,6 +29,8 @@ describe('FiltersPanel', () => {
     vi.clearAllMocks();
     mockUseAppState.mockReturnValue({
       state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
         selectedSpecies: ['Adelie'],
         selectedIsland: 'Biscoe',
         selectedSex: 'male',
@@ -50,6 +52,8 @@ describe('FiltersPanel', () => {
   it('hides clear button when no filters active', () => {
     mockUseAppState.mockReturnValue({
       state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
         selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
         selectedIsland: 'all',
         selectedSex: 'all',

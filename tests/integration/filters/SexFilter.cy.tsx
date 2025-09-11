@@ -1,5 +1,5 @@
 import { SexFilter } from '@/components/filters/SexFilter';
-import { penguins } from '@/data/penguins';
+// No import needed for Cypress; use cy.fixture or mock
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useAppState } from '@/context/ContextProvider';
@@ -33,7 +33,7 @@ describe('SexFilter Integration', () => {
     });
 
     // Mock filtering logic test
-    const filtered = penguins.filter(p => p.sex === 'male');
+    const filtered = penguins.filter((p) => p.sex === 'male');
     expect(filtered.length).toBeGreaterThan(0);
   });
 
@@ -47,16 +47,16 @@ describe('SexFilter Integration', () => {
     expect(allFiltered.length).toBe(mockPenguins.length);
 
     // Male excludes null
-    const maleFiltered = mockPenguins.filter(p => p.sex === 'male');
+    const maleFiltered = mockPenguins.filter((p) => p.sex === 'male');
     expect(maleFiltered.length).toBeLessThan(mockPenguins.length);
   });
 
   it('integrates with other filters without conflicts', () => {
     vi.mocked(useAppState).mockReturnValue({
-      state: { 
-        selectedSpecies: ['Adelie'], 
-        selectedIsland: 'Biscoe', 
-        selectedSex: 'all' 
+      state: {
+        selectedSpecies: ['Adelie'],
+        selectedIsland: 'Biscoe',
+        selectedSex: 'all',
       },
       dispatch: mockDispatch,
     });

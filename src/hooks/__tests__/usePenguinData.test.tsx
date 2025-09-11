@@ -6,8 +6,13 @@ import { usePenguinData } from '../usePenguinData';
 import { AppProvider } from '../../context/ContextProvider';
 
 // Mock fetch
-global.fetch = vi.fn();
-const mockFetch = fetch as typeof vi.fn;
+global.fetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: async () => mockRawData,
+  })
+) as any;
+const mockFetch = global.fetch as any;
 
 // Test wrapper for React Query and App Context
 const createWrapper = () => {
@@ -18,12 +23,10 @@ const createWrapper = () => {
       },
     },
   });
-  
+
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <AppProvider>
-        {children}
-      </AppProvider>
+      <AppProvider>{children}</AppProvider>
     </QueryClientProvider>
   );
 };
@@ -91,7 +94,7 @@ describe('usePenguinData', () => {
       sex: 'female',
       year: 2021,
     });
-    
+
     // Check transformation of falsy values to null
     expect(result.current.data[1]).toEqual({
       species: 'Chinstrap',
@@ -106,7 +109,7 @@ describe('usePenguinData', () => {
   });
 
   it('handles fetch error correctly', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    vi.mocked(global.fetch).mockRejectedValueOnce(new Error('Network error'));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => usePenguinData(), { wrapper });
@@ -120,7 +123,7 @@ describe('usePenguinData', () => {
   });
 
   it('handles HTTP error response', async () => {
-    mockFetch.mockResolvedValueOnce({
+    vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: false,
       status: 404,
     } as Response);
