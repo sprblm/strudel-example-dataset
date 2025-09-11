@@ -14,7 +14,15 @@
       "Bash(/BMad:agents:po)",
       "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. correct-course - Execute course correction task  \n3. create-epic - Create epic for brownfield projects\n4. create-story - Create user story from requirements\n5. doc-out - Output full document to current destination file\n6. execute-checklist-po - Run PO master checklist\n7. shard-doc {document} {destination} - Shard document to destination\n8. validate-story-draft {story} - Validate story file\n9. yolo - Toggle Yolo Mode (skip doc confirmations)\n10. exit - Exit agent mode\n\nSimply type the number or command name (with * prefix) to execute!\")",
       "Bash(npm run dev)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. develop-story - Execute story development workflow\n3. explain - Detailed explanation of recent work for learning\n4. review-qa - Apply QA fixes using task workflow  \n5. run-tests - Execute linting and tests\n6. exit - Exit developer agent mode\n\nSimply type the number or command name (with * prefix) to execute!\")",
+      "Bash(git checkout:*)",
+      "Bash(npm run:*)",
+      "Bash(pkill:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. correct-course - Execute course correction task\n3. draft - Execute task create-next-story.md\n4. story-checklist - Execute story draft checklist\n5. exit - Exit Scrum Master mode\n\nSimply type the number or command name (with * prefix) to execute!\")",
+      "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. gate {story} - Execute quality gate decision for story\n3. nfr-assess {story} - Validate non-functional requirements\n4. review {story} - Comprehensive adaptive review with gate decision\n5. risk-profile {story} - Generate risk assessment matrix\n6. test-design {story} - Create comprehensive test scenarios\n7. trace {story} - Map requirements to tests using Given-When-Then\n8. exit - Exit Test Architect mode\n\nSimply type the number or command name (with * prefix) to execute!\")"
     ],
     "deny": [],
     "ask": []
