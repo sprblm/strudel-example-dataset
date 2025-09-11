@@ -8,7 +8,13 @@
       "WebSearch",
       "Bash(npm run test:*)",
       "Bash(npm run lint:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm test:*)",
+      "Bash(/BMad:agents:sm)",
+      "Bash(/BMad:agents:po)",
+      "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. correct-course - Execute course correction task  \n3. create-epic - Create epic for brownfield projects\n4. create-story - Create user story from requirements\n5. doc-out - Output full document to current destination file\n6. execute-checklist-po - Run PO master checklist\n7. shard-doc {document} {destination} - Shard document to destination\n8. validate-story-draft {story} - Validate story file\n9. yolo - Toggle Yolo Mode (skip doc confirmations)\n10. exit - Exit agent mode\n\nSimply type the number or command name (with * prefix) to execute!\")",
+      "Bash(npm run dev)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

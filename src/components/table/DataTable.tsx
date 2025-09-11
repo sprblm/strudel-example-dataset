@@ -1,8 +1,8 @@
 import React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
-import { usePenguinData } from '@/hooks/usePenguinData';
-import { formatValue } from '@/utils/dataHelpers';
+import { usePenguinData } from '@/hooks/usePenguinData.ts';
+import { formatValue } from '@/utils/dataHelpers.ts';
 
 // Define columns with proper typing and formatting
 const columns: GridColDef[] = [
@@ -98,10 +98,10 @@ export const DataTable: React.FC = () => {
   }
 
   // Add IDs to data for DataGrid (required)
-  const rowsWithIds = penguins?.map((penguin, index) => ({
+  const rowsWithIds = penguins.map((penguin, index) => ({
     id: index,
     ...penguin,
-  })) || [];
+  }));
 
   return (
     <Box
@@ -132,11 +132,9 @@ export const DataTable: React.FC = () => {
         // Performance optimization for sorting
         sortingOrder={['asc', 'desc']}
       />
-      {penguins && (
-        <Typography variant="body2" color="textSecondary" sx={{ mt: 1, px: 1 }}>
-          Showing {penguins.length} penguins
-        </Typography>
-      )}
+      <Typography variant="body2" color="textSecondary" sx={{ mt: 1, px: 1 }}>
+        Showing {penguins.length} penguins
+      </Typography>
     </Box>
   );
 };

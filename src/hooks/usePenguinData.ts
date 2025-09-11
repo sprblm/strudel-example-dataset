@@ -1,5 +1,8 @@
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Penguin, RawPenguinData } from '@/types/penguin';
+import { useAppState } from '@/context/ContextProvider.tsx';
+import { Penguin, RawPenguinData } from '@/types/penguin.ts';
+import { filterPenguinsBySpecies } from '@/utils/filtering.ts';
 
 // Transform raw data to match story specification
 const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
@@ -25,10 +28,24 @@ const fetchPenguinData = async (): Promise<Penguin[]> => {
 };
 
 export const usePenguinData = () => {
-  return useQuery({
+  const { state } = useAppState();
+  const { selectedSpecies } = state;
+
+  const { data: allPenguins = [], isLoading, error, isError } = useQuery({
     queryKey: ['penguins'],
     queryFn: fetchPenguinData,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime in v5)
   });
+
+  const filteredPenguins = React.useMemo(() => {
+    return filterPenguinsBySpecies(allPenguins, selectedSpecies);
+  }, [allPenguins, selectedSpecies]);
+
+  return {
+    data: filteredPenguins,
+    isLoading,
+    error,
+    isError,
+  };
 };

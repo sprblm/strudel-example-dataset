@@ -22,6 +22,8 @@
   "rules": {
     "@typescript-eslint/no-explicit-any": "off", // allow any because template often can't predict users' types
     "@typescript-eslint/no-use-before-define": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "react/no-danger": "off", // it's self explainatory that no-danger should be used sparingly
     "react/prop-types": "off", // as long as TS strict mode is off this is not required

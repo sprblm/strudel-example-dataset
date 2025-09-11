@@ -4,6 +4,7 @@ import { AppAction, AppActionType } from './actions';
 export interface AppState {
   appTitle: string;
   apiModalOpen: boolean;
+  selectedSpecies: string[];
 }
 
 /**
@@ -13,6 +14,7 @@ export interface AppState {
  */
 interface AppProviderProps extends Partial<AppState> {
   apiModalOpen?: boolean;
+  selectedSpecies?: string[];
   children: React.ReactNode;
 }
 
@@ -23,6 +25,7 @@ const AppContext = React.createContext<
 const initialState: AppState = {
   appTitle: '',
   apiModalOpen: false,
+  selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'], // All selected by default
 };
 
 const initState = (state: AppState, props: AppProviderProps) => {
@@ -45,6 +48,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         apiModalOpen: false,
+      };
+    }
+    case 'UPDATE_SPECIES_FILTER': {
+      return {
+        ...state,
+        selectedSpecies: action.payload,
       };
     }
     default: {

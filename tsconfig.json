@@ -26,7 +26,9 @@
     "strudel.config.ts",
     "cypress",
     "cypress.config.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "vitest.config.ts",
+    "tests"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

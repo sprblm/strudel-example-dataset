@@ -2,8 +2,6 @@
 
 ## Project Organization
 
-The Palmer Penguins Explorer follows a feature-based component organization with clear separation of concerns.
-
 ```
 palmer-penguins-explorer/
 ├── public/
@@ -28,7 +26,7 @@ palmer-penguins-explorer/
 │   │   │   ├── TablePagination.tsx
 │   │   │   ├── ColumnSort.tsx     # Sort indicators
 │   │   │   ├── EmptyState.tsx     # "No penguins match" message
-│   │   │   └── CardView.tsx       # Card-based responsive layout
+│   │   │   └── CardView.tsx    # Card-based responsive layout
 │   │   ├── visualizations/
 │   │   │   ├── VisualizationPanel.tsx
 │   │   │   ├── ChartTypeSelector.tsx  # Icon-based selection
@@ -106,102 +104,45 @@ palmer-penguins-explorer/
 └── [config files]
 ```
 
-## Directory Structure Principles
+## Directory Organization Principles
 
-### Feature-Based Organization
+### Component Organization
+Components are organized by feature and responsibility:
+- **layout/**: App-wide layout components
+- **filters/**: Data filtering interface components
+- **table/**: Data table display components
+- **visualizations/**: Chart and visualization components
+- **modals/**: Modal dialog components
+- **export/**: Data export functionality
+- **a11y/**: Accessibility-specific components
 
-Components are grouped by feature/domain rather than by type:
+### Hook Organization
+Custom hooks are grouped by functionality:
+- **Data hooks**: `useFilteredData`, `useChartConfig`
+- **UI hooks**: `useResponsive`, `useFirstVisit`
+- **Integration hooks**: `useURLSync`, `useKeyboardShortcuts`
+- **Feature hooks**: `useExport`
 
-- `/filters/` - All filtering-related components
-- `/table/` - Data table and related components
-- `/visualizations/` - Charts and visualization components
-- `/modals/` - Modal dialogs and overlays
+### Store Organization
+State management is separated by concern:
+- **dataStore**: Raw penguin data and loading states
+- **filterStore**: User filter selections and derived counts
+- **selectors**: Memoized computations for performance
 
-### Separation of Concerns
+### Utility Organization
+Utilities are organized by domain:
+- **constants**: Static configuration values
+- **dataHelpers**: Data processing and validation
+- **chartHelpers**: Visualization-specific utilities
+- **exportHelpers**: File generation utilities
+- **urlHelpers**: URL state management
+- **a11yHelpers**: Accessibility utilities
 
-- **Components**: Pure UI components with minimal business logic
-- **Hooks**: Reusable stateful logic and side effects
-- **Stores**: Global state management (Zustand)
-- **Utils**: Pure functions and utilities
-- **Types**: TypeScript type definitions
-
-### Testing Structure
-
-Tests mirror the source structure:
-
-- **Unit tests** for individual components and functions
-- **Integration tests** for component interactions
-- **E2E tests** for complete user workflows
-- **Performance tests** for runtime and bundle analysis
-
-## Key Files & Their Purpose
-
-### Application Entry Points
-
-- `main.tsx` - React application bootstrap
-- `App.tsx` - Root component with providers and routing
-- `index.html` - HTML template with meta tags
-
-### Core Components
-
-- `MainLayout.tsx` - Primary application layout
-- `AppHeader.tsx` - Navigation and global actions
-- `FilterPanel.tsx` - Data filtering interface
-- `DataTable.tsx` - Tabular data display
-- `VisualizationPanel.tsx` - Chart container and controls
-
-### State Management
-
-- `dataStore.ts` - Raw penguin data and loading states
-- `filterStore.ts` - Filter selections and derived counts
-- `selectors.ts` - Memoized data transformations
-
-### Utilities
-
-- `constants.ts` - Application constants and enums
-- `dataHelpers.ts` - Data processing and formatting
-- `a11yHelpers.ts` - Accessibility utility functions
-
-## Import Path Standards
-
-Use absolute imports with `@/` prefix for cleaner imports:
-
-```typescript
-// Good
-import { FilterPanel } from '@/components/filters/FilterPanel';
-import { useFilteredData } from '@/hooks/useFilteredData';
-import { SPECIES } from '@/utils/constants';
-
-// Avoid
-import { FilterPanel } from '../../components/filters/FilterPanel';
-```
-
-## File Naming Conventions
-
-- **Components**: PascalCase (e.g., `FilterPanel.tsx`)
-- **Hooks**: camelCase with `use` prefix (e.g., `useFilteredData.ts`)
-- **Utilities**: camelCase (e.g., `dataHelpers.ts`)
-- **Types**: camelCase (e.g., `penguin.ts`)
-- **Constants**: camelCase (e.g., `constants.ts`)
-
-## Code Organization Within Files
-
-```typescript
-// 1. External imports
-import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-// 2. Internal imports (absolute paths)
-import { useFilterStore } from '@/stores/filterStore';
-import { SPECIES } from '@/utils/constants';
-
-// 3. Types and interfaces
-interface FilterPanelProps {
-  className?: string;
-}
-
-// 4. Component implementation
-export const FilterPanel: React.FC<FilterPanelProps> = ({ className }) => {
-  // Component logic
-};
-```
+### Test Organization
+Tests are organized by type and scope:
+- **unit/**: Isolated component and function tests
+- **integration/**: Multi-component interaction tests
+- **e2e/**: Full user journey tests
+- **performance/**: Performance benchmark tests
+- **__fixtures__/**: Shared test data and mocks
+- **setup/**: Test configuration and utilities

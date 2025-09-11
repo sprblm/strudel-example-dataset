@@ -3,12 +3,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { vi } from 'vitest';
 import { usePenguinData } from '../usePenguinData';
+import { AppProvider } from '../../context/ContextProvider';
 
 // Mock fetch
 global.fetch = vi.fn();
 const mockFetch = fetch as typeof vi.fn;
 
-// Test wrapper for React Query
+// Test wrapper for React Query and App Context
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -20,7 +21,9 @@ const createWrapper = () => {
   
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <AppProvider>
+        {children}
+      </AppProvider>
     </QueryClientProvider>
   );
 };
@@ -70,7 +73,7 @@ describe('usePenguinData', () => {
 
     // Initially loading
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.data).toBeUndefined();
+    expect(result.current.data).toEqual([]);
 
     // Wait for data to load
     await waitFor(() => {
@@ -78,7 +81,7 @@ describe('usePenguinData', () => {
     });
 
     expect(result.current.data).toHaveLength(2);
-    expect(result.current.data?.[0]).toEqual({
+    expect(result.current.data[0]).toEqual({
       species: 'Adelie',
       island: 'Biscoe',
       bill_length_mm: 53.4,
@@ -90,7 +93,7 @@ describe('usePenguinData', () => {
     });
     
     // Check transformation of falsy values to null
-    expect(result.current.data?.[1]).toEqual({
+    expect(result.current.data[1]).toEqual({
       species: 'Chinstrap',
       island: 'Dream',
       bill_length_mm: null, // 0 should be converted to null
@@ -113,7 +116,7 @@ describe('usePenguinData', () => {
     });
 
     expect(result.current.error).toBeInstanceOf(Error);
-    expect(result.current.data).toBeUndefined();
+    expect(result.current.data).toEqual([]);
   });
 
   it('handles HTTP error response', async () => {

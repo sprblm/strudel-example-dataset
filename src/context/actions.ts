@@ -1,6 +1,7 @@
 export enum AppActionType {
   OPEN_API_MODAL = 'OPEN_API_MODAL',
   CLOSE_API_MODAL = 'CLOSE_API_MODAL',
+  UPDATE_SPECIES_FILTER = 'UPDATE_SPECIES_FILTER',
 }
 
 export interface AppAction {
@@ -14,4 +15,9 @@ export const openApiModal = (): AppAction => ({
 
 export const closeApiModal = (): AppAction => ({
   type: AppActionType.CLOSE_API_MODAL,
+});
+
+export const updateSpeciesFilter = (species: string[]): AppAction => ({
+  type: AppActionType.UPDATE_SPECIES_FILTER,
+  payload: species,
 });
