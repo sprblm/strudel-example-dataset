@@ -4,6 +4,7 @@ export enum AppActionType {
   UPDATE_SPECIES_FILTER = 'UPDATE_SPECIES_FILTER',
   UPDATE_ISLAND_FILTER = 'UPDATE_ISLAND_FILTER',
   UPDATE_SEX_FILTER = 'UPDATE_SEX_FILTER',
+  CLEAR_ALL_FILTERS = 'CLEAR_ALL_FILTERS',
 }
 
 export interface AppAction {
@@ -32,4 +33,9 @@ export const updateIslandFilter = (island: string): AppAction => ({
 export const updateSexFilter = (sex: string): AppAction => ({
   type: AppActionType.UPDATE_SEX_FILTER,
   payload: sex,
+});
+
+export const clearAllFilters = (): AppAction => ({
+  type: AppActionType.CLEAR_ALL_FILTERS,
+  payload: null,
 });

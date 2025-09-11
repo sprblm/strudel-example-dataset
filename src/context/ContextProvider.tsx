@@ -74,6 +74,14 @@ function appReducer(state: AppState, action: AppAction): AppState {
         selectedSex: action.payload,
       };
     }
+    case AppActionType.CLEAR_ALL_FILTERS: {
+      return {
+        ...state,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+      };
+    }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
