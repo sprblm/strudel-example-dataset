@@ -29,7 +29,7 @@ const fetchPenguinData = async (): Promise<Penguin[]> => {
 
 export const usePenguinData = () => {
   const { state } = useAppState();
-  const { selectedSpecies, selectedIsland } = state;
+  const { selectedSpecies, selectedIsland, selectedSex } = state;
 
   const { data: allPenguins = [], isLoading, error, isError } = useQuery({
     queryKey: ['penguins'],
@@ -39,8 +39,8 @@ export const usePenguinData = () => {
   });
 
   const filteredPenguins = React.useMemo(() => {
-    return filterPenguins(allPenguins, selectedSpecies, selectedIsland);
-  }, [allPenguins, selectedSpecies, selectedIsland]);
+    return filterPenguins(allPenguins, selectedSpecies, selectedIsland, selectedSex);
+  }, [allPenguins, selectedSpecies, selectedIsland, selectedSex]);
 
   return {
     data: filteredPenguins,

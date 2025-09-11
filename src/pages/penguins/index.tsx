@@ -3,6 +3,7 @@ import { Box, Container, Typography, Grid } from '@mui/material';
 import { DataTable } from '@/components/table/DataTable';
 import { SpeciesFilter } from '@/components/filters/SpeciesFilter';
 import { IslandFilter } from '@/components/filters/IslandFilter';
+import { SexFilter } from '@/components/filters/SexFilter';
 
 export const Route = createFileRoute('/penguins/')({
   component: PenguinsPage,
@@ -24,6 +25,7 @@ function PenguinsPage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <SpeciesFilter />
             <IslandFilter />
+            <SexFilter />
           </Box>
         </Grid>
         <Grid item xs={12} md={9}>

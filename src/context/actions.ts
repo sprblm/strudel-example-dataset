@@ -3,6 +3,7 @@ export enum AppActionType {
   CLOSE_API_MODAL = 'CLOSE_API_MODAL',
   UPDATE_SPECIES_FILTER = 'UPDATE_SPECIES_FILTER',
   UPDATE_ISLAND_FILTER = 'UPDATE_ISLAND_FILTER',
+  UPDATE_SEX_FILTER = 'UPDATE_SEX_FILTER',
 }
 
 export interface AppAction {
@@ -26,4 +27,9 @@ export const updateSpeciesFilter = (species: string[]): AppAction => ({
 export const updateIslandFilter = (island: string): AppAction => ({
   type: AppActionType.UPDATE_ISLAND_FILTER,
   payload: island,
+});
+
+export const updateSexFilter = (sex: string): AppAction => ({
+  type: AppActionType.UPDATE_SEX_FILTER,
+  payload: sex,
 });

@@ -6,6 +6,7 @@ export interface AppState {
   apiModalOpen: boolean;
   selectedSpecies: string[];
   selectedIsland: string;
+  selectedSex: string;
 }
 
 /**
@@ -17,6 +18,7 @@ interface AppProviderProps extends Partial<AppState> {
   apiModalOpen?: boolean;
   selectedSpecies?: string[];
   selectedIsland?: string;
+  selectedSex?: string;
   children: React.ReactNode;
 }
 
@@ -29,6 +31,7 @@ const initialState: AppState = {
   apiModalOpen: false,
   selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'], // All selected by default
   selectedIsland: 'all', // All islands by default
+  selectedSex: 'all', // All sexes by default
 };
 
 const initState = (state: AppState, props: AppProviderProps) => {
@@ -63,6 +66,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         selectedIsland: action.payload,
+      };
+    }
+    case 'UPDATE_SEX_FILTER' as any: {
+      return {
+        ...state,
+        selectedSex: action.payload,
       };
     }
     default: {
