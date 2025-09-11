@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAppState } from '@/context/ContextProvider';
 import { Penguin, RawPenguinData } from '@/types/penguin';
-import { filterPenguinsBySpecies } from '@/utils/filtering';
+import { filterPenguins } from '@/utils/filtering';
 
 // Transform raw data to match story specification
 const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
@@ -29,7 +29,7 @@ const fetchPenguinData = async (): Promise<Penguin[]> => {
 
 export const usePenguinData = () => {
   const { state } = useAppState();
-  const { selectedSpecies } = state;
+  const { selectedSpecies, selectedIsland } = state;
 
   const { data: allPenguins = [], isLoading, error, isError } = useQuery({
     queryKey: ['penguins'],
@@ -39,8 +39,8 @@ export const usePenguinData = () => {
   });
 
   const filteredPenguins = React.useMemo(() => {
-    return filterPenguinsBySpecies(allPenguins, selectedSpecies);
-  }, [allPenguins, selectedSpecies]);
+    return filterPenguins(allPenguins, selectedSpecies, selectedIsland);
+  }, [allPenguins, selectedSpecies, selectedIsland]);
 
   return {
     data: filteredPenguins,

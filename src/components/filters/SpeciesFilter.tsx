@@ -19,10 +19,10 @@ export const SpeciesFilter: React.FC = () => {
     
     if (isChecked) {
       const newSpecies = [...selectedSpecies, species].filter((s, index, arr) => arr.indexOf(s) === index); // Avoid duplicates
-      dispatch({ type: 'UPDATE_SPECIES_FILTER', payload: newSpecies });
+      dispatch({ type: 'UPDATE_SPECIES_FILTER' as any, payload: newSpecies });
     } else {
       const newSpecies = selectedSpecies.filter(s => s !== species);
-      dispatch({ type: 'UPDATE_SPECIES_FILTER', payload: newSpecies });
+      dispatch({ type: 'UPDATE_SPECIES_FILTER' as any, payload: newSpecies });
     }
   };
 

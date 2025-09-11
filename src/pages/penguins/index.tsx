@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Box, Container, Typography, Grid } from '@mui/material';
 import { DataTable } from '@/components/table/DataTable';
 import { SpeciesFilter } from '@/components/filters/SpeciesFilter';
+import { IslandFilter } from '@/components/filters/IslandFilter';
 
 export const Route = createFileRoute('/penguins/')({
   component: PenguinsPage,
@@ -20,7 +21,10 @@ function PenguinsPage() {
       </Box>
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
-          <SpeciesFilter />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <SpeciesFilter />
+            <IslandFilter />
+          </Box>
         </Grid>
         <Grid item xs={12} md={9}>
           <DataTable />
