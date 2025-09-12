@@ -10,9 +10,36 @@ import { usePenguinData } from '@/hooks/usePenguinData';
 vi.mock('@/hooks/usePenguinData', () => ({
   usePenguinData: vi.fn(() => ({
     data: [
-      { species: 'Adelie', island: 'Biscoe', bill_length_mm: 39.1, bill_depth_mm: 18.7, flipper_length_mm: 181, body_mass_g: 3750, sex: 'male', year: 2007 },
-      { species: 'Chinstrap', island: 'Dream', bill_length_mm: 46.5, bill_depth_mm: 17.9, flipper_length_mm: 192, body_mass_g: 3500, sex: 'female', year: 2007 },
-      { species: 'Gentoo', island: 'Biscoe', bill_length_mm: 49.0, bill_depth_mm: 15.0, flipper_length_mm: 217, body_mass_g: 6000, sex: 'male', year: 2007 },
+      {
+        species: 'Adelie',
+        island: 'Biscoe',
+        bill_length_mm: 39.1,
+        bill_depth_mm: 18.7,
+        flipper_length_mm: 181,
+        body_mass_g: 3750,
+        sex: 'male',
+        year: 2007,
+      },
+      {
+        species: 'Chinstrap',
+        island: 'Dream',
+        bill_length_mm: 46.5,
+        bill_depth_mm: 17.9,
+        flipper_length_mm: 192,
+        body_mass_g: 3500,
+        sex: 'female',
+        year: 2007,
+      },
+      {
+        species: 'Gentoo',
+        island: 'Biscoe',
+        bill_length_mm: 49.0,
+        bill_depth_mm: 15.0,
+        flipper_length_mm: 217,
+        body_mass_g: 6000,
+        sex: 'male',
+        year: 2007,
+      },
     ],
     isLoading: false,
     error: null,
@@ -30,9 +57,7 @@ const renderWithProviders = (ui) => {
   return render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <AppProvider>
-          {ui}
-        </AppProvider>
+        <AppProvider>{ui}</AppProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
@@ -43,8 +68,26 @@ describe('DataTable with Filtering', () => {
     const mockUsePenguinData = vi.mocked(usePenguinData);
     mockUsePenguinData.mockReturnValue({
       data: [
-        { species: 'Adelie', island: 'Biscoe', bill_length_mm: 39.1, bill_depth_mm: 18.7, flipper_length_mm: 181, body_mass_g: 3750, sex: 'male', year: 2007 },
-        { species: 'Gentoo', island: 'Biscoe', bill_length_mm: 49.0, bill_depth_mm: 15.0, flipper_length_mm: 217, body_mass_g: 6000, sex: 'male', year: 2007 },
+        {
+          species: 'Adelie',
+          island: 'Biscoe',
+          bill_length_mm: 39.1,
+          bill_depth_mm: 18.7,
+          flipper_length_mm: 181,
+          body_mass_g: 3750,
+          sex: 'male',
+          year: 2007,
+        },
+        {
+          species: 'Gentoo',
+          island: 'Biscoe',
+          bill_length_mm: 49.0,
+          bill_depth_mm: 15.0,
+          flipper_length_mm: 217,
+          body_mass_g: 6000,
+          sex: 'male',
+          year: 2007,
+        },
       ],
       isLoading: false,
       error: null,

@@ -48,6 +48,7 @@ export const FilterPanel: FC = () => {
 ```
 
 **Key Features:**
+
 - Responsive behavior: fixed sidebar (desktop), collapsible (tablet), overlay (mobile)
 - Accessibility: proper ARIA labeling and keyboard navigation
 - State management: connects to filter store for active filter count
@@ -86,6 +87,7 @@ export const SpeciesFilter: FC = () => {
 ```
 
 **Key Features:**
+
 - Live count updates based on other active filters
 - Accessibility: fieldset/legend structure, aria-describedby for counts
 - Visual feedback: zero counts styled differently
@@ -131,6 +133,7 @@ export const ChartTypeSelector: FC = () => {
 ```
 
 **Key Features:**
+
 - ARIA tab pattern for accessible chart type selection
 - Route-based state management via React Router
 - Visual icon-based interface with text alternatives
@@ -211,6 +214,7 @@ export const WelcomeModal: FC = () => {
 ```
 
 **Key Features:**
+
 - First-visit detection using localStorage
 - User preference persistence for "don't show again"
 - Comprehensive dataset introduction and usage guide
@@ -220,11 +224,11 @@ export const WelcomeModal: FC = () => {
 
 ```typescript
 // ScatterPlot.tsx - Interactive D3-powered scatter plot
-export const ScatterPlot: FC<ScatterPlotProps> = ({ 
-  data, 
-  xField, 
-  yField, 
-  colorField = 'species' 
+export const ScatterPlot: FC<ScatterPlotProps> = ({
+  data,
+  xField,
+  yField,
+  colorField = 'species'
 }) => {
   const svgRef = useRef<SVGSVGElement>(null)
   const [focusedIndex, setFocusedIndex] = useState(-1)
@@ -295,7 +299,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .attr('stroke-width', 1)
       .attr('tabindex', 0)
       .attr('role', 'button')
-      .attr('aria-label', (d, i) => 
+      .attr('aria-label', (d, i) =>
         `Data point ${i + 1}: ${d.species}, ${formatFieldName(xField)}: ${d[xField]}, ${formatFieldName(yField)}: ${d[yField]}`
       )
 
@@ -331,9 +335,9 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       if (document.activeElement?.classList.contains('data-point')) {
         const currentIndex = Array.from(svg.selectAll('.data-point').nodes())
           .indexOf(document.activeElement as Element)
-        
+
         let newIndex = currentIndex
-        
+
         switch (event.key) {
           case 'ArrowRight':
             newIndex = Math.min(currentIndex + 1, data.length - 1)
@@ -351,7 +355,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
             (document.activeElement as HTMLElement)?.blur()
             return
         }
-        
+
         if (newIndex !== currentIndex) {
           event.preventDefault()
           const newElement = svg.selectAll('.data-point').nodes()[newIndex] as HTMLElement
@@ -361,7 +365,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
@@ -378,9 +382,9 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
         aria-label={`Scatter plot of ${formatFieldName(xField)} vs ${formatFieldName(yField)}`}
         aria-describedby="chart-description"
       />
-      
+
       <div id="chart-description" className="sr-only">
-        Scatter plot showing the relationship between {formatFieldName(xField)} and {formatFieldName(yField)} 
+        Scatter plot showing the relationship between {formatFieldName(xField)} and {formatFieldName(yField)}
         for {data.length} penguins. Use arrow keys to navigate between data points.
       </div>
 
@@ -399,6 +403,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
 ```
 
 **Key Features:**
+
 - D3.js integration for high-performance rendering
 - Full keyboard navigation support
 - Interactive tooltips on hover and focus
@@ -420,7 +425,7 @@ export const DataTable: FC<DataTableProps> = ({ data, onSort }) => {
     return [...data].sort((a, b) => {
       const aVal = a[sortField]
       const bVal = b[sortField]
-      
+
       if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1
       if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1
       return 0
@@ -589,6 +594,7 @@ export const DataTable: FC<DataTableProps> = ({ data, onSort }) => {
 ```
 
 **Key Features:**
+
 - Strudel Kit table components for consistent styling
 - Full keyboard navigation and screen reader support
 - Sortable columns with visual indicators

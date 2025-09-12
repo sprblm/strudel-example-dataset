@@ -16,18 +16,30 @@ describe('SpeciesFilter Integration with Context', () => {
     );
 
     // Initially all should be checked
-    expect(screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })
+    ).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })
+    ).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })
+    ).toBeChecked();
 
     // Click to uncheck Chinstrap
-    const chinstrapCheckbox = screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' });
+    const chinstrapCheckbox = screen.getByRole('checkbox', {
+      name: 'Filter by Chinstrap penguins',
+    });
     fireEvent.click(chinstrapCheckbox);
 
     // Chinstrap should be unchecked, others still checked
-    expect(screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })
+    ).toBeChecked();
     expect(chinstrapCheckbox).not.toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })
+    ).toBeChecked();
   });
 
   it('initially shows all checkboxes selected', () => {
@@ -39,8 +51,14 @@ describe('SpeciesFilter Integration with Context', () => {
       </ThemeProvider>
     );
 
-    expect(screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Adelie penguins' })
+    ).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Chinstrap penguins' })
+    ).toBeChecked();
+    expect(
+      screen.getByRole('checkbox', { name: 'Filter by Gentoo penguins' })
+    ).toBeChecked();
   });
 });

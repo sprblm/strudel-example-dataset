@@ -14,21 +14,9 @@ import { IslandFilter } from './filters/IslandFilter';
 import { SexFilter } from './filters/SexFilter';
 import { useAppState } from '@/context/ContextProvider';
 import { useNavigate } from '@tanstack/react-router';
-
-enum FilterType {
-  CHECKBOX_LIST = 'CHECKBOX_LIST',
-  RANGE_SLIDER = 'RANGE_SLIDER',
-}
-
-interface Filter {
-  label: string;
-  field: string;
-  type: FilterType;
-  defaultValue: any;
-}
+import { clearAllFilters } from '@/context/actions';
 
 interface FiltersProps extends StackProps {
-  filters?: Filter[];
   onChange?: () => any;
   onClose?: () => any;
 }
@@ -55,7 +43,7 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
 
   const handleClearFilters = () => {
     // Reset state
-    dispatch({ type: 'CLEAR_ALL_FILTERS' as any, payload: null });
+    dispatch(clearAllFilters());
     // Clear URL
     navigate({
       to: '/penguins',

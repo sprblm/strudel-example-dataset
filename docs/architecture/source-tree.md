@@ -107,7 +107,9 @@ palmer-penguins-explorer/
 ## Directory Organization Principles
 
 ### Component Organization
+
 Components are organized by feature and responsibility:
+
 - **layout/**: App-wide layout components
 - **filters/**: Data filtering interface components
 - **table/**: Data table display components
@@ -117,20 +119,26 @@ Components are organized by feature and responsibility:
 - **a11y/**: Accessibility-specific components
 
 ### Hook Organization
+
 Custom hooks are grouped by functionality:
+
 - **Data hooks**: `useFilteredData`, `useChartConfig`
 - **UI hooks**: `useResponsive`, `useFirstVisit`
 - **Integration hooks**: `useURLSync`, `useKeyboardShortcuts`
 - **Feature hooks**: `useExport`
 
 ### Store Organization
+
 State management is separated by concern:
+
 - **dataStore**: Raw penguin data and loading states
 - **filterStore**: User filter selections and derived counts
 - **selectors**: Memoized computations for performance
 
 ### Utility Organization
+
 Utilities are organized by domain:
+
 - **constants**: Static configuration values
 - **dataHelpers**: Data processing and validation
 - **chartHelpers**: Visualization-specific utilities
@@ -139,10 +147,12 @@ Utilities are organized by domain:
 - **a11yHelpers**: Accessibility utilities
 
 ### Test Organization
+
 Tests are organized by type and scope:
+
 - **unit/**: Isolated component and function tests
 - **integration/**: Multi-component interaction tests
 - **e2e/**: Full user journey tests
 - **performance/**: Performance benchmark tests
-- **__fixtures__/**: Shared test data and mocks
+- \***\*fixtures**/\*\*: Shared test data and mocks
 - **setup/**: Test configuration and utilities

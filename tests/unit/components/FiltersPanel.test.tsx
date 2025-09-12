@@ -96,10 +96,7 @@ describe('FiltersPanel', () => {
     fireEvent.click(button);
 
     // Wait for the alert to appear
-    setTimeout(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent(
-        'All filters cleared'
-      );
-    }, 100);
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('All filters cleared');
   });
 });

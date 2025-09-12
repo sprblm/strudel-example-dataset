@@ -14,6 +14,7 @@ App Mount → Check localStorage → Show/Skip Welcome → Load JSON → Initial
 ```
 
 **Detailed Flow:**
+
 1. **App Mount**: React application initializes
 2. **localStorage Check**: Verify if user has visited before
 3. **Welcome Modal**: Show/skip onboarding based on visit status
@@ -32,6 +33,7 @@ User Input → Update Store → Debounced URL Update → Memoized Recompute → 
 ```
 
 **Detailed Flow:**
+
 1. **User Input**: User interacts with filter controls (checkbox, dropdown, radio)
 2. **Store Update**: Filter store updates relevant state (species, island, sex)
 3. **Derived State**: Filter counts and active filter count automatically recompute
@@ -48,6 +50,7 @@ Tab Click → Route Change → Component Mount → Use Filtered Data → Render
 ```
 
 **Detailed Flow:**
+
 1. **Tab Interaction**: User clicks Table or Visualization tab
 2. **Route Change**: React Router navigates to new route (`/table` or `/visualize/:chartType`)
 3. **Component Mount**: Route-specific component mounts
@@ -65,9 +68,10 @@ Current View → Canvas/CSV Generator → Blob Creation → Download Trigger
 ```
 
 **Detailed Flow:**
+
 1. **Export Trigger**: User clicks export button (PNG/CSV)
 2. **Current State Capture**: Capture current view state (data, filters, chart config)
-3. **Content Generation**: 
+3. **Content Generation**:
    - **PNG**: Canvas rendering of current visualization
    - **CSV**: Filtered dataset conversion to CSV format
 4. **Blob Creation**: Create downloadable blob from generated content
@@ -122,6 +126,7 @@ interface URLStateMapping {
 ### Live Data Updates
 
 Components automatically receive updates through:
+
 1. **Zustand subscriptions**: Components subscribe to relevant store slices
 2. **Memoized selectors**: Expensive computations cached and recomputed only when dependencies change
 3. **React re-renders**: Automatic re-rendering when subscribed state changes
@@ -132,10 +137,7 @@ Components automatically receive updates through:
 
 ```typescript
 // Prevent excessive URL updates during rapid filter changes
-const debouncedURLUpdate = useMemo(
-  () => debounce(updateURLParams, 100),
-  []
-);
+const debouncedURLUpdate = useMemo(() => debounce(updateURLParams, 100), []);
 ```
 
 ### Memoized Computations
@@ -143,7 +145,7 @@ const debouncedURLUpdate = useMemo(
 ```typescript
 // Expensive filter computations are memoized
 const filteredData = useMemo(() => {
-  return penguins.filter(penguin => {
+  return penguins.filter((penguin) => {
     return matchesFilters(penguin, filters);
   });
 }, [penguins, filters]);
@@ -153,8 +155,8 @@ const filteredData = useMemo(() => {
 
 ```typescript
 // Components only re-render when their specific data slice changes
-const species = useFilterStore(state => state.selectedSpecies);
-const counts = useFilterStore(state => state.speciesCounts);
+const species = useFilterStore((state) => state.selectedSpecies);
+const counts = useFilterStore((state) => state.speciesCounts);
 ```
 
 ## Error Handling in Data Flow
