@@ -19,16 +19,18 @@ The Palmer Penguins Explorer is designed to meet strict performance requirements
 const lazyLoadCharts = {
   ScatterPlot: lazy(() => import('./charts/ScatterPlot')),
   Histogram: lazy(() => import('./charts/Histogram')),
-  BoxPlot: lazy(() => import('./charts/BoxPlot'))
-}
+  BoxPlot: lazy(() => import('./charts/BoxPlot')),
+};
 
 // Lazy load heavy dependencies
-const ExportUtilities = lazy(() => import('./utils/exportHelpers'))
-const AdvancedFilters = lazy(() => import('./components/filters/AdvancedFilters'))
+const ExportUtilities = lazy(() => import('./utils/exportHelpers'));
+const AdvancedFilters = lazy(
+  () => import('./components/filters/AdvancedFilters')
+);
 
 // Route-based code splitting
-const TableRoute = lazy(() => import('./routes/TableRoute'))
-const VisualizationRoute = lazy(() => import('./routes/VisualizationRoute'))
+const TableRoute = lazy(() => import('./routes/TableRoute'));
+const VisualizationRoute = lazy(() => import('./routes/VisualizationRoute'));
 ```
 
 ### Bundle Splitting Configuration
@@ -41,44 +43,44 @@ export default defineConfig({
       output: {
         manualChunks: {
           // Core framework chunks
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+
           // State management
-          'state': ['zustand'],
-          
+          state: ['@tanstack/react-query'],
+
           // UI framework
-          'strudel': ['@strudel-ui/react'],
-          
+          strudel: ['@strudel-ui/react'],
+
           // Visualization libraries
-          'charts': ['d3-scale', 'd3-selection', 'd3-axis', 'd3-shape'],
-          
+          charts: ['d3-scale', 'd3-selection', 'd3-axis', 'd3-shape'],
+
           // Export functionality
-          'export': ['html2canvas', 'file-saver'],
-          
+          export: ['html2canvas', 'file-saver'],
+
           // Development tools (only in dev)
           ...(process.env.NODE_ENV === 'development' && {
-            'devtools': ['@tanstack/react-query-devtools']
-          })
-        }
-      }
+            devtools: ['@tanstack/react-query-devtools'],
+          }),
+        },
+      },
     },
-    
+
     // Enable minification and compression
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true, // Remove console.log in production
-        drop_debugger: true
-      }
+        drop_debugger: true,
+      },
     },
-    
+
     // Generate source maps for debugging
-    sourcemap: process.env.NODE_ENV === 'development'
+    sourcemap: process.env.NODE_ENV === 'development',
   },
-  
+
   // Asset optimization
   assetsInclude: ['**/*.json'], // Treat JSON as assets for better caching
-})
+});
 ```
 
 ## Runtime Performance Optimizations
@@ -123,46 +125,45 @@ export const getChartData = createSelector(
 
 ```typescript
 // Debounced URL updates to prevent excessive history entries
-const debouncedURLUpdate = useMemo(
-  () => debounce(updateURLParams, 100),
-  []
-)
+const debouncedURLUpdate = useMemo(() => debounce(updateURLParams, 100), []);
 
 // Debounced filter announcements for screen readers
 const debouncedAnnouncement = useMemo(
-  () => debounce((count: number) => {
-    announceToScreenReader(`Showing ${count} penguins`)
-  }, 300),
+  () =>
+    debounce((count: number) => {
+      announceToScreenReader(`Showing ${count} penguins`);
+    }, 300),
   []
-)
+);
 
 // Debounced search functionality
 const debouncedSearch = useMemo(
-  () => debounce((query: string) => {
-    performSearch(query)
-  }, 150),
+  () =>
+    debounce((query: string) => {
+      performSearch(query);
+    }, 150),
   []
-)
+);
 ```
 
 ### Virtual Scrolling for Large Datasets
 
 ```typescript
 // Virtual scrolling for data table performance
-export const VirtualizedDataTable: FC<VirtualizedTableProps> = ({ 
-  data, 
-  rowHeight = 40 
+export const VirtualizedDataTable: FC<VirtualizedTableProps> = ({
+  data,
+  rowHeight = 40
 }) => {
   const [scrollTop, setScrollTop] = useState(0)
   const [containerHeight, setContainerHeight] = useState(400)
-  
+
   const visibleRange = useMemo(() => {
     const startIndex = Math.floor(scrollTop / rowHeight)
     const endIndex = Math.min(
       startIndex + Math.ceil(containerHeight / rowHeight) + 1,
       data.length
     )
-    
+
     return { startIndex, endIndex }
   }, [scrollTop, containerHeight, rowHeight, data.length])
 
@@ -174,14 +175,14 @@ export const VirtualizedDataTable: FC<VirtualizedTableProps> = ({
   const offsetY = visibleRange.startIndex * rowHeight
 
   return (
-    <div 
+    <div
       className={styles.virtualScrollContainer}
       style={{ height: containerHeight }}
       onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
     >
       <div style={{ height: totalHeight, position: 'relative' }}>
-        <div 
-          style={{ 
+        <div
+          style={{
             transform: `translateY(${offsetY}px)`,
             position: 'absolute',
             top: 0,
@@ -210,54 +211,53 @@ export const VirtualizedDataTable: FC<VirtualizedTableProps> = ({
 ```typescript
 // Optimized data loading with caching and compression
 export const useOptimizedDataFetch = () => {
-  const [data, setData] = useState<Penguin[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [data, setData] = useState<Penguin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         // Check for cached data first
-        const cached = getCachedData()
+        const cached = getCachedData();
         if (cached) {
-          setData(cached)
-          setLoading(false)
-          return
+          setData(cached);
+          setLoading(false);
+          return;
         }
 
         // Fetch with compression support
         const response = await fetch('/penguins.json', {
           headers: {
-            'Accept-Encoding': 'gzip, compress, br'
-          }
-        })
+            'Accept-Encoding': 'gzip, compress, br',
+          },
+        });
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const rawData = await response.json()
-        
+        const rawData = await response.json();
+
         // Validate and transform data
-        const validatedData = validateAndTransformData(rawData)
-        
+        const validatedData = validateAndTransformData(rawData);
+
         // Cache for future use
-        cacheData(validatedData)
-        
-        setData(validatedData)
-        setLoading(false)
-        
+        cacheData(validatedData);
+
+        setData(validatedData);
+        setLoading(false);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
-        setLoading(false)
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setLoading(false);
       }
-    }
+    };
 
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
-  return { data, loading, error }
-}
+  return { data, loading, error };
+};
 ```
 
 ### Data Preprocessing
@@ -265,7 +265,7 @@ export const useOptimizedDataFetch = () => {
 ```typescript
 // Preprocess data for optimal filtering and charting performance
 export const preprocessPenguinData = (rawData: any[]): ProcessedPenguinData => {
-  const processed = rawData.map(penguin => ({
+  const processed = rawData.map((penguin) => ({
     ...penguin,
     // Pre-compute derived fields
     billRatio: penguin.bill_length_mm / penguin.bill_depth_mm,
@@ -273,40 +273,40 @@ export const preprocessPenguinData = (rawData: any[]): ProcessedPenguinData => {
     // Normalize strings for consistent filtering
     species: penguin.species.toLowerCase(),
     island: penguin.island.toLowerCase(),
-    sex: penguin.sex?.toLowerCase() || 'unknown'
-  }))
+    sex: penguin.sex?.toLowerCase() || 'unknown',
+  }));
 
   // Create lookup maps for O(1) filtering performance
-  const speciesMap = new Map<Species, Penguin[]>()
-  const islandMap = new Map<Island, Penguin[]>()
-  const sexMap = new Map<Sex, Penguin[]>()
+  const speciesMap = new Map<Species, Penguin[]>();
+  const islandMap = new Map<Island, Penguin[]>();
+  const sexMap = new Map<Sex, Penguin[]>();
 
-  processed.forEach(penguin => {
+  processed.forEach((penguin) => {
     // Populate species map
     if (!speciesMap.has(penguin.species)) {
-      speciesMap.set(penguin.species, [])
+      speciesMap.set(penguin.species, []);
     }
-    speciesMap.get(penguin.species)!.push(penguin)
+    speciesMap.get(penguin.species)!.push(penguin);
 
     // Populate island map
     if (!islandMap.has(penguin.island)) {
-      islandMap.set(penguin.island, [])
+      islandMap.set(penguin.island, []);
     }
-    islandMap.get(penguin.island)!.push(penguin)
+    islandMap.get(penguin.island)!.push(penguin);
 
     // Populate sex map
     if (!sexMap.has(penguin.sex)) {
-      sexMap.set(penguin.sex, [])
+      sexMap.set(penguin.sex, []);
     }
-    sexMap.get(penguin.sex)!.push(penguin)
-  })
+    sexMap.get(penguin.sex)!.push(penguin);
+  });
 
   return {
     penguins: processed,
     lookupMaps: { speciesMap, islandMap, sexMap },
-    statistics: computeDataStatistics(processed)
-  }
-}
+    statistics: computeDataStatistics(processed),
+  };
+};
 ```
 
 ## Chart Rendering Optimizations
@@ -317,12 +317,12 @@ export const preprocessPenguinData = (rawData: any[]): ProcessedPenguinData => {
 // Adaptive rendering based on data size
 export const AdaptiveChart: FC<ChartProps> = ({ data, type, config }) => {
   const shouldUseCanvas = data.length > 1000 // Use canvas for large datasets
-  
+
   if (shouldUseCanvas) {
     return (
-      <CanvasChart 
-        data={data} 
-        type={type} 
+      <CanvasChart
+        data={data}
+        type={type}
         config={config}
         optimizations={{
           enableWebGL: true,
@@ -332,11 +332,11 @@ export const AdaptiveChart: FC<ChartProps> = ({ data, type, config }) => {
       />
     )
   }
-  
+
   return (
-    <SVGChart 
-      data={data} 
-      type={type} 
+    <SVGChart
+      data={data}
+      type={type}
       config={config}
       optimizations={{
         useVirtualization: data.length > 500,
@@ -351,18 +351,18 @@ export const AdaptiveChart: FC<ChartProps> = ({ data, type, config }) => {
 
 ```typescript
 // Optimized D3 chart rendering
-export const OptimizedScatterPlot: FC<ScatterPlotProps> = ({ 
-  data, 
-  xField, 
-  yField 
+export const OptimizedScatterPlot: FC<ScatterPlotProps> = ({
+  data,
+  xField,
+  yField
 }) => {
   const svgRef = useRef<SVGSVGElement>(null)
-  
+
   useEffect(() => {
     if (!svgRef.current) return
 
     const svg = d3.select(svgRef.current)
-    
+
     // Use requestAnimationFrame for smooth updates
     const updateChart = () => {
       // Batch DOM updates
@@ -394,7 +394,7 @@ export const OptimizedScatterPlot: FC<ScatterPlotProps> = ({
 
     // Use RAF for smooth animations
     requestAnimationFrame(updateChart)
-    
+
   }, [data, xField, yField])
 
   return <svg ref={svgRef} />
@@ -414,17 +414,17 @@ export const ChartComponent: FC<ChartProps> = ({ data }) => {
   useEffect(() => {
     // Initialize chart
     chartRef.current = new D3Chart(data)
-    
+
     // Setup resize observer
     resizeObserverRef.current = new ResizeObserver(() => {
       chartRef.current?.resize()
     })
-    
+
     return () => {
       // Cleanup chart resources
       chartRef.current?.destroy()
       chartRef.current = null
-      
+
       // Cleanup resize observer
       resizeObserverRef.current?.disconnect()
       resizeObserverRef.current = null
@@ -446,29 +446,29 @@ export const ChartComponent: FC<ChartProps> = ({ data }) => {
 // Optimized Zustand store with cleanup
 export const useOptimizedFilterStore = create<FilterStore>((set, get) => ({
   // ... store implementation
-  
+
   // Cleanup function for memory management
   cleanup: () => {
     // Clear large data structures
     set({
       cachedResults: new Map(),
       computationCache: new Map(),
-      eventHandlers: new Set()
-    })
-    
+      eventHandlers: new Set(),
+    });
+
     // Cancel pending operations
-    get().cancelPendingOperations?.()
-  }
-}))
+    get().cancelPendingOperations?.();
+  },
+}));
 
 // Auto-cleanup on unmount
 export const useStoreCleanup = () => {
   useEffect(() => {
     return () => {
-      useOptimizedFilterStore.getState().cleanup()
-    }
-  }, [])
-}
+      useOptimizedFilterStore.getState().cleanup();
+    };
+  }, []);
+};
 ```
 
 ## Performance Monitoring
@@ -480,50 +480,50 @@ export const useStoreCleanup = () => {
 export const usePerformanceMonitoring = () => {
   useEffect(() => {
     // Monitor Core Web Vitals
-    getCLS(onCLS)
-    getFID(onFID)
-    getFCP(onFCP)
-    getLCP(onLCP)
-    getTTFB(onTTFB)
-    
+    getCLS(onCLS);
+    getFID(onFID);
+    getFCP(onFCP);
+    getLCP(onLCP);
+    getTTFB(onTTFB);
+
     function onCLS(metric: Metric) {
-      reportMetric('CLS', metric.value)
+      reportMetric('CLS', metric.value);
     }
-    
+
     function onFID(metric: Metric) {
-      reportMetric('FID', metric.value)
+      reportMetric('FID', metric.value);
     }
-    
+
     function onFCP(metric: Metric) {
-      reportMetric('FCP', metric.value)
+      reportMetric('FCP', metric.value);
     }
-    
+
     function onLCP(metric: Metric) {
-      reportMetric('LCP', metric.value)
+      reportMetric('LCP', metric.value);
     }
-    
+
     function onTTFB(metric: Metric) {
-      reportMetric('TTFB', metric.value)
+      reportMetric('TTFB', metric.value);
     }
-  }, [])
-}
+  }, []);
+};
 
 // Custom performance markers
 export const measureChartRenderTime = (chartType: string) => {
-  const startTime = performance.now()
-  
+  const startTime = performance.now();
+
   return {
     end: () => {
-      const endTime = performance.now()
-      const duration = endTime - startTime
-      
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+
       reportMetric('chart_render_time', duration, {
         chart_type: chartType,
-        data_size: getCurrentDataSize()
-      })
-    }
-  }
-}
+        data_size: getCurrentDataSize(),
+      });
+    },
+  };
+};
 ```
 
 ### Performance Budget Enforcement
@@ -539,18 +539,21 @@ module.exports = {
         'largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
         'total-blocking-time': ['error', { maxNumericValue: 300 }],
-        
+
         // Bundle size constraints
         'resource-summary:script:size': ['error', { maxNumericValue: 512000 }],
-        'resource-summary:stylesheet:size': ['error', { maxNumericValue: 25000 }],
+        'resource-summary:stylesheet:size': [
+          'error',
+          { maxNumericValue: 25000 },
+        ],
         'resource-summary:image:size': ['error', { maxNumericValue: 100000 }],
-        
+
         // Performance score
-        'categories:performance': ['error', { minScore: 0.9 }]
-      }
-    }
-  }
-}
+        'categories:performance': ['error', { minScore: 0.9 }],
+      },
+    },
+  },
+};
 ```
 
 ## Caching Strategy
@@ -563,23 +566,23 @@ self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('/penguins.json')) {
     // Cache dataset for offline use
     event.respondWith(
-      caches.open('penguin-data-v1').then(cache => {
-        return cache.match(event.request).then(response => {
+      caches.open('penguin-data-v1').then((cache) => {
+        return cache.match(event.request).then((response) => {
           if (response) {
             // Serve from cache
-            return response
+            return response;
           }
-          
+
           // Fetch and cache
-          return fetch(event.request).then(fetchResponse => {
-            cache.put(event.request, fetchResponse.clone())
-            return fetchResponse
-          })
-        })
+          return fetch(event.request).then((fetchResponse) => {
+            cache.put(event.request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        });
       })
-    )
+    );
   }
-})
+});
 ```
 
 ### Application-Level Caching
@@ -587,54 +590,56 @@ self.addEventListener('fetch', (event) => {
 ```typescript
 // Multi-level caching strategy
 class CacheManager {
-  private memoryCache = new Map<string, any>()
-  private persistentCache = new Map<string, any>()
-  
+  private memoryCache = new Map<string, any>();
+  private persistentCache = new Map<string, any>();
+
   // Memory cache for frequently accessed data
-  setMemoryCache(key: string, value: any, ttl = 300000) { // 5 minutes
+  setMemoryCache(key: string, value: any, ttl = 300000) {
+    // 5 minutes
     this.memoryCache.set(key, {
       value,
-      expires: Date.now() + ttl
-    })
+      expires: Date.now() + ttl,
+    });
   }
-  
+
   getMemoryCache(key: string) {
-    const item = this.memoryCache.get(key)
+    const item = this.memoryCache.get(key);
     if (!item || Date.now() > item.expires) {
-      this.memoryCache.delete(key)
-      return null
+      this.memoryCache.delete(key);
+      return null;
     }
-    return item.value
+    return item.value;
   }
-  
+
   // Persistent cache for data that survives page reloads
-  setPersistentCache(key: string, value: any, ttl = 86400000) { // 24 hours
+  setPersistentCache(key: string, value: any, ttl = 86400000) {
+    // 24 hours
     try {
       const item = {
         value,
-        expires: Date.now() + ttl
-      }
-      localStorage.setItem(`cache_${key}`, JSON.stringify(item))
+        expires: Date.now() + ttl,
+      };
+      localStorage.setItem(`cache_${key}`, JSON.stringify(item));
     } catch (error) {
-      console.warn('Failed to set persistent cache:', error)
+      console.warn('Failed to set persistent cache:', error);
     }
   }
-  
+
   getPersistentCache(key: string) {
     try {
-      const item = localStorage.getItem(`cache_${key}`)
-      if (!item) return null
-      
-      const parsed = JSON.parse(item)
+      const item = localStorage.getItem(`cache_${key}`);
+      if (!item) return null;
+
+      const parsed = JSON.parse(item);
       if (Date.now() > parsed.expires) {
-        localStorage.removeItem(`cache_${key}`)
-        return null
+        localStorage.removeItem(`cache_${key}`);
+        return null;
       }
-      
-      return parsed.value
+
+      return parsed.value;
     } catch (error) {
-      console.warn('Failed to get persistent cache:', error)
-      return null
+      console.warn('Failed to get persistent cache:', error);
+      return null;
     }
   }
 }

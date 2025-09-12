@@ -57,14 +57,14 @@ The routing system supports rich URL state to enable shareable links:
 export const MainLayout: FC = () => {
   const location = useLocation()
   const { isLoading, error } = useDataStore()
-  
+
   // Initialize URL sync on mount
   useURLSync()
-  
+
   if (isLoading) {
     return <LoadingScreen />
   }
-  
+
   if (error) {
     return <ErrorScreen error={error} />
   }
@@ -72,18 +72,18 @@ export const MainLayout: FC = () => {
   return (
     <div className={styles.mainLayout}>
       <SkipLinks />
-      
+
       <AppHeader />
-      
+
       <div className={styles.content}>
         <FilterPanel />
-        
+
         <main id="main-content" className={styles.mainContent}>
           <TabNavigation />
           <Outlet />
         </main>
       </div>
-      
+
       <LiveRegion />
       <WelcomeModal />
       <HelpModal />
@@ -109,7 +109,7 @@ export const TableRoute: FC = () => {
   const handleSort = (field: keyof Penguin, direction: 'asc' | 'desc') => {
     setSortField(field)
     setSortDirection(direction)
-    
+
     // Update URL with sort parameters
     const url = new URL(window.location.href)
     url.searchParams.set('sort', field)
@@ -120,7 +120,7 @@ export const TableRoute: FC = () => {
   // Handle empty state
   if (filteredData.length === 0) {
     return (
-      <EmptyDataState 
+      <EmptyDataState
         onReset={() => useFilterStore.getState().clearAll()}
       />
     )
@@ -133,17 +133,17 @@ export const TableRoute: FC = () => {
         <p className={styles.resultCount}>
           Showing {filteredData.length} penguin{filteredData.length !== 1 ? 's' : ''}
         </p>
-        
+
         <div className={styles.tableActions}>
-          <ExportButton 
-            data={filteredData} 
-            format="csv" 
+          <ExportButton
+            data={filteredData}
+            format="csv"
             filename="palmer-penguins-filtered"
           />
         </div>
       </div>
 
-      <DataTable 
+      <DataTable
         data={filteredData}
         sortField={sortField}
         sortDirection={sortDirection}
@@ -162,7 +162,7 @@ export const VisualizationRoute: FC = () => {
   const { chartType } = useParams<{ chartType: ChartType }>()
   const [searchParams, setSearchParams] = useSearchParams()
   const filteredData = useFilterStore(getFilteredPenguins)
-  
+
   // Chart configuration from URL
   const chartConfig = useMemo(() => ({
     type: chartType || 'scatter',
@@ -182,7 +182,7 @@ export const VisualizationRoute: FC = () => {
   // Update URL when chart config changes
   const updateChartConfig = (newConfig: Partial<ChartConfig>) => {
     const newSearchParams = new URLSearchParams(searchParams)
-    
+
     Object.entries(newConfig).forEach(([key, value]) => {
       if (value) {
         newSearchParams.set(key, value.toString())
@@ -190,14 +190,14 @@ export const VisualizationRoute: FC = () => {
         newSearchParams.delete(key)
       }
     })
-    
+
     setSearchParams(newSearchParams, { replace: true })
   }
 
   // Handle empty state
   if (filteredData.length === 0) {
     return (
-      <EmptyDataState 
+      <EmptyDataState
         onReset={() => useFilterStore.getState().clearAll()}
       />
     )
@@ -214,7 +214,7 @@ export const VisualizationRoute: FC = () => {
 
       <div className={styles.chartControls}>
         <ChartTypeSelector />
-        
+
         {chartConfig.type === 'scatter' && (
           <AxisControls
             xAxis={chartConfig.xAxis}
@@ -222,7 +222,7 @@ export const VisualizationRoute: FC = () => {
             onAxisChange={updateChartConfig}
           />
         )}
-        
+
         {chartConfig.type === 'histogram' && (
           <HistogramControls
             field={chartConfig.field}
@@ -230,7 +230,7 @@ export const VisualizationRoute: FC = () => {
             onConfigChange={updateChartConfig}
           />
         )}
-        
+
         {chartConfig.type === 'boxplot' && (
           <BoxPlotControls
             field={chartConfig.field}
@@ -249,7 +249,7 @@ export const VisualizationRoute: FC = () => {
               colorField={chartConfig.colorBy}
             />
           )}
-          
+
           {chartConfig.type === 'histogram' && (
             <Histogram
               data={filteredData}
@@ -258,7 +258,7 @@ export const VisualizationRoute: FC = () => {
               colorField={chartConfig.colorBy}
             />
           )}
-          
+
           {chartConfig.type === 'boxplot' && (
             <BoxPlot
               data={filteredData}
@@ -270,14 +270,14 @@ export const VisualizationRoute: FC = () => {
       </div>
 
       <div className={styles.chartActions}>
-        <ExportButton 
+        <ExportButton
           chartRef={chartRef}
           data={filteredData}
           config={chartConfig}
           format="png"
         />
-        
-        <ShareButton 
+
+        <ShareButton
           url={window.location.href}
           title={`Palmer Penguins ${formatChartType(chartConfig.type)}`}
         />
@@ -297,14 +297,14 @@ interface URLParameters {
   species?: string; // comma-separated: "adelie,gentoo"
   island?: Island | 'all';
   sex?: Sex | 'all';
-  
+
   // Chart parameters
   x?: string; // x-axis field for scatter plots
   y?: string; // y-axis field for scatter plots
   field?: string; // field for histogram/boxplot
   bins?: string; // number of bins for histogram
   color?: string; // color grouping field
-  
+
   // Table parameters
   sort?: string; // sort field
   order?: 'asc' | 'desc'; // sort direction
@@ -317,97 +317,100 @@ interface URLParameters {
 ```typescript
 // useURLSync.ts - Bidirectional URL state synchronization
 export const useURLSync = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { serializeToURL, hydrateFromURL } = useFilterStore()
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { serializeToURL, hydrateFromURL } = useFilterStore();
 
   // Debounced URL update to prevent excessive history entries
   const debouncedNavigate = useMemo(
-    () => debounce((search: string) => {
-      navigate({ search }, { replace: true })
-    }, 100),
+    () =>
+      debounce((search: string) => {
+        navigate({ search }, { replace: true });
+      }, 100),
     [navigate]
-  )
+  );
 
   // Update URL when filters change
   useEffect(() => {
-    const params = serializeToURL()
-    const newSearch = params.toString()
-    
+    const params = serializeToURL();
+    const newSearch = params.toString();
+
     if (newSearch !== location.search.slice(1)) {
-      debouncedNavigate(newSearch)
+      debouncedNavigate(newSearch);
     }
-  }, [serializeToURL, debouncedNavigate, location.search])
+  }, [serializeToURL, debouncedNavigate, location.search]);
 
   // Update filters when URL changes (browser back/forward, direct URL access)
   useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    hydrateFromURL(params)
-  }, [location.search, hydrateFromURL])
+    const params = new URLSearchParams(location.search);
+    hydrateFromURL(params);
+  }, [location.search, hydrateFromURL]);
 
   // Cleanup debounced function
   useEffect(() => {
     return () => {
-      debouncedNavigate.cancel()
-    }
-  }, [debouncedNavigate])
-}
+      debouncedNavigate.cancel();
+    };
+  }, [debouncedNavigate]);
+};
 ```
 
 ### Deep Linking Support
 
 ```typescript
 // Deep linking validation and fallbacks
-export const validateAndNormalizeURL = (params: URLSearchParams): URLSearchParams => {
-  const normalized = new URLSearchParams()
+export const validateAndNormalizeURL = (
+  params: URLSearchParams
+): URLSearchParams => {
+  const normalized = new URLSearchParams();
 
   // Validate species parameter
-  const species = params.get('species')
+  const species = params.get('species');
   if (species) {
-    const validSpecies = species.split(',').filter(isValidSpecies)
+    const validSpecies = species.split(',').filter(isValidSpecies);
     if (validSpecies.length > 0) {
-      normalized.set('species', validSpecies.join(','))
+      normalized.set('species', validSpecies.join(','));
     }
   }
 
   // Validate island parameter
-  const island = params.get('island')
+  const island = params.get('island');
   if (island && (island === 'all' || isValidIsland(island))) {
-    normalized.set('island', island)
+    normalized.set('island', island);
   }
 
   // Validate sex parameter
-  const sex = params.get('sex')
+  const sex = params.get('sex');
   if (sex && (sex === 'all' || isValidSex(sex))) {
-    normalized.set('sex', sex)
+    normalized.set('sex', sex);
   }
 
   // Validate chart parameters
-  const xField = params.get('x')
+  const xField = params.get('x');
   if (xField && isValidNumericField(xField)) {
-    normalized.set('x', xField)
+    normalized.set('x', xField);
   }
 
-  const yField = params.get('y')
+  const yField = params.get('y');
   if (yField && isValidNumericField(yField)) {
-    normalized.set('y', yField)
+    normalized.set('y', yField);
   }
 
-  const field = params.get('field')
+  const field = params.get('field');
   if (field && isValidNumericField(field)) {
-    normalized.set('field', field)
+    normalized.set('field', field);
   }
 
-  const bins = params.get('bins')
+  const bins = params.get('bins');
   if (bins) {
-    const binCount = parseInt(bins)
+    const binCount = parseInt(bins);
     if (binCount >= 5 && binCount <= 50) {
-      normalized.set('bins', bins)
+      normalized.set('bins', bins);
     }
   }
 
-  return normalized
-}
+  return normalized;
+};
 ```
 
 ## Navigation Components
@@ -419,7 +422,7 @@ export const validateAndNormalizeURL = (params: URLSearchParams): URLSearchParam
 export const TabNavigation: FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  
+
   const currentTab = location.pathname.startsWith('/visualize') ? 'visualize' : 'table'
 
   const handleTabChange = (tab: 'table' | 'visualize') => {
@@ -443,7 +446,7 @@ export const TabNavigation: FC = () => {
       >
         📊 Table
       </button>
-      
+
       <button
         role="tab"
         aria-selected={currentTab === 'visualize'}
@@ -467,25 +470,25 @@ export const TabNavigation: FC = () => {
 export const Breadcrumbs: FC = () => {
   const location = useLocation()
   const { chartType } = useParams<{ chartType: ChartType }>()
-  
+
   const breadcrumbs = useMemo(() => {
     const crumbs = [
       { label: 'Home', path: '/' }
     ]
-    
+
     if (location.pathname.startsWith('/table')) {
       crumbs.push({ label: 'Data Table', path: '/table' })
     } else if (location.pathname.startsWith('/visualize')) {
       crumbs.push({ label: 'Visualizations', path: '/visualize/scatter' })
-      
+
       if (chartType) {
-        crumbs.push({ 
-          label: formatChartType(chartType), 
-          path: `/visualize/${chartType}` 
+        crumbs.push({
+          label: formatChartType(chartType),
+          path: `/visualize/${chartType}`
         })
       }
     }
-    
+
     return crumbs
   }, [location.pathname, chartType])
 
@@ -520,17 +523,17 @@ export const Breadcrumbs: FC = () => {
 // Route protection and validation
 export const ProtectedRoute: FC<{ children: ReactNode }> = ({ children }) => {
   const { penguins, loadingState } = useDataStore()
-  
+
   // Redirect to loading state if data not yet loaded
   if (loadingState === 'loading') {
     return <LoadingScreen />
   }
-  
+
   // Redirect to error state if data failed to load
   if (loadingState === 'error' || penguins.length === 0) {
     return <ErrorScreen />
   }
-  
+
   return <>{children}</>
 }
 ```
@@ -541,13 +544,13 @@ export const ProtectedRoute: FC<{ children: ReactNode }> = ({ children }) => {
 // 404 error boundary and fallback
 export const NotFoundRoute: FC = () => {
   const navigate = useNavigate()
-  
+
   useEffect(() => {
     // Auto-redirect to table view after 3 seconds
     const timer = setTimeout(() => {
       navigate('/table', { replace: true })
     }, 3000)
-    
+
     return () => clearTimeout(timer)
   }, [navigate])
 
@@ -555,12 +558,12 @@ export const NotFoundRoute: FC = () => {
     <div className={styles.notFound} role="main">
       <h1>Page Not Found</h1>
       <p>The page you're looking for doesn't exist.</p>
-      
+
       <div className={styles.actions}>
         <Link to="/table">Go to Data Table</Link>
         <Link to="/visualize/scatter">Go to Visualizations</Link>
       </div>
-      
+
       <p className={styles.autoRedirect}>
         You'll be automatically redirected to the data table in 3 seconds.
       </p>
