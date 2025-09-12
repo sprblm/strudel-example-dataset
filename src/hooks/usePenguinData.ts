@@ -11,9 +11,10 @@ const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
     island: item.island as 'Biscoe' | 'Dream' | 'Torgersen',
     bill_length_mm: item.bill_length_mm === 0 ? null : item.bill_length_mm,
     bill_depth_mm: item.bill_depth_mm === 0 ? null : item.bill_depth_mm,
-    flipper_length_mm: item.flipper_length_mm === 0 ? null : item.flipper_length_mm,
+    flipper_length_mm:
+      item.flipper_length_mm === 0 ? null : item.flipper_length_mm,
     body_mass_g: item.body_mass_g === 0 ? null : item.body_mass_g,
-    sex: (item.sex === '' || !item.sex) ? null : (item.sex as 'male' | 'female'),
+    sex: item.sex === '' || !item.sex ? null : (item.sex as 'male' | 'female'),
     year: item.year,
   }));
 };
@@ -31,7 +32,12 @@ export const usePenguinData = () => {
   const { state } = useAppState();
   const { selectedSpecies, selectedIsland, selectedSex } = state;
 
-  const { data: allPenguins = [], isLoading, error, isError } = useQuery({
+  const {
+    data: allPenguins = [],
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
     queryKey: ['penguins'],
     queryFn: fetchPenguinData,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -39,7 +45,12 @@ export const usePenguinData = () => {
   });
 
   const filteredPenguins = React.useMemo(() => {
-    return filterPenguins(allPenguins, selectedSpecies, selectedIsland, selectedSex);
+    return filterPenguins(
+      allPenguins,
+      selectedSpecies,
+      selectedIsland,
+      selectedSex
+    );
   }, [allPenguins, selectedSpecies, selectedIsland, selectedSex]);
 
   return {

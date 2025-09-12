@@ -6,14 +6,14 @@ import {
   FormControlLabel,
   Radio,
   Typography,
-  Box
+  Box,
 } from '@mui/material';
 import { useAppState } from '@/context/ContextProvider';
 
 const SEX_OPTIONS = [
   { value: 'all', label: 'All' },
   { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' }
+  { value: 'female', label: 'Female' },
 ] as const;
 
 export const SexFilter: React.FC = () => {
@@ -27,27 +27,24 @@ export const SexFilter: React.FC = () => {
 
   return (
     <Box data-testid="sex-filter">
-      <Typography 
-        component="legend" 
-        variant="h6" 
+      <Typography
+        component="legend"
+        variant="h6"
         gutterBottom
         id="sex-filter-legend"
         sx={{ fontWeight: 'medium', mb: 1 }}
       >
         Sex Filter
       </Typography>
-      <FormControl 
-        component="fieldset"
-        sx={{ mt: 1 }}
-      >
-        <FormLabel 
+      <FormControl component="fieldset" sx={{ mt: 1 }}>
+        <FormLabel
           component="legend"
           id="sex-radio-group-label"
-          sx={{ 
+          sx={{
             fontSize: '0.875rem',
             '&.Mui-focused': {
-              color: 'primary.main'
-            }
+              color: 'primary.main',
+            },
           }}
         >
           Select Sex
@@ -65,46 +62,43 @@ export const SexFilter: React.FC = () => {
               key={option.value}
               value={option.value}
               control={
-                <Radio 
+                <Radio
                   data-testid={`sex-radio-${option.value.toLowerCase()}`}
                   sx={{
                     '&.Mui-checked': {
-                      color: 'primary.main'
+                      color: 'primary.main',
                     },
                     '&.Mui-focusVisible': {
                       outline: '3px solid',
                       outlineColor: 'primary.main',
-                      outlineOffset: '2px'
-                    }
+                      outlineOffset: '2px',
+                    },
                   }}
                 />
               }
-              label={
-                <Typography variant="body2">
-                  {option.label}
-                </Typography>
-              }
+              label={<Typography variant="body2">{option.label}</Typography>}
               data-testid={`sex-option-${option.value.toLowerCase()}`}
               sx={{
                 '&:hover': {
-                  backgroundColor: 'action.hover'
+                  backgroundColor: 'action.hover',
                 },
                 '& .MuiFormControlLabel-label': {
-                  fontWeight: selectedSex === option.value ? 'medium' : 'normal'
-                }
+                  fontWeight:
+                    selectedSex === option.value ? 'medium' : 'normal',
+                },
               }}
             />
           ))}
         </RadioGroup>
       </FormControl>
       {selectedSex && selectedSex !== 'all' && (
-        <Typography 
-          variant="caption" 
-          sx={{ 
-            display: 'block', 
-            mt: 0.5, 
+        <Typography
+          variant="caption"
+          sx={{
+            display: 'block',
+            mt: 0.5,
             color: 'primary.main',
-            fontWeight: 'medium'
+            fontWeight: 'medium',
           }}
           data-testid="sex-filter-feedback"
         >

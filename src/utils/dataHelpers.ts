@@ -3,7 +3,9 @@
  * @param value - The value to format
  * @returns The formatted value or em dash if null/undefined
  */
-export const formatValue = (value: number | null | undefined): string | number => {
+export const formatValue = (
+  value: number | null | undefined
+): string | number => {
   if (value === null || value === undefined) {
     return '—'; // em dash
   }
