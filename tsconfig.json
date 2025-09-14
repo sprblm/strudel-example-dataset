@@ -26,13 +26,11 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src",
+    "src/**/*",
     "strudel.config.ts",
-    "cypress",
-    "cypress.config.ts",
-    "vite.config.ts",
-    "vitest.config.ts",
-    "tests"
+    "cypress/**/*.ts",
+    "tests/**/*.ts",
+    "vitest.config.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

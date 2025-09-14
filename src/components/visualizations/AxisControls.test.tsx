@@ -1,19 +1,19 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { AxisControls } from './AxisControls';
 
-const mockOnChange = vi.fn();
-
-const user = userEvent.setup();
+const mockOnConfigChange = vi.fn();
 
 describe('AxisControls', () => {
   it('renders X and Y axis selectors with correct options', () => {
     render(
       <AxisControls
-        currentX="bill_length_mm"
-        currentY="body_mass_g"
-        onAxisChange={mockOnChange}
+        config={{
+          type: 'scatter',
+          x: 'bill_length_mm',
+          y: 'body_mass_g',
+        }}
+        onConfigChange={mockOnConfigChange}
       />
     );
 
@@ -28,33 +28,45 @@ describe('AxisControls', () => {
     expect(screen.getByText('Body Mass (g)')).toBeInTheDocument();
   });
 
-  it('calls onAxisChange when X axis is changed', async () => {
+  it('calls onConfigChange when X axis is changed', async () => {
     render(
       <AxisControls
-        currentX="bill_length_mm"
-        currentY="body_mass_g"
-        onAxisChange={mockOnChange}
+        config={{
+          type: 'scatter',
+          x: 'bill_length_mm',
+          y: 'body_mass_g',
+        }}
+        onConfigChange={mockOnConfigChange}
       />
     );
 
-    const xSelect = screen.getByRole('combobox', { name: /x axis/i });
-    await user.selectOptions(xSelect, 'flipper_length_mm');
+    const xSelect = screen.getByRole('combobox', { name: 'X Axis' });
+    fireEvent.mouseDown(xSelect);
 
-    expect(mockOnChange).toHaveBeenCalledWith('x', 'flipper_length_mm');
+    const option = screen.getByText('Flipper Length (mm)');
+    fireEvent.click(option);
+
+    expect(mockOnConfigChange).toHaveBeenCalledWith({ x: 'flipper_length_mm' });
   });
 
-  it('calls onAxisChange when Y axis is changed', async () => {
+  it('calls onConfigChange when Y axis is changed', async () => {
     render(
       <AxisControls
-        currentX="bill_length_mm"
-        currentY="body_mass_g"
-        onAxisChange={mockOnChange}
+        config={{
+          type: 'scatter',
+          x: 'bill_length_mm',
+          y: 'body_mass_g',
+        }}
+        onConfigChange={mockOnConfigChange}
       />
     );
 
-    const ySelect = screen.getByRole('combobox', { name: /y axis/i });
-    await user.selectOptions(ySelect, 'bill_depth_mm');
+    const ySelect = screen.getByRole('combobox', { name: 'Y Axis' });
+    fireEvent.mouseDown(ySelect);
 
-    expect(mockOnChange).toHaveBeenCalledWith('y', 'bill_depth_mm');
+    const option = screen.getByText('Bill Depth (mm)');
+    fireEvent.click(option);
+
+    expect(mockOnConfigChange).toHaveBeenCalledWith({ y: 'bill_depth_mm' });
   });
 });

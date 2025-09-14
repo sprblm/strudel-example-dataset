@@ -1,61 +1,81 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Alert } from '@mui/material';
+import { useChartConfig } from '@/hooks/useChartConfig';
 import { AxisControls } from './AxisControls';
 import { ChartLegend } from './ChartLegend';
 import { ScatterPlot } from './charts/ScatterPlot';
-import { useSearch } from '@tanstack/router';
+import { Histogram } from './charts/Histogram';
+import { BoxPlot } from './charts/BoxPlot';
 import { usePenguinData } from '@/hooks/usePenguinData';
-import { NumericField } from './types';
+import { Penguin } from '@/types/penguin';
 
 export const VisualizationPanel: React.FC = () => {
-  const { data: penguins } = usePenguinData();
-  const [currentX, setCurrentX] =
-    React.useState<NumericField>('bill_length_mm');
-  const [currentY, setCurrentY] = React.useState<NumericField>('body_mass_g');
+  const { data: penguins = [] } = usePenguinData();
   const [visibleSpecies, setVisibleSpecies] = React.useState<string[]>([
     'Adelie',
     'Chinstrap',
     'Gentoo',
   ]);
+  const { config, updateConfig } = useChartConfig();
 
-  const handleAxisChange = (axis: 'x' | 'y', value: NumericField) => {
-    if (axis === 'x') setCurrentX(value);
-    else setCurrentY(value);
-  };
-
-  const search = useSearch({ from: '/visualize/scatter' });
   const handleVisibilityChange = (species: string, visible: boolean) => {
     setVisibleSpecies((prev) =>
       visible ? [...prev, species] : prev.filter((s) => s !== species)
     );
   };
 
-  React.useEffect(() => {
-    const params = new URLSearchParams();
-    if (currentX) params.set('x', currentX);
-    if (currentY) params.set('y', currentY);
-    // Note: visibleSpecies could be serialized to URL if needed
-    const url = `/visualize/scatter?${params.toString()}`;
-    window.history.replaceState({}, '', url);
-  }, [currentX, currentY]);
+  const filteredData = React.useMemo(
+    () => penguins.filter((p: Penguin) => visibleSpecies.includes(p.species)),
+    [penguins, visibleSpecies]
+  );
 
-  React.useEffect(() => {
-    if (search.x) setCurrentX(search.x as NumericField);
-    if (search.y) setCurrentY(search.y as NumericField);
-  }, [search]);
+  if (filteredData.length === 0) {
+    return (
+      <Alert severity="info" role="alert" aria-live="polite">
+        No data available for the selected species. Adjust filters or legend to
+        see penguin measurements.
+      </Alert>
+    );
+  }
 
-  const filteredData =
-    penguins?.filter((p) => visibleSpecies.includes(p.species)) || [];
+  const renderChart = () => {
+    switch (config.type) {
+      case 'scatter':
+        return (
+          <ScatterPlot
+            data={filteredData}
+            xField={config.x!}
+            yField={config.y!}
+            visibleSpecies={visibleSpecies}
+          />
+        );
+      case 'histogram':
+        return (
+          <Histogram
+            data={filteredData}
+            field={config.field!}
+            bins={config.bins!}
+            visibleSpecies={visibleSpecies}
+          />
+        );
+      case 'box':
+        return (
+          <BoxPlot
+            data={filteredData}
+            field={config.field!}
+            visibleSpecies={visibleSpecies}
+          />
+        );
+      default:
+        return <Alert severity="warning">Chart type not supported</Alert>;
+    }
+  };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <AxisControls
-        currentX={currentX}
-        currentY={currentY}
-        onAxisChange={handleAxisChange}
-      />
+    <Box sx={{ p: 2 }} data-testid="visualization-panel">
+      <AxisControls config={config} onConfigChange={updateConfig} />
       <ChartLegend onVisibilityChange={handleVisibilityChange} />
-      <ScatterPlot data={filteredData} xField={currentX} yField={currentY} visibleSpecies={visibleSpecies} />
+      {renderChart()}
     </Box>
   );
 };

@@ -36,7 +36,8 @@ describe('ScatterPlot', () => {
       />
     );
 
-    expect(screen.getByRole('img')).toBeInTheDocument();
+    const svg = screen.getByRole('img', { name: /scatter plot/i });
+    expect(svg).toBeInTheDocument();
   });
 
   it('has correct ARIA label', () => {
@@ -48,10 +49,10 @@ describe('ScatterPlot', () => {
       />
     );
 
-    const svg = screen.getByRole('img');
+    const svg = screen.getByRole('img', { name: /scatter plot/i });
     expect(svg).toHaveAttribute(
-      'aria-label',
-      expect.stringContaining('Scatter plot of bill_length_mm vs body_mass_g')
+      'aria-labelledby',
+      expect.stringContaining('scatter-title')
     );
   });
 
@@ -66,7 +67,7 @@ describe('ScatterPlot', () => {
       />
     );
 
-    const svg = screen.getByRole('img');
+    const svg = screen.getByRole('img', { name: /scatter plot/i });
     expect(svg).toHaveAttribute('width', '800');
     expect(svg).toHaveAttribute('height', '600');
   });
