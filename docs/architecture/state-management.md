@@ -28,6 +28,7 @@ interface DataStore {
 ```
 
 **Responsibilities:**
+
 - Raw dataset storage and loading
 - Data validation and error handling
 - Computed maps for efficient filtering
@@ -61,6 +62,7 @@ interface FilterStore {
 ```
 
 **Responsibilities:**
+
 - Filter selection state management
 - Live count computation
 - URL state synchronization
@@ -102,7 +104,7 @@ export const getDataMetrics = createSelector(
     totalCount: penguins.length,
     speciesDistribution: groupBy(penguins, 'species'),
     islandDistribution: groupBy(penguins, 'island'),
-    sexDistribution: groupBy(penguins, 'sex')
+    sexDistribution: groupBy(penguins, 'sex'),
   })
 );
 ```
@@ -120,27 +122,26 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
   loadData: async () => {
     set({ loadingState: 'loading', error: null });
-    
+
     try {
       const response = await fetch('/penguins.json');
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
+
       const data = await response.json();
       validatePenguinData(data);
-      
-      set({ 
-        penguins: data, 
+
+      set({
+        penguins: data,
         loadingState: 'success',
-        error: null 
+        error: null,
       });
-      
+
       // Cache data for offline use
       cacheData(data);
-      
     } catch (error) {
-      set({ 
-        loadingState: 'error', 
-        error: error.message 
+      set({
+        loadingState: 'error',
+        error: error.message,
       });
     }
   },
@@ -159,7 +160,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   get numericRanges() {
     const { penguins } = get();
     return computeNumericRanges(penguins);
-  }
+  },
 }));
 
 // Filter store implementation
@@ -172,26 +173,26 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
   get speciesCounts() {
     const dataStore = useDataStore.getState();
     const { selectedIsland, selectedSex } = get();
-    
-    return computeSpeciesCounts(
-      dataStore.penguins,
-      { island: selectedIsland, sex: selectedSex }
-    );
+
+    return computeSpeciesCounts(dataStore.penguins, {
+      island: selectedIsland,
+      sex: selectedSex,
+    });
   },
 
   get activeFilterCount() {
     const { selectedSpecies, selectedIsland, selectedSex } = get();
     let count = 0;
-    
+
     if (selectedSpecies.size < 3) count++;
     if (selectedIsland !== 'all') count++;
     if (selectedSex !== 'all') count++;
-    
+
     return count;
   },
 
   toggleSpecies: (species) => {
-    set(state => {
+    set((state) => {
       const newSelected = new Set(state.selectedSpecies);
       if (newSelected.has(species)) {
         newSelected.delete(species);
@@ -204,17 +205,18 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
 
   setIsland: (island) => set({ selectedIsland: island }),
   setSex: (sex) => set({ selectedSex: sex }),
-  
-  clearAll: () => set({
-    selectedSpecies: new Set(['adelie', 'chinstrap', 'gentoo']),
-    selectedIsland: 'all',
-    selectedSex: 'all'
-  }),
+
+  clearAll: () =>
+    set({
+      selectedSpecies: new Set(['adelie', 'chinstrap', 'gentoo']),
+      selectedIsland: 'all',
+      selectedSex: 'all',
+    }),
 
   serializeToURL: () => {
     const { selectedSpecies, selectedIsland, selectedSex } = get();
     const params = new URLSearchParams();
-    
+
     if (selectedSpecies.size < 3) {
       params.set('species', Array.from(selectedSpecies).join(','));
     }
@@ -224,7 +226,7 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
     if (selectedSex !== 'all') {
       params.set('sex', selectedSex);
     }
-    
+
     return params;
   },
 
@@ -232,15 +234,15 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
     const species = params.get('species');
     const island = params.get('island');
     const sex = params.get('sex');
-    
+
     set({
-      selectedSpecies: species 
+      selectedSpecies: species
         ? new Set(species.split(',').filter(isValidSpecies))
         : new Set(['adelie', 'chinstrap', 'gentoo']),
       selectedIsland: island && isValidIsland(island) ? island : 'all',
-      selectedSex: sex && isValidSex(sex) ? sex : 'all'
+      selectedSex: sex && isValidSex(sex) ? sex : 'all',
     });
-  }
+  },
 }));
 ```
 
@@ -249,6 +251,7 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
 ### When to Use Local State
 
 Local React state is used for:
+
 - **UI-only concerns**: Modal open/closed, form input values, loading indicators
 - **Temporary state**: Hover states, focus management, animation states
 - **Component-specific state**: Pagination current page, sort direction, expanded/collapsed states
@@ -289,7 +292,7 @@ export const useURLSync = () => {
   useEffect(() => {
     const params = serializeToURL();
     const newSearch = params.toString();
-    
+
     if (newSearch !== location.search.slice(1)) {
       navigate({ search: newSearch }, { replace: true });
     }
@@ -329,9 +332,12 @@ export const useDataCache = () => {
       const cacheObject = {
         data,
         timestamp: Date.now(),
-        version: '1.0'
+        version: '1.0',
       };
-      localStorage.setItem('palmer-penguins-cache', JSON.stringify(cacheObject));
+      localStorage.setItem(
+        'palmer-penguins-cache',
+        JSON.stringify(cacheObject)
+      );
     } catch (error) {
       console.warn('Failed to cache data:', error);
     }
@@ -343,7 +349,7 @@ export const useDataCache = () => {
       if (!cached) return null;
 
       const { data, timestamp, version } = JSON.parse(cached);
-      
+
       // Check cache expiry (7 days)
       if (Date.now() - timestamp > 7 * 24 * 60 * 60 * 1000) {
         localStorage.removeItem('palmer-penguins-cache');
@@ -375,11 +381,11 @@ Components subscribe only to the data they need:
 
 ```typescript
 // Only subscribe to species selection
-const selectedSpecies = useFilterStore(state => state.selectedSpecies);
+const selectedSpecies = useFilterStore((state) => state.selectedSpecies);
 
 // Only subscribe to filtered data count
-const filteredCount = useFilterStore(state => 
-  getFilteredPenguins(state).length
+const filteredCount = useFilterStore(
+  (state) => getFilteredPenguins(state).length
 );
 
 // Avoid subscribing to entire store
@@ -394,7 +400,7 @@ Expensive computations are memoized to prevent unnecessary recalculation:
 // Memoized chart data transformation
 export const useChartData = (chartType: ChartType) => {
   const filteredData = useFilterStore(getFilteredPenguins);
-  
+
   return useMemo(() => {
     switch (chartType) {
       case 'scatter':
@@ -418,11 +424,8 @@ Rapid state changes are debounced to prevent performance issues:
 // Debounced URL updates
 export const useDebouncedURLUpdate = () => {
   const updateURL = useURLUpdate();
-  
-  const debouncedUpdate = useMemo(
-    () => debounce(updateURL, 100),
-    [updateURL]
-  );
+
+  const debouncedUpdate = useMemo(() => debounce(updateURL, 100), [updateURL]);
 
   return debouncedUpdate;
 };
@@ -442,7 +445,7 @@ export const StoreErrorBoundary: FC<{ children: ReactNode }> = ({ children }) =>
         // Reset stores to default state
         useDataStore.getState().reset?.();
         useFilterStore.getState().clearAll();
-        
+
         console.error('Store error:', error);
       }}
     >
@@ -460,12 +463,12 @@ export const validateStoreState = (state: any): boolean => {
   try {
     // Validate data store
     if (!Array.isArray(state.penguins)) return false;
-    
+
     // Validate filter store
     if (!(state.selectedSpecies instanceof Set)) return false;
     if (!isValidIsland(state.selectedIsland)) return false;
     if (!isValidSex(state.selectedSex)) return false;
-    
+
     return true;
   } catch (error) {
     return false;

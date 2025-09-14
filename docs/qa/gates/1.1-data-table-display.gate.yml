@@ -1,46 +1,52 @@
 # Quality Gate Decision - Story 1.1 Data Table Display
 
 schema: 1
-story: "1.1"
-story_title: "Data Table Display"
+story: '1.1'
+story_title: 'Data Table Display'
 gate: FAIL
-status_reason: "No implementation exists despite comprehensive requirements and test strategy. Critical acceptance criteria are unimplemented."
-reviewer: "Quinn (Test Architect)"
-updated: "2025-09-08T00:00:00Z"
+status_reason: 'No implementation exists despite comprehensive requirements and test strategy. Critical acceptance criteria are unimplemented.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-09-08T00:00:00Z'
 
 waiver: { active: false }
 
 top_issues:
-  - id: "IMPL-001"
+  - id: 'IMPL-001'
     severity: high
-    finding: "No implementation of any acceptance criteria despite comprehensive story definition"
-    suggested_action: "Implement all 6 acceptance criteria as specified in story tasks"
-    suggested_owner: "dev"
-    refs: ["src/components/table/", "src/types/penguin.ts", "src/hooks/usePenguinData.ts"]
-  
-  - id: "TEST-001"
+    finding: 'No implementation of any acceptance criteria despite comprehensive story definition'
+    suggested_action: 'Implement all 6 acceptance criteria as specified in story tasks'
+    suggested_owner: 'dev'
+    refs:
+      [
+        'src/components/table/',
+        'src/types/penguin.ts',
+        'src/hooks/usePenguinData.ts',
+      ]
+
+  - id: 'TEST-001'
     severity: high
-    finding: "No test implementation despite detailed 18-scenario test design"
-    suggested_action: "Implement comprehensive test suite as designed in test-design.md"
-    suggested_owner: "dev"
-    refs: ["src/components/table/__tests__/", "src/utils/__tests__/"]
-  
-  - id: "DATA-001" 
+    finding: 'No test implementation despite detailed 18-scenario test design'
+    suggested_action: 'Implement comprehensive test suite as designed in test-design.md'
+    suggested_owner: 'dev'
+    refs: ['src/components/table/__tests__/', 'src/utils/__tests__/']
+
+  - id: 'DATA-001'
     severity: medium
-    finding: "Data count mismatch: 3,430 records found vs 344 expected in story"
-    suggested_action: "Clarify data requirements - subset to 344 or update story expectations"
-    suggested_owner: "po"
-    refs: ["public/data/penguins.json"]
-  
-  - id: "ARCH-001"
-    severity: low  
-    finding: "RESOLVED: Story updated to use React Query + MUI DataGrid (current tech stack)"
-    suggested_action: "Implement using React Query for data fetching as specified in updated story"
-    suggested_owner: "dev"
-    refs: ["src/hooks/usePenguinData.ts", "docs/stories/1.1.data-table.story.md"]
+    finding: 'Data count mismatch: 3,430 records found vs 344 expected in story'
+    suggested_action: 'Clarify data requirements - subset to 344 or update story expectations'
+    suggested_owner: 'po'
+    refs: ['public/data/penguins.json']
+
+  - id: 'ARCH-001'
+    severity: low
+    finding: 'RESOLVED: Story updated to use React Query + MUI DataGrid (current tech stack)'
+    suggested_action: 'Implement using React Query for data fetching as specified in updated story'
+    suggested_owner: 'dev'
+    refs:
+      ['src/hooks/usePenguinData.ts', 'docs/stories/1.1.data-table.story.md']
 
 quality_score: 0
-expires: "2025-09-22T00:00:00Z"
+expires: '2025-09-22T00:00:00Z'
 
 evidence:
   tests_reviewed: 0
@@ -52,37 +58,37 @@ evidence:
 nfr_validation:
   security:
     status: PASS
-    notes: "No security concerns in data table requirements"
+    notes: 'No security concerns in data table requirements'
   performance:
     status: FAIL
-    notes: "Cannot validate <50ms sort requirement without implementation"
+    notes: 'Cannot validate <50ms sort requirement without implementation'
   reliability:
     status: FAIL
-    notes: "Cannot assess error handling without implementation"
+    notes: 'Cannot assess error handling without implementation'
   maintainability:
     status: FAIL
-    notes: "No code to assess maintainability"
+    notes: 'No code to assess maintainability'
 
 recommendations:
   immediate:
-    - action: "Implement Penguin TypeScript interface"
-      refs: ["src/types/penguin.ts"]
-    - action: "Create DataTable component using MUI X DataGrid"
-      refs: ["src/components/table/DataTable.tsx"]
-    - action: "Implement data loading using React Query hook"
-      refs: ["src/hooks/usePenguinData.ts"]
-    - action: "Create data helper utilities for missing value handling"
-      refs: ["src/utils/dataHelpers.ts"]
-    - action: "Resolve data count requirements (344 vs 3,430)"
-      refs: ["public/data/penguins.json"]
-  
+    - action: 'Implement Penguin TypeScript interface'
+      refs: ['src/types/penguin.ts']
+    - action: 'Create DataTable component using MUI X DataGrid'
+      refs: ['src/components/table/DataTable.tsx']
+    - action: 'Implement data loading using React Query hook'
+      refs: ['src/hooks/usePenguinData.ts']
+    - action: 'Create data helper utilities for missing value handling'
+      refs: ['src/utils/dataHelpers.ts']
+    - action: 'Resolve data count requirements (344 vs 3,430)'
+      refs: ['public/data/penguins.json']
+
   future:
-    - action: "Implement comprehensive test suite (18 scenarios designed)"
-      refs: ["docs/stories/1.1.data-table.design.md"]
-    - action: "Add performance monitoring for sort operations"
-      refs: ["src/components/table/DataTable.tsx"]
-    - action: "Configure Vitest for unit testing framework"
-      refs: ["vitest.config.ts"]
+    - action: 'Implement comprehensive test suite (18 scenarios designed)'
+      refs: ['docs/stories/1.1.data-table.design.md']
+    - action: 'Add performance monitoring for sort operations'
+      refs: ['src/components/table/DataTable.tsx']
+    - action: 'Configure Vitest for unit testing framework'
+      refs: ['vitest.config.ts']
 
 # Assessment references
 planning_ref: 'docs/stories/1.1.data-table.design.md'
@@ -92,10 +98,10 @@ trace_ref: 'docs/stories/1.1.data-table.trace.md'
 risk_summary:
   totals:
     critical: 0
-    high: 2  # Implementation gaps, test gaps
-    medium: 2  # Data mismatch, architecture mismatch
+    high: 2 # Implementation gaps, test gaps
+    medium: 2 # Data mismatch, architecture mismatch
     low: 0
   highest: high
   recommendations:
-    must_fix: ["IMPL-001", "TEST-001"] 
-    monitor: ["DATA-001", "ARCH-001"]
+    must_fix: ['IMPL-001', 'TEST-001']
+    monitor: ['DATA-001', 'ARCH-001']

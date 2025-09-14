@@ -4,7 +4,7 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
-  Box
+  Box,
 } from '@mui/material';
 import { useAppState } from '@/context/ContextProvider';
 
@@ -14,31 +14,34 @@ export const SpeciesFilter: React.FC = () => {
   const { state, dispatch } = useAppState();
   const { selectedSpecies } = state;
 
-  const handleSpeciesChange = (species: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const isChecked = event.target.checked;
-    
-    if (isChecked) {
-      const newSpecies = [...selectedSpecies, species].filter((s, index, arr) => arr.indexOf(s) === index); // Avoid duplicates
-      dispatch({ type: 'UPDATE_SPECIES_FILTER' as any, payload: newSpecies });
-    } else {
-      const newSpecies = selectedSpecies.filter(s => s !== species);
-      dispatch({ type: 'UPDATE_SPECIES_FILTER' as any, payload: newSpecies });
-    }
-  };
+  const handleSpeciesChange =
+    (species: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const isChecked = event.target.checked;
+
+      if (isChecked) {
+        const newSpecies = [...selectedSpecies, species].filter(
+          (s, index, arr) => arr.indexOf(s) === index
+        ); // Avoid duplicates
+        dispatch({ type: 'UPDATE_SPECIES_FILTER' as any, payload: newSpecies });
+      } else {
+        const newSpecies = selectedSpecies.filter((s) => s !== species);
+        dispatch({ type: 'UPDATE_SPECIES_FILTER' as any, payload: newSpecies });
+      }
+    };
 
   return (
     <Box data-testid="species-filter">
-      <Typography 
-        component="legend" 
-        variant="h6" 
+      <Typography
+        component="legend"
+        variant="h6"
         gutterBottom
         id="species-filter-legend"
         sx={{ fontWeight: 'medium', mb: 1 }}
       >
         Species Filter
       </Typography>
-      <FormGroup 
-        role="group" 
+      <FormGroup
+        role="group"
         aria-labelledby="species-filter-legend"
         sx={{ ml: 1 }}
       >
@@ -51,24 +54,24 @@ export const SpeciesFilter: React.FC = () => {
                 onChange={handleSpeciesChange(species)}
                 name={species.toLowerCase()}
                 inputProps={{
-                  'aria-label': `Filter by ${species} penguins`
+                  'aria-label': `Filter by ${species} penguins`,
                 }}
                 data-testid={`species-checkbox-${species.toLowerCase()}`}
                 sx={{
                   '&.Mui-focusVisible': {
                     outline: '3px solid',
                     outlineColor: 'primary.main',
-                    outlineOffset: '2px'
-                  }
+                    outlineOffset: '2px',
+                  },
                 }}
               />
             }
             label={
-              <Typography 
+              <Typography
                 variant="body2"
-                sx={{ 
+                sx={{
                   userSelect: 'none',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 {species}

@@ -15,7 +15,8 @@ function PenguinsPage() {
           Palmer Penguins Explorer
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Browse and explore the Palmer Penguins dataset with interactive filtering and sorting.
+          Browse and explore the Palmer Penguins dataset with interactive
+          filtering and sorting.
         </Typography>
       </Box>
       <Grid container spacing={3}>

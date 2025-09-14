@@ -6,7 +6,7 @@ import {
   MenuItem,
   Typography,
   Box,
-  SelectChangeEvent
+  SelectChangeEvent,
 } from '@mui/material';
 import { useAppState } from '@/context/ContextProvider';
 
@@ -14,7 +14,7 @@ const ISLAND_OPTIONS = [
   { value: 'all', label: 'All' },
   { value: 'Biscoe', label: 'Biscoe' },
   { value: 'Dream', label: 'Dream' },
-  { value: 'Torgersen', label: 'Torgersen' }
+  { value: 'Torgersen', label: 'Torgersen' },
 ] as const;
 
 export const IslandFilter: React.FC = () => {
@@ -28,26 +28,22 @@ export const IslandFilter: React.FC = () => {
 
   return (
     <Box data-testid="island-filter">
-      <Typography 
-        component="legend" 
-        variant="h6" 
+      <Typography
+        component="legend"
+        variant="h6"
         gutterBottom
         id="island-filter-legend"
         sx={{ fontWeight: 'medium', mb: 1 }}
       >
         Island Filter
       </Typography>
-      <FormControl 
-        fullWidth 
-        size="small"
-        sx={{ mt: 1 }}
-      >
-        <InputLabel 
+      <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+        <InputLabel
           id="island-select-label"
-          sx={{ 
+          sx={{
             '&.Mui-focused': {
-              color: 'primary.main'
-            }
+              color: 'primary.main',
+            },
           }}
         >
           Select Island
@@ -58,22 +54,22 @@ export const IslandFilter: React.FC = () => {
           label="Select Island"
           onChange={handleIslandChange}
           inputProps={{
-            'aria-label': 'Filter penguins by island'
+            'aria-label': 'Filter penguins by island',
           }}
           data-testid="island-select"
           sx={{
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
               borderColor: 'primary.main',
-              borderWidth: '2px'
+              borderWidth: '2px',
             },
             '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'primary.light'
+              borderColor: 'primary.light',
             },
             '&.Mui-focusVisible': {
               outline: '3px solid',
               outlineColor: 'primary.main',
-              outlineOffset: '2px'
-            }
+              outlineOffset: '2px',
+            },
           }}
         >
           {ISLAND_OPTIONS.map((option) => (
@@ -83,31 +79,29 @@ export const IslandFilter: React.FC = () => {
               data-testid={`island-option-${option.value.toLowerCase()}`}
               sx={{
                 '&:hover': {
-                  backgroundColor: 'action.hover'
+                  backgroundColor: 'action.hover',
                 },
                 '&.Mui-selected': {
                   backgroundColor: 'primary.light',
                   '&:hover': {
-                    backgroundColor: 'primary.main'
-                  }
-                }
+                    backgroundColor: 'primary.main',
+                  },
+                },
               }}
             >
-              <Typography variant="body2">
-                {option.label}
-              </Typography>
+              <Typography variant="body2">{option.label}</Typography>
             </MenuItem>
           ))}
         </Select>
       </FormControl>
       {selectedIsland && selectedIsland !== 'all' && (
-        <Typography 
-          variant="caption" 
-          sx={{ 
-            display: 'block', 
-            mt: 0.5, 
+        <Typography
+          variant="caption"
+          sx={{
+            display: 'block',
+            mt: 0.5,
             color: 'primary.main',
-            fontWeight: 'medium'
+            fontWeight: 'medium',
           }}
           data-testid="island-filter-feedback"
         >

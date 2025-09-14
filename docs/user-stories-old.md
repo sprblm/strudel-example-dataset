@@ -20,7 +20,7 @@
 
 ```bash
 npm create vite@latest palmer-penguins-explorer -- --template react-ts
-npm install @strudel-ui/react zustand react-router-dom
+npm install @strudel-ui/react @tanstack/react-query @tanstack/react-router
 npm install -D @types/react @types/react-dom
 ```
 
