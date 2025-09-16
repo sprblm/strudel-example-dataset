@@ -27,10 +27,10 @@
   },
   "include": [
     "src/**/*",
-    "strudel.config.ts",
     "cypress/**/*.ts",
+    "cypress/**/*.tsx",
     "tests/**/*.ts",
-    "vitest.config.ts"
+    "tests/**/*.tsx"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
