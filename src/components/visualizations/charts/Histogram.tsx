@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as d3 from 'd3';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Tooltip } from '@mui/material';
 import { Penguin } from '@/types/penguin';
 import { NumericField } from '../types';
 
@@ -32,6 +32,12 @@ export const Histogram: React.FC<HistogramProps> = ({
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [tooltip, setTooltip] = useState<{
+    open: boolean;
+    content: string;
+    x: number;
+    y: number;
+  }>({ open: false, content: '', x: 0, y: 0 });
 
   const filteredData = useMemo(
     () =>
@@ -173,18 +179,43 @@ export const Histogram: React.FC<HistogramProps> = ({
           (d) =>
             `Histogram bar: ${species}, range ${(d.x0 ?? 0).toFixed(1)} to ${(d.x1 ?? 0).toFixed(1)}, ${d.length} penguins`
         )
-        .on('mouseover', function () {
+        .on('mouseover', function (event, d) {
           d3.select(this).attr('fill-opacity', 1);
-          // TODO: Add MUI Tooltip for histogram bins
+          const rect = this.getBoundingClientRect();
+          const containerRect =
+            containerRef.current?.getBoundingClientRect() || {
+              left: 0,
+              top: 0,
+            };
+          setTooltip({
+            open: true,
+            content: `${species}: ${d.length} penguins (${(d.x0 ?? 0).toFixed(1)} - ${(d.x1 ?? 0).toFixed(1)} ${fieldLabels[field]})`,
+            x: rect.left - containerRect.left + rect.width / 2,
+            y: rect.top - containerRect.top,
+          });
         })
         .on('mouseout', function () {
           d3.select(this).attr('fill-opacity', 0.7);
+          setTooltip((prev) => ({ ...prev, open: false }));
         })
-        .on('focus', function () {
+        .on('focus', function (event, d) {
           d3.select(this).attr('fill-opacity', 1);
+          const rect = this.getBoundingClientRect();
+          const containerRect =
+            containerRef.current?.getBoundingClientRect() || {
+              left: 0,
+              top: 0,
+            };
+          setTooltip({
+            open: true,
+            content: `${species}: ${d.length} penguins (${(d.x0 ?? 0).toFixed(1)} - ${(d.x1 ?? 0).toFixed(1)} ${fieldLabels[field]})`,
+            x: rect.left - containerRect.left + rect.width / 2,
+            y: rect.top - containerRect.top,
+          });
         })
         .on('blur', function () {
           d3.select(this).attr('fill-opacity', 0.7);
+          setTooltip((prev) => ({ ...prev, open: false }));
         });
     });
 
@@ -208,9 +239,42 @@ export const Histogram: React.FC<HistogramProps> = ({
   return (
     <Box
       ref={containerRef}
-      sx={{ minWidth: 400, width: '100%', height: 'auto' }}
+      sx={{
+        minWidth: 400,
+        width: '100%',
+        height: 'auto',
+        position: 'relative',
+      }}
     >
       <svg ref={svgRef} />
+      <Tooltip
+        open={tooltip.open}
+        title={tooltip.content}
+        placement="top"
+        arrow
+        componentsProps={{
+          tooltip: {
+            sx: {
+              position: 'fixed',
+              left: `${tooltip.x}px`,
+              top: `${tooltip.y - 10}px`,
+              transform: 'translateX(-50%)',
+              zIndex: 1000,
+            },
+          },
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            left: `${tooltip.x}px`,
+            top: `${tooltip.y}px`,
+            width: 1,
+            height: 1,
+            pointerEvents: 'none',
+          }}
+        />
+      </Tooltip>
     </Box>
   );
 };
