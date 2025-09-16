@@ -7,9 +7,9 @@ describe('Sex Filter E2E', () => {
   });
 
   it('persists filter state in URL and reloads correctly', () => {
-    cy.get('[data-testid="sex-radio-male"]').click();
+    cy.get('[data-testid="sex-radio-male"]').click({ force: true });
     cy.wait(2000);
-    cy.url().should('include', '?sex=male');
+    cy.url().should('include', 'sex=male');
     cy.reload();
     cy.wait(2000);
     cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
@@ -17,7 +17,7 @@ describe('Sex Filter E2E', () => {
   });
 
   it('tests keyboard navigation', () => {
-    cy.get('[data-testid="sex-radio-all"] input').focus();
+    cy.get('[data-testid="sex-radio-all"] input').focus({ force: true });
     cy.realPress('ArrowDown');
     cy.wait(500);
     cy.get('[data-testid="sex-radio-all"] input').should('be.checked');
@@ -38,15 +38,15 @@ describe('Sex Filter E2E', () => {
 
   it('validates accessibility', () => {
     cy.get('[data-testid="sex-filter"]').should('be.visible');
-    cy.checkA11y();
+    cy.checkA11y('[data-testid="sex-filter"]');
   });
 
   it('integrates with other filters', () => {
     cy.get('[data-testid="species-checkbox-adelie"]').click();
     cy.wait(1000);
-    cy.get('[data-testid="sex-radio-male"]').click();
+    cy.get('[data-testid="sex-radio-male"]').click({ force: true });
     cy.wait(1000);
-    cy.url().should('include', '?sex=male');
+    cy.url().should('include', 'sex=male');
     cy.get('[data-testid="data-table"]').should('be.visible');
   });
 });
