@@ -2,14 +2,62 @@
 
 ### Core Architecture Decisions
 
-**State Management**: Zustand for filters/data, React state for UI (simpler than Context)
-**Routing**: React Router v6 with tabs as routes (/table, /visualize/[chartType])
-**Data Pipeline**: Static JSON → Zustand → Memoized selectors → Components
-**Component Library**: Strudel Kit components with custom chart wrappers
+**State Management**: TanStack React Query for data fetching/caching, React Context for global app state, local React state for UI components
+**Routing**: TanStack React Router for type-safe routing with tabs as routes (/table, /visualize/[chartType])
+**Data Pipeline**: Static JSON → TanStack React Query → Memoized hooks → Components
+**Component Library**: Strudel Kit (MUI-based) components with custom chart wrappers
 **Accessibility**: React Aria Live for announcements, focus trap for modals
 **Testing**: Vitest + React Testing Library for unit tests, Cypress for E2E
 **CI/CD**: GitHub Actions for automated testing, building, and deployment
 **Error Handling**: Layered error boundaries with graceful degradation and recovery
+
+### Tech Stack
+
+#### Core Framework
+
+- **React**: Version 18+ for component-based UI development
+- **TypeScript**: Version 5+ for type safety and developer experience
+
+#### Routing and Navigation
+
+- **TanStack React Router**: Type-safe file-based routing with URL state management
+
+#### State Management and Data Fetching
+
+- **TanStack React Query**: Server state management, caching, and optimistic updates
+- **React Context**: Global application state (e.g., theme, user preferences)
+
+#### UI Components and Styling
+
+- **Strudel Kit**: MUI 5-based component library for consistent design system
+- **MUI System**: Theme provider, CSS-in-JS (Emotion), and responsive utilities
+- **CSS Modules**: Scoped styles for component isolation
+
+#### Data Visualization
+
+- **D3.js**: Scales, axes, and data transformations for custom charts
+- **Recharts** or **Victory**: React wrappers for common chart types (scatter, histogram, box plot)
+
+#### Development Tools
+
+- **Vite**: Fast build tool and dev server
+- **ESLint + Prettier**: Code linting and formatting (Airbnb TypeScript style)
+- **Vitest**: Unit and integration testing with Jest-like API
+- **Cypress**: End-to-end testing and component testing
+
+#### Build and Deployment
+
+- **Vite**: Bundling, code splitting, and tree-shaking
+- **GitHub Actions**: CI/CD pipelines for testing, building, and deployment
+- **Netlify/Vercel**: Static hosting with automatic deployments
+
+#### Accessibility and Performance
+
+- **axe-core**: Automated WCAG 2.1 AA compliance testing
+- **React Aria**: Accessible component primitives
+- **Lighthouse CI**: Performance, accessibility, and SEO audits in CI
+
+For detailed configuration, see [tech-stack.md](tech-stack.md) shard.
 
 ### File Structure (Revised)
 
@@ -228,7 +276,7 @@ export const getFilteredPenguins = createSelector(
 export const FilterPanel: FC = () => {
   const { isTablet, isMobile } = useResponsive()
   const [isCollapsed, setCollapsed] = useState(isMobile)
-  const filterCount = useFilterStore(state => state.activeFilterCount)
+  const { activeFilterCount } = useFilters(); // From context or hook
 
   if (isMobile) {
     return (
@@ -265,7 +313,12 @@ export const FilterPanel: FC = () => {
 
 // SpeciesFilter.tsx - Checkboxes with live counts
 export const SpeciesFilter: FC = () => {
-  const { selectedSpecies, speciesCounts, toggleSpecies } = useFilterStore()
+  const { filters: { selectedSpecies, speciesCounts }, setFilters } = useContext(AppContext) || {};
+  const toggleSpecies = (species: Species) => {
+    const newSelected = new Set(selectedSpecies);
+    if (newSelected.has(species)) newSelected.delete(species); else newSelected.add(species);
+    setFilters({ ...filters, selectedSpecies: newSelected });
+  };
 
   return (
     <fieldset>
@@ -447,7 +500,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom', 'zustand'],
+          'vendor': ['react', 'react-dom', '@tanstack/react-router', '@tanstack/react-query'],
           'strudel': ['@strudel-ui/react'],
           'export': ['html2canvas', 'file-saver']
         }
@@ -463,7 +516,8 @@ export default defineConfig({
 // LiveRegion.tsx - Announce filter changes
 export const LiveRegion: FC = () => {
   const filteredCount = useFilteredData().length
-  const totalCount = useDataStore(state => state.penguins.length)
+  const { data: penguins = [] } = usePenguinData();
+  const totalCount = penguins.length;
 
   return (
     <div
@@ -1012,7 +1066,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          state: ['zustand'],
+          state: ['@tanstack/react-query'],
           ui: ['@strudel-ui/react'],
           charts: ['d3-scale', 'd3-selection', 'd3-axis'],
           export: ['html2canvas', 'file-saver'],
@@ -1127,7 +1181,9 @@ export const ChartErrorBoundary: FC<{ children: ReactNode }> = ({ children }) =>
 };
 
 const ChartErrorFallback: FC<FallbackProps> = ({ error, resetErrorBoundary }) => {
-  const { filteredData } = useFilteredData();
+  const { data: penguins = [] } = usePenguinData();
+  const { filters } = useContext(AppContext) || {};
+  const filteredData = useFilteredPenguins(penguins, filters);
 
   return (
     <div className="chart-error-fallback" role="alert">
@@ -1341,7 +1397,9 @@ export const EmptyDataState: FC<{ onReset: () => void }> = ({ onReset }) => (
 );
 
 export const ChartRenderErrorState: FC<{ error: Error; onRetry: () => void }> = ({ error, onRetry }) => {
-  const { filteredData } = useFilteredData();
+  const { data: penguins = [] } = usePenguinData();
+  const { filters } = useContext(AppContext) || {};
+  const filteredData = useFilteredPenguins(penguins, filters);
 
   return (
     <div className="chart-error-state" role="alert">

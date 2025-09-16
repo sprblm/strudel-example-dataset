@@ -46,7 +46,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom', 'react-router-dom'],
 
           // State management
-          state: ['zustand'],
+          state: ['@tanstack/react-query'],
 
           // UI framework
           strudel: ['@strudel-ui/react'],
