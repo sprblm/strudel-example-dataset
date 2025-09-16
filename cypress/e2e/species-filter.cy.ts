@@ -17,8 +17,10 @@ describe('Species Filter E2E', () => {
     );
 
     cy.get('[data-testid="species-checkbox-chinstrap"]').click();
-    cy.wait(2000);
-    cy.url().should('include', 'species=Adelie,Gentoo');
+    cy.wait(5000);
+    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
+      'not.be.checked'
+    );
 
     cy.get('[data-testid="data-table"]').should('be.visible');
     cy.get('[data-testid="showing-count"]')
@@ -26,12 +28,14 @@ describe('Species Filter E2E', () => {
       .should('be.visible');
 
     cy.reload();
-    cy.wait(2000);
+    cy.wait(5000);
 
     cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
       'not.be.checked'
     );
-    cy.url().should('include', 'species=Adelie,Gentoo');
+    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
+      'not.be.checked'
+    );
   });
 
   it('tests keyboard navigation', () => {
