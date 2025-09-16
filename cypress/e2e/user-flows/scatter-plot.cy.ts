@@ -1,6 +1,6 @@
 describe('Scatter Plot Visualization', () => {
   beforeEach(() => {
-    cy.visit('/visualize/scatter');
+    cy.visit('/explore-data/');
   });
 
   it('displays scatter plot with controls', () => {
@@ -26,7 +26,11 @@ describe('Scatter Plot Visualization', () => {
   });
 
   it('has accessible chart elements', () => {
-    cy.get('svg').should('have.attr', 'aria-labelledby', 'scatter-title scatter-desc');
+    cy.get('svg').should(
+      'have.attr',
+      'aria-labelledby',
+      'scatter-title scatter-desc'
+    );
     cy.get('#scatter-title').should('contain', 'Scatter Plot');
     cy.get('#scatter-desc').should('contain', 'Interactive scatter plot');
   });
