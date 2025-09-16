@@ -4,6 +4,7 @@ import { AppAction, AppActionType } from './actions';
 export interface AppState {
   appTitle: string;
   apiModalOpen: boolean;
+  helpModalOpen: boolean;
   selectedSpecies: string[];
   selectedIsland: string;
   selectedSex: string;
@@ -16,6 +17,7 @@ export interface AppState {
  */
 interface AppProviderProps extends Partial<AppState> {
   apiModalOpen?: boolean;
+  helpModalOpen?: boolean;
   selectedSpecies?: string[];
   selectedIsland?: string;
   selectedSex?: string;
@@ -29,6 +31,7 @@ const AppContext = React.createContext<
 const initialState: AppState = {
   appTitle: '',
   apiModalOpen: false,
+  helpModalOpen: false,
   selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'], // All selected by default
   selectedIsland: 'all', // All islands by default
   selectedSex: 'all', // All sexes by default
@@ -54,6 +57,25 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         apiModalOpen: false,
+      };
+    }
+    case AppActionType.OPEN_HELP_MODAL: {
+      return {
+        ...state,
+        helpModalOpen: true,
+      };
+    }
+    case AppActionType.CLOSE_HELP_MODAL: {
+      return {
+        ...state,
+        helpModalOpen: false,
+      };
+    }
+    case AppActionType.CLOSE_ALL_MODALS: {
+      return {
+        ...state,
+        apiModalOpen: false,
+        helpModalOpen: false,
       };
     }
     case 'UPDATE_SPECIES_FILTER' as any: {

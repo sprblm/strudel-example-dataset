@@ -1,6 +1,9 @@
 export enum AppActionType {
   OPEN_API_MODAL = 'OPEN_API_MODAL',
   CLOSE_API_MODAL = 'CLOSE_API_MODAL',
+  OPEN_HELP_MODAL = 'OPEN_HELP_MODAL',
+  CLOSE_HELP_MODAL = 'CLOSE_HELP_MODAL',
+  CLOSE_ALL_MODALS = 'CLOSE_ALL_MODALS',
   UPDATE_SPECIES_FILTER = 'UPDATE_SPECIES_FILTER',
   UPDATE_ISLAND_FILTER = 'UPDATE_ISLAND_FILTER',
   UPDATE_SEX_FILTER = 'UPDATE_SEX_FILTER',
@@ -38,4 +41,16 @@ export const updateSexFilter = (sex: string): AppAction => ({
 export const clearAllFilters = (): AppAction => ({
   type: AppActionType.CLEAR_ALL_FILTERS,
   payload: null,
+});
+
+export const openHelpModal = (): AppAction => ({
+  type: AppActionType.OPEN_HELP_MODAL,
+});
+
+export const closeHelpModal = (): AppAction => ({
+  type: AppActionType.CLOSE_HELP_MODAL,
+});
+
+export const closeAllModals = (): AppAction => ({
+  type: AppActionType.CLOSE_ALL_MODALS,
 });
