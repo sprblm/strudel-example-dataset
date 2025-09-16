@@ -20,7 +20,10 @@
     "prettier:fix": "prettier . --write '**/*.{js,jsx,ts,tsx}'",
     "prepare": "husky ./.husky",
     "cy:open": "cypress open",
-    "cy:test": "cypress run"
+    "cy:test": "cypress run",
+    "bmad:refresh": "bmad-method install -f -i codex",
+    "bmad:list": "bmad-method list:agents",
+    "bmad:validate": "bmad-method validate"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
