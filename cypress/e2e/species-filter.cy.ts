@@ -6,7 +6,6 @@ describe('Species Filter E2E', () => {
   });
 
   it('persists filter state in URL and reloads correctly', () => {
-    // Check all selected by default
     cy.get('[data-testid="species-checkbox-adelie"] input').should(
       'be.checked'
     );
@@ -17,27 +16,33 @@ describe('Species Filter E2E', () => {
       'be.checked'
     );
 
-    // Uncheck Chinstrap
-    cy.get('[data-testid="species-checkbox-chinstrap"]').click();\n    cy.wait(1000); cy.url().should('include', '?species=Adelie,Gentoo');
+    cy.get('[data-testid="species-checkbox-chinstrap"]').click();
+    cy.wait(2000);
+    cy.url().should('include', '?species=Adelie,Gentoo');
 
-    // Check row count decreases
     cy.get('[data-testid="data-table"]').should('be.visible');
     cy.get('[data-testid="showing-count"]')
       .contains('Showing')
       .should('be.visible');
 
-    // Reload page
-    cy.reload();\n    cy.wait(2000);\n    // Verify filter state restored\n    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(\n      'not.be.checked'\n    );\n    cy.url().should('include', '?species=Adelie,Gentoo');
+    cy.reload();
+    cy.wait(2000);
+
+    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
+      'not.be.checked'
+    );
+    cy.url().should('include', '?species=Adelie,Gentoo');
   });
 
   it('tests keyboard navigation', () => {
     cy.get('[data-testid="species-checkbox-adelie"] input').focus();
-    cy.realPress('Tab'); // Tab to first checkbox\n    cy.wait(500);\n    cy.get('[data-testid="species-checkbox-adelie"] input').should('be.focused');
     cy.realPress('Space');
+    cy.wait(500);
     cy.get('[data-testid="species-checkbox-adelie"] input').should(
       'be.checked'
     );
-    cy.realPress('Tab'); // To next
+    cy.realPress('Tab');
+    cy.wait(500);
     cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
       'be.focused'
     );
