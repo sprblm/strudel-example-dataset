@@ -20,12 +20,16 @@ describe('AxisControls', () => {
     );
 
     // For MUI Select, the value is usually displayed as text content
-    expect(screen.getByRole('combobox', { name: 'X-Axis' })).toHaveTextContent(
-      'bill_length_mm'
-    );
-    expect(screen.getByRole('combobox', { name: 'Y-Axis' })).toHaveTextContent(
-      'body_mass_g'
-    );
+    expect(
+      screen.getByRole('combobox', {
+        name: 'X-Axis Select X-axis variable for chart',
+      })
+    ).toHaveTextContent('Bill Length Mm');
+    expect(
+      screen.getByRole('combobox', {
+        name: 'Y-Axis Select Y-axis variable for chart',
+      })
+    ).toHaveTextContent('Body Mass G');
   });
 
   it('calls onAxisChange when X-axis is changed', async () => {
@@ -37,17 +41,19 @@ describe('AxisControls', () => {
       />
     );
 
-    const xAxisSelect = screen.getByRole('combobox', { name: 'X-Axis' });
+    const xAxisSelect = screen.getByRole('combobox', {
+      name: 'X-Axis Select X-axis variable for chart',
+    });
     await userEvent.click(xAxisSelect); // Open the dropdown
 
     // Wait for the MenuItem to appear in the DOM
     await waitFor(() => {
       expect(
-        screen.getByRole('option', { name: 'bill_depth_mm' })
+        screen.getByRole('option', { name: 'Bill Depth Mm' })
       ).toBeInTheDocument();
     });
 
-    const newOption = screen.getByRole('option', { name: 'bill_depth_mm' });
+    const newOption = screen.getByRole('option', { name: 'Bill Depth Mm' });
     await userEvent.click(newOption); // Click the new option
 
     expect(mockOnAxisChange).toHaveBeenCalledTimes(1);
@@ -63,17 +69,19 @@ describe('AxisControls', () => {
       />
     );
 
-    const yAxisSelect = screen.getByRole('combobox', { name: 'Y-Axis' });
+    const yAxisSelect = screen.getByRole('combobox', {
+      name: 'Y-Axis Select Y-axis variable for chart',
+    });
     await userEvent.click(yAxisSelect); // Open the dropdown
 
     // Wait for the MenuItem to appear in the DOM
     await waitFor(() => {
       expect(
-        screen.getByRole('option', { name: 'flipper_length_mm' })
+        screen.getByRole('option', { name: 'Flipper Length Mm' })
       ).toBeInTheDocument();
     });
 
-    const newOption = screen.getByRole('option', { name: 'flipper_length_mm' });
+    const newOption = screen.getByRole('option', { name: 'Flipper Length Mm' });
     await userEvent.click(newOption); // Click the new option
 
     expect(mockOnAxisChange).toHaveBeenCalledTimes(1);

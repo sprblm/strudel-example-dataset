@@ -4,31 +4,26 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '@/theme';
 import { ScatterPlot } from './ScatterPlot';
 import { Penguin } from '@/types/penguin';
-import * as d3 from 'd3';
+
+const mockSelection = {
+  attr: vi.fn().mockReturnThis(),
+  call: vi.fn().mockReturnThis(),
+  append: vi.fn().mockReturnThis(),
+  style: vi.fn().mockReturnThis(),
+  text: vi.fn().mockReturnThis(),
+  on: vi.fn().mockReturnThis(),
+  selectAll: vi.fn(() => mockSelection),
+  data: vi.fn(() => mockSelection),
+  enter: vi.fn(() => mockSelection),
+  remove: vi.fn().mockReturnThis(),
+  node: vi.fn(() => document.createElement('svg')),
+};
 
 vi.mock('d3', () => ({
   ...vi.importActual('d3'),
   extent: vi.fn(() => [30, 60]),
   pointer: vi.fn(() => [100, 100]),
-  select: vi.fn(() => ({
-    selectAll: vi.fn(() => ({
-      remove: vi.fn(),
-      data: vi.fn(() => ({
-        enter: vi.fn(() => ({
-          append: vi.fn(() => ({
-            attr: vi.fn().mockReturnThis(),
-            on: vi.fn().mockReturnThis(),
-          })),
-        })),
-      })),
-    })),
-    append: vi.fn(() => ({
-      attr: vi.fn().mockReturnThis(),
-      call: vi.fn().mockReturnThis(),
-    })),
-    on: vi.fn(),
-    node: vi.fn(() => document.createElement('svg')),
-  })),
+  select: vi.fn(() => mockSelection),
   scaleLinear: vi.fn(() => ({
     domain: vi.fn().mockReturnThis(),
     range: vi.fn().mockReturnThis(),
@@ -39,8 +34,8 @@ vi.mock('d3', () => ({
     range: vi.fn().mockReturnThis(),
     unknown: vi.fn().mockReturnThis(),
   })),
-  axisBottom: vi.fn(),
-  axisLeft: vi.fn(),
+  axisBottom: vi.fn(() => vi.fn()),
+  axisLeft: vi.fn(() => vi.fn()),
 }));
 
 const mockData: Penguin[] = [

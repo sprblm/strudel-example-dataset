@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import ChartLegend from './ChartLegend';
-import { useTheme } from '@mui/material';
 
 // Mock useTheme since it's used in the component
 vi.mock('@mui/material', async (importOriginal) => {
