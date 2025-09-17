@@ -3,7 +3,7 @@ import { useSearch, useNavigate } from '@tanstack/router';
 import { NumericField } from '@/components/visualizations/types';
 
 export interface ChartConfig {
-  type: 'scatter' | 'histogram';
+  type: 'scatter' | 'histogram' | 'box';
   x?: NumericField;
   y?: NumericField;
   field?: NumericField;

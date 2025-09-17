@@ -1,18 +1,3 @@
-import React, { useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { usePenguinData } from '@/hooks/usePenguinData';
-import { AxisControls } from '@/components/visualizations/AxisControls';
-import { ChartLegend } from '@/components/visualizations/ChartLegend';
-import { ScatterPlot } from '@/components/visualizations/charts/ScatterPlot';
-import { useTheme } from '@mui/material/styles';
-
-const NUMERIC_FIELDS = [
-  'bill_length_mm',
-  'bill_depth_mm',
-  'flipper_length_mm',
-  'body_mass_g',
-];
-
 import React, { lazy, Suspense, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { usePenguinData } from '@/hooks/usePenguinData';
