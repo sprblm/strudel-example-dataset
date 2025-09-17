@@ -106,6 +106,8 @@ export const DataTable: React.FC = () => {
 
   return (
     <Box
+      id="data"
+      tabIndex={-1}
       sx={{
         height: 600,
         width: '100%',
@@ -114,6 +116,9 @@ export const DataTable: React.FC = () => {
         },
         '& .MuiDataGrid-columnHeaders': {
           backgroundColor: 'grey.50',
+        },
+        '&:focus': {
+          outline: 'none',
         },
       }}
     >
@@ -132,6 +137,48 @@ export const DataTable: React.FC = () => {
         aria-label="Palmer Penguins data table"
         // Performance optimization for sorting
         sortingOrder={['asc', 'desc']}
+        // Enhanced keyboard navigation
+        autoFocus
+        slotProps={{
+          columnsPanel: {
+            sx: {
+              '& .MuiDataGrid-columnsPanel': {
+                '&:focus-within': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: '2px',
+                },
+              },
+            },
+          },
+          pagination: {
+            sx: {
+              '& .MuiTablePagination-actions button': {
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: '2px',
+                },
+              },
+            },
+          },
+        }}
+        sx={{
+          '& .MuiDataGrid-columnHeader': {
+            '&:focus-within': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+            },
+          },
+          '& .MuiDataGrid-cell': {
+            '&:focus-within': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+            },
+          },
+        }}
       />
       <Typography variant="body2" color="textSecondary" sx={{ mt: 1, px: 1 }}>
         Showing {penguins.length} penguins

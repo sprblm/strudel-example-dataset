@@ -35,35 +35,129 @@ const AxisControls: React.FC<AxisControlsProps> = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+    <Box
+      sx={{ display: 'flex', gap: 2, mb: 2 }}
+      role="group"
+      aria-label="Chart axis controls"
+    >
       <FormControl fullWidth>
-        <InputLabel id="x-axis-select-label">X-Axis</InputLabel>
+        <InputLabel
+          id="x-axis-select-label"
+          sx={{
+            '&.Mui-focused': {
+              color: 'primary.main',
+            },
+          }}
+        >
+          X-Axis
+        </InputLabel>
         <Select
           labelId="x-axis-select-label"
           id="x-axis-select"
           value={xAxis}
           label="X-Axis"
           onChange={handleXAxisChange}
+          inputProps={{
+            'aria-label': 'Select X-axis variable for chart',
+          }}
+          sx={{
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'primary.main',
+              borderWidth: '2px',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'primary.light',
+            },
+            '&.Mui-focusVisible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+            },
+          }}
         >
           {NUMERIC_COLUMNS.map((col) => (
-            <MenuItem key={col} value={col}>
-              {col}
+            <MenuItem
+              key={col}
+              value={col}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: 'primary.light',
+                  '&:hover': {
+                    backgroundColor: 'primary.main',
+                  },
+                },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: '2px',
+                },
+              }}
+            >
+              {col.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
       <FormControl fullWidth>
-        <InputLabel id="y-axis-select-label">Y-Axis</InputLabel>
+        <InputLabel
+          id="y-axis-select-label"
+          sx={{
+            '&.Mui-focused': {
+              color: 'primary.main',
+            },
+          }}
+        >
+          Y-Axis
+        </InputLabel>
         <Select
           labelId="y-axis-select-label"
           id="y-axis-select"
           value={yAxis}
           label="Y-Axis"
           onChange={handleYAxisChange}
+          inputProps={{
+            'aria-label': 'Select Y-axis variable for chart',
+          }}
+          sx={{
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'primary.main',
+              borderWidth: '2px',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'primary.light',
+            },
+            '&.Mui-focusVisible': {
+              outline: '2px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+            },
+          }}
         >
           {NUMERIC_COLUMNS.map((col) => (
-            <MenuItem key={col} value={col}>
-              {col}
+            <MenuItem
+              key={col}
+              value={col}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: 'primary.light',
+                  '&:hover': {
+                    backgroundColor: 'primary.main',
+                  },
+                },
+                '&:focus-visible': {
+                  outline: '2px solid',
+                  outlineColor: 'primary.main',
+                  outlineOffset: '2px',
+                },
+              }}
+            >
+              {col.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
             </MenuItem>
           ))}
         </Select>

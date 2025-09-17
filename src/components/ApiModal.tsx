@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { FocusTrap } from './a11y/FocusTrap';
 
 export const ApiModal: React.FC = () => {
   const app = useAppState();
@@ -34,44 +35,46 @@ export const ApiModal: React.FC = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Paper
-          sx={{
-            left: '50%',
-            p: 4,
-            position: 'absolute',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 500,
-          }}
-        >
-          <Stack spacing={2}>
-            <Typography variant="h6" component="h2">
-              API Authentication Required
-            </Typography>
-            <Typography>
-              Enter the name of your API token (e.g. X-ApiToken) and the value
-              of your API token (e.g. abc123).
-            </Typography>
-            <TextField
-              value={name}
-              label="Name"
-              onChange={(event) => {
-                setName(event.target.value);
-              }}
-            />
-            <TextField
-              value={value}
-              label="Value"
-              type="password"
-              onChange={(event) => {
-                setValue(event.target.value);
-              }}
-            />
-            <Button variant="contained" onClick={handleSubmit}>
-              Submit
-            </Button>
-          </Stack>
-        </Paper>
+        <FocusTrap active={app.state.apiModalOpen}>
+          <Paper
+            sx={{
+              left: '50%',
+              p: 4,
+              position: 'absolute',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 500,
+            }}
+          >
+            <Stack spacing={2}>
+              <Typography variant="h6" component="h2">
+                API Authentication Required
+              </Typography>
+              <Typography>
+                Enter the name of your API token (e.g. X-ApiToken) and the value
+                of your API token (e.g. abc123).
+              </Typography>
+              <TextField
+                value={name}
+                label="Name"
+                onChange={(event) => {
+                  setName(event.target.value);
+                }}
+              />
+              <TextField
+                value={value}
+                label="Value"
+                type="password"
+                onChange={(event) => {
+                  setValue(event.target.value);
+                }}
+              />
+              <Button variant="contained" onClick={handleSubmit}>
+                Submit
+              </Button>
+            </Stack>
+          </Paper>
+        </FocusTrap>
       </Modal>
     </div>
   );

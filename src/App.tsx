@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import React from 'react';
 import { ApiModal } from './components/ApiModal';
+import { HelpModal } from './components/modals/HelpModal';
 import { AppProvider } from './context/ContextProvider';
 import { routeTree } from './routeTree.gen';
 import { theme } from './theme';
@@ -33,6 +34,7 @@ const App: React.FC = () => {
               basepath={import.meta.env.BASE_URL}
             />
             <ApiModal />
+            <HelpModal />
           </AppProvider>
         </ThemeProvider>
       </LocalizationProvider>

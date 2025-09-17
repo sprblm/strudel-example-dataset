@@ -1,5 +1,7 @@
 import { Box, Stack } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
+import { SkipLinks } from './a11y/SkipLinks';
+import { KeyboardShortcutsProvider } from './a11y/KeyboardShortcutsProvider';
 import { Footer } from './Footer';
 import { TopBar } from './TopBar';
 
@@ -8,20 +10,30 @@ import { TopBar } from './TopBar';
  */
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
-    <Stack
-      sx={{
-        height: '100%',
-      }}
-    >
-      <TopBar />
-      <Box
+    <KeyboardShortcutsProvider>
+      <Stack
         sx={{
-          flex: 1,
+          height: '100%',
+          position: 'relative',
         }}
       >
-        {children}
-      </Box>
-      <Footer />
-    </Stack>
+        <SkipLinks />
+        <TopBar />
+        <Box
+          component="main"
+          id="main-content"
+          tabIndex={-1}
+          sx={{
+            flex: 1,
+            '&:focus': {
+              outline: 'none',
+            },
+          }}
+        >
+          {children}
+        </Box>
+        <Footer />
+      </Stack>
+    </KeyboardShortcutsProvider>
   );
 };

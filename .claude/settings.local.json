@@ -27,7 +27,10 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(npx eslint:*)",
-      "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. correct-course - Execute course correction task\n3. draft - Execute story creation workflow\n4. story-checklist - Execute story draft checklist\n5. exit - Exit Scrum Master mode\n\nSimply type the number or command name (with * prefix) to execute!\")"
+      "Bash(echo \"Available Commands:\n\n1. help - Show this list of commands\n2. correct-course - Execute course correction task\n3. draft - Execute story creation workflow\n4. story-checklist - Execute story draft checklist\n5. exit - Exit Scrum Master mode\n\nSimply type the number or command name (with * prefix) to execute!\")",
+      "Bash(git push:*)",
+      "Bash(for:*)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

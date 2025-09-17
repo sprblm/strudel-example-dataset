@@ -63,7 +63,7 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
   const isAnyFilterActive = activeCount > 0;
 
   return (
-    <Stack {...rest}>
+    <Stack {...rest} id="filters" tabIndex={-1}>
       <Stack direction="row" alignItems="center">
         <Typography variant="h6" component="h2" flex={1}>
           FILTERS
