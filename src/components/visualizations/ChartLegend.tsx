@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Switch,
-  FormControlLabel,
-  useTheme,
-} from '@mui/material';
+import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
 
 interface ChartLegendProps {
   allSpecies: string[];
@@ -25,7 +19,6 @@ const ChartLegend: React.FC<ChartLegendProps> = ({
   initialVisibleSpecies,
   onToggleSpecies,
 }) => {
-  const theme = useTheme();
   const [visibleSpecies, setVisibleSpecies] = useState<string[]>(
     initialVisibleSpecies
   );

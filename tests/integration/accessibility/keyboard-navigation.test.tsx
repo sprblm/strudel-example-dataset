@@ -9,6 +9,12 @@ import { theme } from '@/theme';
 import { FiltersPanel } from '@/components/FiltersPanel';
 import { DataTable } from '@/components/table/DataTable';
 import { HelpModal } from '@/components/modals/HelpModal';
+import {
+  createRouter,
+  RouterProvider,
+  createRootRoute,
+  createRoute,
+} from '@tanstack/react-router';
 
 // Mock the penguin data hook
 vi.mock('@/hooks/usePenguinData', () => ({
@@ -41,6 +47,21 @@ vi.mock('@/hooks/usePenguinData', () => ({
   }),
 }));
 
+// Create minimal router for testing
+const rootRoute = createRootRoute({
+  component: ({ children }) => <>{children}</>,
+});
+
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: () => <div>Index</div>,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute]);
+
+const router = createRouter({ routeTree });
+
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -52,7 +73,9 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <AppProvider>{children}</AppProvider>
+        <RouterProvider router={router}>
+          <AppProvider>{children}</AppProvider>
+        </RouterProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

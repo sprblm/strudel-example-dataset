@@ -4,40 +4,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '@/theme';
 import { FiltersProvider } from '@/contexts/FiltersProvider';
 import VisualizationRoute from '@/routes/VisualizationRoute';
-import { Penguin } from '@/types/penguin';
-
-const mockPenguins: Penguin[] = [
-  {
-    species: 'Adelie',
-    island: 'Biscoe',
-    bill_length_mm: 39.1,
-    bill_depth_mm: 18.7,
-    flipper_length_mm: 181,
-    body_mass_g: 3750,
-    sex: 'male',
-    year: 2007,
-  },
-  {
-    species: 'Chinstrap',
-    island: 'Dream',
-    bill_length_mm: 46.5,
-    bill_depth_mm: 17.9,
-    flipper_length_mm: 192,
-    body_mass_g: 3500,
-    sex: 'female',
-    year: 2008,
-  },
-  {
-    species: 'Gentoo',
-    island: 'Biscoe',
-    bill_length_mm: 50,
-    bill_depth_mm: 15,
-    flipper_length_mm: 220,
-    body_mass_g: 5000,
-    sex: 'male',
-    year: 2009,
-  },
-];
 
 describe('Scatter Integration', () => {
   it('renders AxisControls, ChartLegend, and ScatterPlot', () => {

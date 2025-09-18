@@ -95,9 +95,11 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    g.append('g')
-      .attr('transform', `translate(0,${h})`)
-      .call(d3.axisBottom(xScale))
+    const xAxis = g.append('g').attr('transform', `translate(0,${h})`);
+
+    xAxis.call(d3.axisBottom(xScale));
+
+    xAxis
       .append('text')
       .attr('x', w / 2)
       .attr('y', 35)
@@ -105,8 +107,11 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .style('text-anchor', 'middle')
       .text(formatFieldName(xField));
 
-    g.append('g')
-      .call(d3.axisLeft(yScale))
+    const yAxis = g.append('g');
+
+    yAxis.call(d3.axisLeft(yScale));
+
+    yAxis
       .append('text')
       .attr('transform', 'rotate(-90)')
       .attr('y', -margin.left)
