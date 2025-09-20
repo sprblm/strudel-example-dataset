@@ -44,7 +44,12 @@ export const TopBar: React.FC = () => {
             </Typography>
           </AppLink>
         </Stack>
-        <IconButton size="large" edge="start" color="inherit">
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="User account menu"
+        >
           <AccountCircleIcon />
         </IconButton>
       </Toolbar>
