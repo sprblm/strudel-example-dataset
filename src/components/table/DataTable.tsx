@@ -1,11 +1,20 @@
 import React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Typography, CircularProgress, Alert } from '@mui/material';
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { usePenguinData } from '@/hooks/usePenguinData';
+import { Penguin } from '@/types/penguin';
 import { formatValue } from '@/utils/dataHelpers';
+import { PenguinCardList } from './PenguinCardList';
 
 // Define columns with proper typing and formatting
-const columns: GridColDef[] = [
+const columns: GridColDef<Penguin>[] = [
   {
     field: 'species',
     headerName: 'Species',
@@ -24,7 +33,8 @@ const columns: GridColDef[] = [
     width: 150,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: ({ value }: { value: number | null | undefined }) =>
+      formatValue(value),
   },
   {
     field: 'bill_depth_mm',
@@ -32,7 +42,8 @@ const columns: GridColDef[] = [
     width: 150,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: ({ value }: { value: number | null | undefined }) =>
+      formatValue(value),
   },
   {
     field: 'flipper_length_mm',
@@ -40,7 +51,8 @@ const columns: GridColDef[] = [
     width: 170,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: ({ value }: { value: number | null | undefined }) =>
+      formatValue(value),
   },
   {
     field: 'body_mass_g',
@@ -48,15 +60,16 @@ const columns: GridColDef[] = [
     width: 130,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: ({ value }: { value: number | null | undefined }) =>
+      formatValue(value),
   },
   {
     field: 'sex',
     headerName: 'Sex',
     width: 100,
     sortable: true,
-    valueFormatter: (params) =>
-      params?.value ? (params.value as string) : '—',
+    valueFormatter: ({ value }: { value: string | null | undefined }) =>
+      value ?? '—',
   },
   {
     field: 'year',
@@ -69,6 +82,19 @@ const columns: GridColDef[] = [
 
 export const DataTable: React.FC = () => {
   const { data: penguins, isLoading, error, isError } = usePenguinData();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  if (isMobile) {
+    return (
+      <PenguinCardList
+        penguins={penguins ?? []}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+      />
+    );
+  }
 
   // Loading state
   if (isLoading) {
@@ -99,7 +125,9 @@ export const DataTable: React.FC = () => {
   }
 
   // Add IDs to data for DataGrid (required)
-  const rowsWithIds = penguins.map((penguin, index) => ({
+  const penguinRows = penguins ?? [];
+
+  const rowsWithIds = penguinRows.map((penguin, index) => ({
     id: index,
     ...penguin,
   }));
@@ -137,8 +165,6 @@ export const DataTable: React.FC = () => {
         aria-label="Palmer Penguins data table"
         // Performance optimization for sorting
         sortingOrder={['asc', 'desc']}
-        // Enhanced keyboard navigation
-        autoFocus
         slotProps={{
           columnsPanel: {
             sx: {
@@ -181,7 +207,7 @@ export const DataTable: React.FC = () => {
         }}
       />
       <Typography variant="body2" color="textSecondary" sx={{ mt: 1, px: 1 }}>
-        Showing {penguins.length} penguins
+        Showing {penguinRows.length} penguins
       </Typography>
     </Box>
   );
