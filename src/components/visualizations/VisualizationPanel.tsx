@@ -6,6 +6,7 @@ import { ChartLegend } from './ChartLegend';
 import { ScatterPlot } from './charts/ScatterPlot';
 import { Histogram } from './charts/Histogram';
 import { BoxPlot } from './charts/BoxPlot';
+import { ChartContainer } from './charts/ChartContainer';
 import { usePenguinData } from '@/hooks/usePenguinData';
 import { Penguin } from '@/types/penguin';
 
@@ -42,29 +43,47 @@ export const VisualizationPanel: React.FC = () => {
     switch (config.type) {
       case 'scatter':
         return (
-          <ScatterPlot
+          <ChartContainer
             data={filteredData}
-            xField={config.x!}
-            yField={config.y!}
-            visibleSpecies={visibleSpecies}
-          />
+            chartType="scatter"
+            fields={{ x: config.x!, y: config.y! }}
+          >
+            <ScatterPlot
+              data={filteredData}
+              xField={config.x!}
+              yField={config.y!}
+              visibleSpecies={visibleSpecies}
+            />
+          </ChartContainer>
         );
       case 'histogram':
         return (
-          <Histogram
+          <ChartContainer
             data={filteredData}
-            field={config.field!}
-            bins={config.bins!}
-            visibleSpecies={visibleSpecies}
-          />
+            chartType="histogram"
+            fields={{ field: config.field! }}
+          >
+            <Histogram
+              data={filteredData}
+              field={config.field!}
+              bins={config.bins!}
+              visibleSpecies={visibleSpecies}
+            />
+          </ChartContainer>
         );
       case 'box':
         return (
-          <BoxPlot
+          <ChartContainer
             data={filteredData}
-            field={config.field!}
-            visibleSpecies={visibleSpecies}
-          />
+            chartType="box"
+            fields={{ field: config.field! }}
+          >
+            <BoxPlot
+              data={filteredData}
+              field={config.field!}
+              visibleSpecies={visibleSpecies}
+            />
+          </ChartContainer>
         );
       default:
         return <Alert severity="warning">Chart type not supported</Alert>;
