@@ -11,7 +11,7 @@ interface ScatterPlotProps {
   data: Penguin[];
   xField: string;
   yField: string;
-  visibleSpecies: Set<string>;
+  visibleSpecies: string[];
 }
 
 export const ScatterPlot: FC<ScatterPlotProps> = ({
@@ -46,8 +46,8 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
     let fd = data.filter(
       (d) => (d as any)[xField] != null && (d as any)[yField] != null
     );
-    if (visibleSpecies.size > 0) {
-      fd = fd.filter((d) => visibleSpecies.has(d.species));
+    if (visibleSpecies.length > 0) {
+      fd = fd.filter((d) => visibleSpecies.includes(d.species));
     }
     return fd;
   }, [data, xField, yField, visibleSpecies]);
