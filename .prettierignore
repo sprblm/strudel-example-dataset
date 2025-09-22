@@ -1,0 +1,5 @@
+cypress/**
+tests/**
+docs/**
+.bmad-core/**
+src/**/__tests__/**
