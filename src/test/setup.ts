@@ -20,3 +20,15 @@ const IntersectionObserverMock = vi.fn(() => ({
 }));
 
 global.IntersectionObserver = IntersectionObserverMock as any;
+
+if (!window.matchMedia) {
+  window.matchMedia = vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+}
