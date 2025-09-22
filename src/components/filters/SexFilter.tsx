@@ -65,6 +65,8 @@ export const SexFilter: React.FC = () => {
                 <Radio
                   data-testid={`sex-radio-${option.value.toLowerCase()}`}
                   sx={{
+                    width: 48,
+                    height: 48,
                     '&.Mui-checked': {
                       color: 'primary.main',
                     },
@@ -82,6 +84,8 @@ export const SexFilter: React.FC = () => {
                 '&:hover': {
                   backgroundColor: 'action.hover',
                 },
+                alignItems: 'center',
+                minHeight: 48,
                 '& .MuiFormControlLabel-label': {
                   fontWeight:
                     selectedSex === option.value ? 'medium' : 'normal',

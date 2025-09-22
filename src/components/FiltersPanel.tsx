@@ -8,7 +8,7 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { SpeciesFilter } from './filters/SpeciesFilter';
 import { IslandFilter } from './filters/IslandFilter';
 import { SexFilter } from './filters/SexFilter';
@@ -33,6 +33,7 @@ const getActiveFilterCount = (state: any) => {
 export const FiltersPanel: React.FC<FiltersProps> = ({
   onClose,
   children,
+  sx,
   ...rest
 }) => {
   const { state, dispatch } = useAppState();
@@ -48,11 +49,11 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
     navigate({
       to: '/penguins',
       search: (prev) => {
-        const newSearch = { ...prev };
-        delete newSearch.species;
-        delete newSearch.island;
-        delete newSearch.sex;
-        return newSearch;
+        const nextSearch = { ...((prev as Record<string, unknown>) ?? {}) };
+        delete nextSearch.species;
+        delete nextSearch.island;
+        delete nextSearch.sex;
+        return nextSearch;
       },
     });
     // Announce
@@ -62,14 +63,39 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
 
   const isAnyFilterActive = activeCount > 0;
 
+  const baseStyles = useMemo<StackProps['sx']>(
+    () => ({
+      p: 2,
+      borderRadius: 2,
+      backgroundColor: 'background.paper',
+      boxShadow: { xs: 'none', md: '0px 4px 8px rgba(0,0,0,0.04)' },
+    }),
+    []
+  );
+
+  const combinedSx = useMemo(() => {
+    const extra = Array.isArray(sx) ? sx : sx ? [sx] : [];
+    return [baseStyles, ...extra];
+  }, [sx, baseStyles]);
+
   return (
-    <Stack {...rest} id="filters" tabIndex={-1}>
-      <Stack direction="row" alignItems="center">
+    <Stack spacing={2} {...rest} id="filters" tabIndex={-1} sx={combinedSx}>
+      <Stack direction="row" alignItems="center" spacing={1}>
         <Typography variant="h6" component="h2" flex={1}>
           FILTERS
         </Typography>
         {onClose && (
-          <IconButton onClick={onClose}>
+          <IconButton
+            onClick={onClose}
+            sx={{
+              width: 48,
+              height: 48,
+              '& .MuiSvgIcon-root': {
+                fontSize: '1.5rem',
+              },
+            }}
+            aria-label="Close filters"
+          >
             <CloseIcon />
           </IconButton>
         )}
@@ -85,7 +111,10 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
             onClick={handleClearFilters}
             fullWidth
             data-testid="clear-filters-button"
-            sx={{ mt: 1 }}
+            sx={{
+              mt: 1,
+              minHeight: 48,
+            }}
           >
             Clear {activeCount} filter{activeCount !== 1 ? 's' : ''}
           </Button>
