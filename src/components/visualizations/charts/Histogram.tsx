@@ -16,8 +16,6 @@ interface HistogramProps {
   field: NumericField;
   bins: number;
   visibleSpecies: string[];
-  width?: number;
-  height?: number;
 }
 
 const margin = { top: 20, right: 30, bottom: 40, left: 50 };
@@ -27,11 +25,10 @@ export const Histogram: React.FC<HistogramProps> = ({
   field,
   bins,
   visibleSpecies,
-  width = 600,
-  height = 400,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
   const [tooltip, setTooltip] = useState<{
     open: boolean;
     content: string;
@@ -60,33 +57,46 @@ export const Histogram: React.FC<HistogramProps> = ({
   );
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const width = Math.max(260, Math.min(840, entry.contentRect.width));
+      const height = Math.max(260, Math.min(560, (width * 2) / 3));
+      setDimensions({ width, height });
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!svgRef.current || filteredData.length === 0) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+    const innerWidth = dimensions.width - margin.left - margin.right;
+    const innerHeight = dimensions.height - margin.top - margin.bottom;
 
     // Scales
     const xValues = filteredData
       .map((d) => d[field] as number)
       .filter((v) => v != null && !isNaN(v));
 
-    const x = d3
-      .scaleLinear()
-      .domain(
-        xValues.length > 0
-          ? [Math.min(...xValues), Math.max(...xValues)]
-          : [0, 1]
-      )
-      .range([0, innerWidth])
-      .nice();
+    const xDomain: [number, number] =
+      xValues.length > 0
+        ? [Math.min(...xValues), Math.max(...xValues)]
+        : [0, 1];
+
+    const x = d3.scaleLinear().domain(xDomain).range([0, innerWidth]).nice();
 
     const histogram = d3
       .histogram<Penguin, number>()
       .value((d) => d[field] as number)
-      .domain(x.domain())
+      .domain(x.domain() as [number, number])
       .thresholds(bins);
 
     const allBins = histogram(filteredData);
@@ -114,7 +124,7 @@ export const Histogram: React.FC<HistogramProps> = ({
         : 1;
     y.domain([0, maxY]);
 
-    svg.attr('width', width).attr('height', height);
+    svg.attr('width', dimensions.width).attr('height', dimensions.height);
 
     const g = svg
       .append('g')
@@ -145,7 +155,7 @@ export const Histogram: React.FC<HistogramProps> = ({
     // Title
     svg
       .append('text')
-      .attr('x', width / 2)
+      .attr('x', dimensions.width / 2)
       .attr('y', margin.top / 2)
       .attr('text-anchor', 'middle')
       .text(`Histogram of ${fieldLabels[field]}`);
@@ -224,7 +234,7 @@ export const Histogram: React.FC<HistogramProps> = ({
       'aria-label',
       `Histogram of ${fieldLabels[field]} by species with ${bins} bins`
     );
-  }, [filteredData, field, bins, visibleSpecies, width, height]);
+  }, [filteredData, field, bins, visibleSpecies, dimensions]);
 
   if (filteredData.length === 0) {
     return (
@@ -240,7 +250,6 @@ export const Histogram: React.FC<HistogramProps> = ({
     <Box
       ref={containerRef}
       sx={{
-        minWidth: 400,
         width: '100%',
         height: 'auto',
         position: 'relative',

@@ -3,9 +3,11 @@ import {
   Box,
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
+  Select,
   SelectChangeEvent,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 const NUMERIC_COLUMNS = [
@@ -21,11 +23,14 @@ interface AxisControlsProps {
   onAxisChange: (axis: 'x' | 'y', value: string) => void;
 }
 
-const AxisControls: React.FC<AxisControlsProps> = ({
+export const AxisControls: React.FC<AxisControlsProps> = ({
   xAxis,
   yAxis,
   onAxisChange,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const handleXAxisChange = (event: SelectChangeEvent<string>) => {
     onAxisChange('x', event.target.value);
   };
@@ -36,7 +41,12 @@ const AxisControls: React.FC<AxisControlsProps> = ({
 
   return (
     <Box
-      sx={{ display: 'flex', gap: 2, mb: 2 }}
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        gap: 2,
+        mb: 2,
+      }}
       role="group"
       aria-label="Chart axis controls"
     >
@@ -59,8 +69,10 @@ const AxisControls: React.FC<AxisControlsProps> = ({
           onChange={handleXAxisChange}
           inputProps={{
             'aria-label': 'Select X-axis variable for chart',
+            'data-testid': 'axis-x-select',
           }}
           sx={{
+            minHeight: isMobile ? 48 : undefined,
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
               borderColor: 'primary.main',
               borderWidth: '2px',
@@ -120,8 +132,10 @@ const AxisControls: React.FC<AxisControlsProps> = ({
           onChange={handleYAxisChange}
           inputProps={{
             'aria-label': 'Select Y-axis variable for chart',
+            'data-testid': 'axis-y-select',
           }}
           sx={{
+            minHeight: isMobile ? 48 : undefined,
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
               borderColor: 'primary.main',
               borderWidth: '2px',

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Penguin } from '@/types/penguin';
-import { NumericField } from './types';
+import { NumericField } from '../types';
 
 interface BoxPlotProps {
   data: Penguin[];
@@ -15,6 +15,24 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
   visibleSpecies,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const width = Math.max(260, Math.min(840, entry.contentRect.width));
+      const height = Math.max(260, Math.min(560, (width * 2) / 3));
+      setDimensions({ width, height });
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   // Define colors for each species
   const speciesColors: { [key: string]: string } = {
@@ -30,8 +48,8 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
     svg.selectAll('*').remove();
 
     const margin = { top: 20, right: 30, bottom: 50, left: 60 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const width = dimensions.width - margin.left - margin.right;
+    const height = dimensions.height - margin.top - margin.bottom;
 
     const g = svg
       .attr('width', width + margin.left + margin.right)
@@ -47,7 +65,10 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
 
     // Calculate statistics for each species
     const boxPlotData = Array.from(groupedData, ([species, penguins]) => {
-      const values = penguins.map((p) => p[field] as number).sort(d3.ascending);
+      const values = penguins
+        .map((p) => p[field])
+        .filter((value): value is number => value != null)
+        .sort(d3.ascending);
       return {
         species,
         count: values.length,
@@ -95,7 +116,7 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
 
     const fieldName = field
       .replace(/_/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+      .replace(/\b\w/g, (letter: string) => letter.toUpperCase());
     g.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('y', 0 - margin.left)
@@ -166,13 +187,15 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
       .attr('y1', (d) => yScale(d.max))
       .attr('y2', (d) => yScale(d.max))
       .attr('stroke', 'black');
-  }, [data, field, visibleSpecies]);
+  }, [data, field, visibleSpecies, dimensions]);
 
   return (
-    <svg
-      ref={svgRef}
-      role="img"
-      aria-label={`Box plot showing distribution of ${field} by species`}
-    />
+    <div ref={containerRef} style={{ width: '100%' }}>
+      <svg
+        ref={svgRef}
+        role="img"
+        aria-label={`Box plot showing distribution of ${field} by species`}
+      />
+    </div>
   );
 };

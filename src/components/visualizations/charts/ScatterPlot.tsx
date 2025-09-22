@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect, useState, useMemo } from 'react';
+import { FC, useRef, useEffect, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { Penguin } from '@/types/penguin';
 import { useTheme } from '@mui/material/styles';
@@ -21,6 +21,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
   visibleSpecies,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -54,17 +55,19 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
 
   const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
   useEffect(() => {
-    const updateSize = () => {
-      const container = svgRef.current?.parentElement;
-      if (container) {
-        const w = Math.max(300, Math.min(800, container.clientWidth));
-        const h = Math.max(300, Math.min(600, (w * 2) / 3));
-        setDimensions({ width: w, height: h });
-      }
-    };
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const width = Math.max(260, Math.min(800, entry.contentRect.width));
+      const height = Math.max(240, Math.min(560, (width * 2) / 3));
+      setDimensions({ width, height });
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -179,7 +182,10 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '300px' }}>
+    <div
+      ref={containerRef}
+      style={{ position: 'relative', width: '100%', minHeight: '260px' }}
+    >
       <svg
         ref={svgRef}
         width={dimensions.width}
@@ -207,6 +213,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
             fontSize: '12px',
             whiteSpace: 'nowrap',
           }}
+          data-testid="tooltip"
         >
           <div>
             <strong>{tooltip.datum.species}</strong>
