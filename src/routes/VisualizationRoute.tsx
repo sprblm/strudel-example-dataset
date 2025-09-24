@@ -41,6 +41,8 @@ const VisualizationRoute: React.FC = () => {
     setSearchParams(searchParams, { replace: true });
   };
 
+  const ALL_SPECIES = ['Adelie', 'Chinstrap', 'Gentoo'];
+
   const handleToggleSpecies = (speciesList: string[]) => {
     setVisibleSpecies(new Set(speciesList));
   };
@@ -53,7 +55,7 @@ const VisualizationRoute: React.FC = () => {
     <div>
       <AxisControls xAxis={x} yAxis={y} onAxisChange={handleAxisChange} />
       <ChartLegend
-        allSpecies={['Adelie', 'Chinstrap', 'Gentoo']}
+        allSpecies={ALL_SPECIES}
         initialVisibleSpecies={Array.from(visibleSpecies)}
         onToggleSpecies={handleToggleSpecies}
       />
