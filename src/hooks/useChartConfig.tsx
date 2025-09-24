@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearch, useNavigate } from '@tanstack/router';
+import { useSearch, useNavigate } from '@tanstack/react-router';
 import { NumericField } from '@/components/visualizations/types';
 
 export interface ChartConfig {
