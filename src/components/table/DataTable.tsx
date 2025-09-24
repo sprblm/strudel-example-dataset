@@ -1,11 +1,20 @@
 import React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Typography, CircularProgress, Alert } from '@mui/material';
+import {
+  DataGrid,
+  GridColDef,
+  GridValueFormatterParams,
+} from '@mui/x-data-grid';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { usePenguinData } from '@/hooks/usePenguinData';
+import { Penguin } from '@/types/penguin';
 import { formatValue } from '@/utils/dataHelpers';
 
+const formatNumericValue = (
+  params: GridValueFormatterParams<Penguin, number | null | undefined>
+) => formatValue(params.value);
+
 // Define columns with proper typing and formatting
-const columns: GridColDef[] = [
+const columns: GridColDef<Penguin>[] = [
   {
     field: 'species',
     headerName: 'Species',
@@ -24,7 +33,7 @@ const columns: GridColDef[] = [
     width: 150,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: formatNumericValue,
   },
   {
     field: 'bill_depth_mm',
@@ -32,7 +41,7 @@ const columns: GridColDef[] = [
     width: 150,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: formatNumericValue,
   },
   {
     field: 'flipper_length_mm',
@@ -40,7 +49,7 @@ const columns: GridColDef[] = [
     width: 170,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: formatNumericValue,
   },
   {
     field: 'body_mass_g',
@@ -48,15 +57,16 @@ const columns: GridColDef[] = [
     width: 130,
     sortable: true,
     type: 'number',
-    valueFormatter: (params) => formatValue(params?.value),
+    valueFormatter: formatNumericValue,
   },
   {
     field: 'sex',
     headerName: 'Sex',
     width: 100,
     sortable: true,
-    valueFormatter: (params) =>
-      params?.value ? (params.value as string) : '—',
+    valueFormatter: (
+      params: GridValueFormatterParams<Penguin, string | null | undefined>
+    ) => params.value ?? '—',
   },
   {
     field: 'year',
@@ -69,6 +79,8 @@ const columns: GridColDef[] = [
 
 export const DataTable: React.FC = () => {
   const { data: penguins, isLoading, error, isError } = usePenguinData();
+
+  const penguinRows = penguins ?? [];
 
   // Loading state
   if (isLoading) {
@@ -99,7 +111,7 @@ export const DataTable: React.FC = () => {
   }
 
   // Add IDs to data for DataGrid (required)
-  const rowsWithIds = penguins.map((penguin, index) => ({
+  const rowsWithIds = penguinRows.map((penguin, index) => ({
     id: index,
     ...penguin,
   }));
