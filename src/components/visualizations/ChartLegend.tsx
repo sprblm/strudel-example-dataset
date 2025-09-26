@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
 
 interface ChartLegendProps {
@@ -7,14 +7,13 @@ interface ChartLegendProps {
   onToggleSpecies: (species: string[]) => void;
 }
 
-// Define a color mapping for each species
-const SPECIES_COLORS: { [key: string]: string } = {
-  Adelie: '#FF8C00', // Dark Orange
-  Chinstrap: '#9932CC', // Dark Orchid
-  Gentoo: '#00CED1', // Dark Turquoise
+const SPECIES_COLORS: Record<string, string> = {
+  Adelie: '#FF8C00',
+  Chinstrap: '#9932CC',
+  Gentoo: '#00CED1',
 };
 
-const ChartLegend: React.FC<ChartLegendProps> = ({
+export const ChartLegend: React.FC<ChartLegendProps> = ({
   allSpecies,
   initialVisibleSpecies,
   onToggleSpecies,
@@ -23,12 +22,16 @@ const ChartLegend: React.FC<ChartLegendProps> = ({
     initialVisibleSpecies
   );
 
-  const handleToggle = (s: string) => {
-    const newVisibleSpecies = visibleSpecies.includes(s)
-      ? visibleSpecies.filter((item) => item !== s)
-      : [...visibleSpecies, s];
-    setVisibleSpecies(newVisibleSpecies);
-    onToggleSpecies(newVisibleSpecies);
+  useEffect(() => {
+    setVisibleSpecies(initialVisibleSpecies);
+  }, [initialVisibleSpecies.join(',')]);
+
+  const handleToggle = (species: string) => {
+    const nextVisible = visibleSpecies.includes(species)
+      ? visibleSpecies.filter((item) => item !== species)
+      : [...visibleSpecies, species];
+    setVisibleSpecies(nextVisible);
+    onToggleSpecies(nextVisible);
   };
 
   return (
@@ -36,47 +39,61 @@ const ChartLegend: React.FC<ChartLegendProps> = ({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 1,
+        gap: 1.5,
         p: 2,
-        border: '1px solid #ccc',
-        borderRadius: 1,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
       }}
     >
-      <Typography variant="h6">Species Legend</Typography>
-      {allSpecies.map((s) => (
+      <Typography variant="h6" component="h3">
+        Species Legend
+      </Typography>
+      {allSpecies.map((species) => (
         <FormControlLabel
-          key={s}
+          key={species}
+          data-testid={`legend-item-${species.toLowerCase()}`}
           control={
             <Switch
-              checked={visibleSpecies.includes(s)}
-              onChange={() => handleToggle(s)}
+              checked={visibleSpecies.includes(species)}
+              onChange={() => handleToggle(species)}
+              inputProps={{
+                'aria-label': `Toggle ${species} data visibility`,
+              }}
               sx={{
+                width: 62,
+                height: 38,
+                padding: 1,
                 '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: SPECIES_COLORS[s],
+                  color: SPECIES_COLORS[species],
                   '&:hover': {
-                    backgroundColor: `${SPECIES_COLORS[s]}10`, // Add a slight hover effect
+                    backgroundColor: `${SPECIES_COLORS[species]}20`,
                   },
                 },
                 '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: SPECIES_COLORS[s],
+                  backgroundColor: SPECIES_COLORS[species],
                 },
               }}
             />
           }
           label={
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box
                 sx={{
-                  width: 20,
-                  height: 20,
+                  width: 18,
+                  height: 18,
                   borderRadius: '50%',
-                  backgroundColor: SPECIES_COLORS[s],
-                  mr: 1,
+                  backgroundColor: SPECIES_COLORS[species],
                 }}
               />
-              <Typography>{s}</Typography>
+              <Typography variant="body2">{species}</Typography>
             </Box>
           }
+          sx={{
+            marginLeft: 0,
+            minHeight: 48,
+            paddingX: 1,
+          }}
         />
       ))}
     </Box>

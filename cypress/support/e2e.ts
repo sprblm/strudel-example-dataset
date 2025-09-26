@@ -19,6 +19,9 @@ import 'cypress-axe';
 // Import cypress-real-events for real browser events
 import 'cypress-real-events';
 
+// Import cypress-plugin-tab for keyboard navigation helpers
+import 'cypress-plugin-tab';
+
 // Import commands.js using ES2015 syntax:
 import './commands';
 

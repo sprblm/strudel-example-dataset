@@ -151,4 +151,36 @@ describe('DataTable', () => {
     const emDashes = screen.getAllByText('—');
     expect(emDashes.length).toBeGreaterThan(0);
   });
+
+  it('renders card layout on mobile viewports', () => {
+    mockUsePenguinData.mockReturnValue({
+      data: mockPenguinData,
+      isLoading: false,
+      error: null,
+      isError: false,
+    });
+
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: query.includes('max-width'),
+      media: query,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+
+    render(
+      <TestWrapper>
+        <DataTable />
+      </TestWrapper>
+    );
+
+    expect(screen.getByTestId('penguin-card-list')).toBeInTheDocument();
+    expect(screen.getAllByText('Bill Length').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Body Mass').length).toBeGreaterThan(0);
+
+    window.matchMedia = originalMatchMedia;
+  });
 });

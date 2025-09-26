@@ -64,11 +64,13 @@ export const ChartContainer: React.FC<ChartContainerProps> = ({
       className={className}
       sx={{
         margin: 0,
-        padding: 2,
+        padding: { xs: 1.5, md: 2 },
         border: '1px solid',
         borderColor: 'divider',
-        borderRadius: 1,
+        borderRadius: 2,
         backgroundColor: 'background.paper',
+        width: '100%',
+        boxSizing: 'border-box',
       }}
     >
       {title && (

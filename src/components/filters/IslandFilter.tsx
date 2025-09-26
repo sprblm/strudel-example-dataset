@@ -58,6 +58,7 @@ export const IslandFilter: React.FC = () => {
           }}
           data-testid="island-select"
           sx={{
+            minHeight: 48,
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
               borderColor: 'primary.main',
               borderWidth: '2px',
@@ -78,6 +79,7 @@ export const IslandFilter: React.FC = () => {
               value={option.value}
               data-testid={`island-option-${option.value.toLowerCase()}`}
               sx={{
+                minHeight: 48,
                 '&:hover': {
                   backgroundColor: 'action.hover',
                 },

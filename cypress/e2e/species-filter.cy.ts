@@ -39,9 +39,7 @@ describe('Species Filter E2E', () => {
   });
 
   it('tests keyboard navigation', () => {
-    cy.get('[data-testid="species-checkbox-adelie"] input').focus({
-      force: true,
-    });
+    cy.get('[data-testid="species-checkbox-adelie"] input').focus();
     cy.realPress('Space');
     cy.wait(500);
     cy.get('[data-testid="species-checkbox-adelie"] input').should(
