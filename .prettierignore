@@ -1,0 +1,5 @@
+# Project-level docs and generated artifacts are intentionally left unformatted
+# to preserve authoring style or existing QA history.
+docs/**
+cypress/**
+tests/**

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { Penguin } from '@/types/penguin';
-import { NumericField } from './types';
+import { NumericField, coerceNumericValue, getFieldLabel } from '../types';
 
 interface BoxPlotProps {
   data: Penguin[];
@@ -40,24 +40,50 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Filter data by visible species
-    const filteredData = data.filter((p) => visibleSpecies.includes(p.species));
+    const filteredData = data.filter((penguin) =>
+      visibleSpecies.includes(penguin.species)
+    );
 
-    // Prepare data for box plot (group by species)
-    const groupedData = d3.group(filteredData, (d) => d.species);
+    const groupedData = d3.group(filteredData, (penguin) => penguin.species);
 
-    // Calculate statistics for each species
     const boxPlotData = Array.from(groupedData, ([species, penguins]) => {
-      const values = penguins.map((p) => p[field] as number).sort(d3.ascending);
+      const values = penguins
+        .map((penguin) => coerceNumericValue(penguin[field]))
+        .filter((value): value is number => value !== null)
+        .sort(d3.ascending);
+
+      if (values.length === 0) {
+        return null;
+      }
+
+      const min = d3.min(values);
+      const max = d3.max(values);
+      const median = d3.median(values);
+      const q1 = d3.quantile(values, 0.25);
+      const q3 = d3.quantile(values, 0.75);
+
+      if (
+        min == null ||
+        max == null ||
+        median == null ||
+        q1 == null ||
+        q3 == null
+      ) {
+        return null;
+      }
+
       return {
         species,
         count: values.length,
-        min: d3.min(values)!,
-        max: d3.max(values)!,
-        median: d3.median(values)!,
-        q1: d3.quantile(values, 0.25)!,
-        q3: d3.quantile(values, 0.75)!,
+        min,
+        max,
+        median,
+        q1,
+        q3,
       };
-    }).filter((d) => d.count > 0); // Only include species with data
+    })
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+      .filter((entry) => entry.count > 0);
 
     if (boxPlotData.length === 0) return;
 
@@ -93,9 +119,7 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({
       .style('text-anchor', 'middle')
       .text('Species');
 
-    const fieldName = field
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+    const fieldName = getFieldLabel(field);
     g.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('y', 0 - margin.left)

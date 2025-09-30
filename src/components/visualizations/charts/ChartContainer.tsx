@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, forwardRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 import { Penguin } from '@/types/penguin';
 import {
@@ -21,7 +21,7 @@ interface ChartContainerProps {
  * - Statistical summaries for screen readers
  * - Proper ARIA labeling and structure
  */
-export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
+export const ChartContainer = forwardRef<HTMLElement, ChartContainerProps>(
   ({ children, data, chartType, fields, title, className }, ref) => {
     const descriptionRef = useRef<HTMLDivElement>(null);
     const statsRef = useRef<HTMLDivElement>(null);
@@ -31,9 +31,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
     const statisticalSummary = fields.field
       ? generateStatisticalSummary(data, fields.field)
       : fields.x && fields.y
-        ? generateStatisticalSummary(data, fields.x) +
-          ' ' +
-          generateStatisticalSummary(data, fields.y)
+        ? `${generateStatisticalSummary(data, fields.x)} ${generateStatisticalSummary(data, fields.y)}`
         : '';
 
     // Update descriptions when data changes
@@ -52,6 +50,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
     return (
       <Box
         component="figure"
+        ref={ref}
         role="img"
         aria-labelledby={title ? `chart-title-${chartType}` : undefined}
         aria-describedby={`${descId} ${statisticalSummary ? statsId : ''}`.trim()}
@@ -64,7 +63,6 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
           borderRadius: 1,
           backgroundColor: 'background.paper',
         }}
-        ref={ref}
       >
         {title && (
           <Box

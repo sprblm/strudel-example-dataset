@@ -13,7 +13,6 @@ import { SpeciesFilter } from './filters/SpeciesFilter';
 import { IslandFilter } from './filters/IslandFilter';
 import { SexFilter } from './filters/SexFilter';
 import { useAppState } from '@/context/ContextProvider';
-import { useNavigate } from '@tanstack/react-router';
 import { clearAllFilters } from '@/context/actions';
 
 interface FiltersProps extends StackProps {
@@ -36,7 +35,6 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
   ...rest
 }) => {
   const { state, dispatch } = useAppState();
-  const navigate = useNavigate();
 
   const activeCount = getActiveFilterCount(state);
   const [announcement, setAnnouncement] = useState('');
@@ -44,17 +42,6 @@ export const FiltersPanel: React.FC<FiltersProps> = ({
   const handleClearFilters = () => {
     // Reset state
     dispatch(clearAllFilters());
-    // Clear URL
-    navigate({
-      to: '/penguins',
-      search: (prev) => {
-        const newSearch = { ...prev };
-        delete newSearch.species;
-        delete newSearch.island;
-        delete newSearch.sex;
-        return newSearch;
-      },
-    });
     // Announce
     setAnnouncement('All filters cleared');
     setTimeout(() => setAnnouncement(''), 2000);

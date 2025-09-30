@@ -1,184 +1,192 @@
-import { useCallback } from 'react';
-
-type ExportScale = number;
+import { useCallback, useState } from 'react';
 
 export interface ExportOptions {
-  filename: string;
+  filename?: string;
+  title?: string;
+  chartType?: string;
+  scale?: number;
   backgroundColor?: string;
-  scale?: ExportScale;
 }
 
-const DEFAULT_SCALE: ExportScale = 2;
-const DEFAULT_BACKGROUND = '#ffffff';
-const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
-const TITLE_PADDING = 48;
-const TITLE_COLOR = '#1f2937';
+interface BuildFilenameOptions {
+  chartType: string;
+  date?: Date;
+}
 
-const getFigureTitle = (element: HTMLElement): string | null => {
-  const caption = element.querySelector('figcaption');
-  if (!caption) {
-    return null;
-  }
+interface UseExportResult {
+  exporting: boolean;
+  exportToPNG: (
+    container: HTMLElement,
+    options?: ExportOptions
+  ) => Promise<void>;
+  buildFilename: (options: BuildFilenameOptions) => string;
+}
 
-  const text = caption.textContent?.trim();
-  return text && text.length > 0 ? text : null;
+const DEFAULT_SCALE = 2;
+const TITLE_OFFSET = 48;
+const DEFAULT_WIDTH = 800;
+const DEFAULT_HEIGHT = 600;
+const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
 };
 
-const appendTitleToSvg = (
-  svg: SVGSVGElement,
-  width: number,
-  height: number,
-  title: string
-): number => {
-  const normalizedTitle = title.trim();
-  if (!normalizedTitle) {
-    return height;
-  }
-
-  const existingChildren = Array.from(svg.childNodes);
-  while (svg.firstChild) {
-    svg.removeChild(svg.firstChild);
-  }
-
-  const titleNode = svg.ownerDocument.createElementNS(SVG_NAMESPACE, 'text');
-  titleNode.textContent = normalizedTitle;
-  titleNode.setAttribute('x', (width / 2).toString());
-  titleNode.setAttribute('y', (TITLE_PADDING / 1.6).toString());
-  titleNode.setAttribute('text-anchor', 'middle');
-  titleNode.setAttribute('font-size', '20');
-  titleNode.setAttribute('font-weight', '600');
-  titleNode.setAttribute('fill', TITLE_COLOR);
-  titleNode.setAttribute('dominant-baseline', 'middle');
-
-  const groupNode = svg.ownerDocument.createElementNS(SVG_NAMESPACE, 'g');
-  groupNode.setAttribute('transform', `translate(0, ${TITLE_PADDING})`);
-  existingChildren.forEach((child) => {
-    groupNode.appendChild(child);
-  });
-
-  const adjustedHeight = height + TITLE_PADDING;
-  svg.appendChild(titleNode);
-  svg.appendChild(groupNode);
-  svg.setAttribute('height', adjustedHeight.toString());
-
-  if (svg.hasAttribute('viewBox')) {
-    const viewBox = svg
-      .getAttribute('viewBox')!
-      .split(/[ ,]+/)
-      .map((segment) => Number(segment));
-    if (viewBox.length === 4) {
-      viewBox[3] += TITLE_PADDING;
-      svg.setAttribute('viewBox', viewBox.join(' '));
-    }
-  } else {
-    svg.setAttribute('viewBox', `0 0 ${width} ${adjustedHeight}`);
-  }
-
-  return adjustedHeight;
+const formatDate = (date: Date) => {
+  const formatter = new Intl.DateTimeFormat('en-CA', DATE_FORMAT_OPTIONS);
+  return formatter.format(date);
 };
 
-const createObjectUrl = (blob: Blob) => URL.createObjectURL(blob);
-const revokeObjectUrl = (url: string) => URL.revokeObjectURL(url);
+const slugify = (value: string) => {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
 
-const loadImage = (url: string): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
+const ensureSvgNamespace = (svg: SVGSVGElement) => {
+  if (!svg.getAttribute('xmlns')) {
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  }
+  if (!svg.getAttribute('xmlns:xlink')) {
+    svg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  }
+};
+
+const loadImage = (url: string) => {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
+    image.crossOrigin = 'anonymous';
     image.onload = () => resolve(image);
-    image.onerror = reject;
+    image.onerror = (event) => reject(event);
     image.src = url;
   });
-
-const getSvgDimensions = (svg: SVGSVGElement) => {
-  const rect = svg.getBoundingClientRect();
-  if (rect.width && rect.height) {
-    return { width: rect.width, height: rect.height };
-  }
-
-  const widthAttr = svg.getAttribute('width');
-  const heightAttr = svg.getAttribute('height');
-  if (widthAttr && heightAttr) {
-    return { width: parseFloat(widthAttr), height: parseFloat(heightAttr) };
-  }
-
-  const { width, height } = svg.viewBox.baseVal;
-  if (width && height) {
-    return { width, height };
-  }
-
-  throw new Error('Unable to determine SVG dimensions for export.');
 };
 
-export const useExport = () => {
-  const exportToPNG = useCallback(
-    async (element: HTMLElement, options: ExportOptions) => {
-      if (!element) {
-        throw new Error('Export element is not available.');
-      }
+const coerceSize = (value: number | null | undefined, fallback: number) => {
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+  return fallback;
+};
 
-      const svgElement = element.querySelector('svg');
-      if (!svgElement) {
-        throw new Error('No SVG element found for export.');
-      }
+export const useExport = (): UseExportResult => {
+  const [exporting, setExporting] = useState(false);
 
-      const { width, height } = getSvgDimensions(svgElement);
-      const clonedSvg = svgElement.cloneNode(true) as SVGSVGElement;
-      const figureTitle = getFigureTitle(element);
-      const exportHeight = figureTitle
-        ? appendTitleToSvg(clonedSvg, width, height, figureTitle)
-        : height;
-      clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-      const serializer = new XMLSerializer();
-      const svgString = serializer.serializeToString(clonedSvg);
-      const svgBlob = new Blob(
-        [`<?xml version="1.0" encoding="UTF-8"?>${svgString}`],
-        { type: 'image/svg+xml;charset=utf-8' }
-      );
-      const svgUrl = createObjectUrl(svgBlob);
-
-      try {
-        const image = await loadImage(svgUrl);
-        const canvas = document.createElement('canvas');
-        const scale = options.scale ?? DEFAULT_SCALE;
-        canvas.width = width * scale;
-        canvas.height = exportHeight * scale;
-
-        const context = canvas.getContext('2d');
-        if (!context) {
-          throw new Error('Unable to acquire canvas context for export.');
-        }
-
-        context.fillStyle = options.backgroundColor ?? DEFAULT_BACKGROUND;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.scale(scale, scale);
-        context.drawImage(image, 0, 0, width, exportHeight);
-
-        const pngBlob = await new Promise<Blob>((resolve, reject) => {
-          canvas.toBlob((blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('Failed to generate PNG blob.'));
-            }
-          }, 'image/png');
-        });
-
-        const downloadUrl = createObjectUrl(pngBlob);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = options.filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        revokeObjectUrl(downloadUrl);
-      } finally {
-        revokeObjectUrl(svgUrl);
-      }
+  const buildFilename = useCallback(
+    ({ chartType, date }: BuildFilenameOptions) => {
+      const safeChart = slugify(chartType || 'chart');
+      const formattedDate = formatDate(date ?? new Date());
+      return `${safeChart}-${formattedDate}.png`;
     },
     []
   );
 
-  return { exportToPNG };
+  const exportToPNG = useCallback(
+    async (container: HTMLElement, options?: ExportOptions) => {
+      if (!container) {
+        throw new Error('No container provided for export.');
+      }
+
+      const svg = container.querySelector('svg');
+      if (!svg) {
+        throw new Error('No SVG element found for export.');
+      }
+
+      const svgClone = svg.cloneNode(true) as SVGSVGElement;
+      ensureSvgNamespace(svgClone);
+
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgClone);
+      const svgBlob = new Blob(
+        [`<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`],
+        {
+          type: 'image/svg+xml;charset=utf-8',
+        }
+      );
+      const svgUrl = URL.createObjectURL(svgBlob);
+
+      setExporting(true);
+
+      try {
+        const image = await loadImage(svgUrl);
+        const rect = svg.getBoundingClientRect();
+        const attrWidth = Number(svg.getAttribute('width'));
+        const attrHeight = Number(svg.getAttribute('height'));
+        const width = coerceSize(
+          rect.width || attrWidth || image.width,
+          DEFAULT_WIDTH
+        );
+        const height = coerceSize(
+          rect.height || attrHeight || image.height,
+          DEFAULT_HEIGHT
+        );
+        const scale = options?.scale ?? DEFAULT_SCALE;
+        const titleOffset = options?.title ? TITLE_OFFSET : 0;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(Math.round(width * scale), scale);
+        canvas.height = Math.max(
+          Math.round((height + titleOffset) * scale),
+          scale
+        );
+
+        const context = canvas.getContext('2d');
+        if (!context) {
+          throw new Error('Canvas context is not available for export.');
+        }
+
+        context.fillStyle = options?.backgroundColor ?? '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (options?.title) {
+          context.fillStyle = '#1f2933';
+          context.font = `600 ${20 * scale}px "Inter", "Helvetica Neue", Arial, sans-serif`;
+          context.textAlign = 'center';
+          context.textBaseline = 'top';
+          context.fillText(options.title, canvas.width / 2, 16 * scale);
+        }
+
+        context.drawImage(
+          image,
+          0,
+          titleOffset * scale,
+          width * scale,
+          height * scale
+        );
+
+        const blob: Blob = await new Promise((resolve, reject) => {
+          canvas.toBlob((generatedBlob) => {
+            if (generatedBlob) {
+              resolve(generatedBlob);
+            } else {
+              reject(new Error('Failed to generate PNG blob.'));
+            }
+          });
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download =
+          options?.filename ??
+          buildFilename({ chartType: options?.chartType ?? 'chart' });
+        link.rel = 'noopener';
+        link.click();
+        URL.revokeObjectURL(url);
+      } finally {
+        setExporting(false);
+        URL.revokeObjectURL(svgUrl);
+      }
+    },
+    [buildFilename]
+  );
+
+  return {
+    exporting,
+    exportToPNG,
+    buildFilename,
+  };
 };
 
-export type UseExportHook = ReturnType<typeof useExport>;
+export default useExport;

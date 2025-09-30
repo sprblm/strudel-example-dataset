@@ -34,12 +34,14 @@ describe('LiveRegion', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUsePenguinData.mockReturnValue({
-      data: Array(50).fill({}).map((_, i) => ({
-        species: 'Adelie',
-        island: 'Biscoe',
-        sex: 'male',
-        id: i,
-      })),
+      data: Array(50)
+        .fill({})
+        .map((_, i) => ({
+          species: 'Adelie',
+          island: 'Biscoe',
+          sex: 'male',
+          id: i,
+        })),
       isLoading: false,
     });
   });

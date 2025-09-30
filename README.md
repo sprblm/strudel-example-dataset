@@ -53,6 +53,21 @@ Install the dependencies:
 npm install
 ```
 
+### Configure MCP server connections
+
+Copy `.env.example` to `.env` and adjust the shared MCP endpoints before activating Claude, Gemini, Quinn, OpenCode, Crush, or Coding agents:
+
+```
+cp .env.example .env
+```
+
+Update the following variables to point at your Serena, Playwright, and GitHub MCP servers (set any `*_ENABLED` flag to `false` when a service
+is unavailable):
+
+- `VITE_MCP_SERVER_SERENA_ENDPOINT`
+- `VITE_MCP_SERVER_PLAYWRIGHT_ENDPOINT`
+- `VITE_MCP_SERVER_GITHUB_ENDPOINT`
+
 Start up the app:
 
 ```

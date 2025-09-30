@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Alert, Stack } from '@mui/material';
+import { useMemo, useRef, useState } from 'react';
+import { Box, Alert } from '@mui/material';
 import { useChartConfig } from '@/hooks/useChartConfig';
-import AxisControls from './AxisControls';
-import ChartLegend from './ChartLegend';
+import { AxisControls } from './AxisControls';
+import { ChartLegend } from './ChartLegend';
 import { ScatterPlot } from './charts/ScatterPlot';
 import { Histogram } from './charts/Histogram';
 import { BoxPlot } from './charts/BoxPlot';
@@ -10,73 +10,80 @@ import { ChartContainer } from './charts/ChartContainer';
 import { usePenguinData } from '@/hooks/usePenguinData';
 import { Penguin } from '@/types/penguin';
 import { ExportButton } from '@/components/export/ExportButton';
-import { formatFieldName } from '@/utils/chartHelpers';
+import { getFieldLabel, type NumericField } from './types';
 
 export const VisualizationPanel: React.FC = () => {
   const { data: penguins = [] } = usePenguinData();
-  const ALL_SPECIES = React.useMemo(
-    () => ['Adelie', 'Chinstrap', 'Gentoo'],
-    []
-  );
-  const [visibleSpecies, setVisibleSpecies] =
-    React.useState<string[]>(ALL_SPECIES);
+  const [visibleSpecies, setVisibleSpecies] = useState<string[]>([
+    'Adelie',
+    'Chinstrap',
+    'Gentoo',
+  ]);
   const { config, updateConfig } = useChartConfig();
-  const chartRef = React.useRef<HTMLDivElement>(null);
-  const chartTitle = React.useMemo(() => {
-    switch (config.type) {
-      case 'scatter':
-        if (config.x && config.y) {
-          return `Scatter Plot: ${formatFieldName(config.x)} vs ${formatFieldName(config.y)}`;
-        }
-        return 'Scatter Plot';
-      case 'histogram':
-        if (config.field) {
-          return `Histogram: ${formatFieldName(config.field)} (${config.bins ?? 10} bins)`;
-        }
-        return 'Histogram';
-      case 'box':
-        if (config.field) {
-          return `Box Plot: ${formatFieldName(config.field)}`;
-        }
-        return 'Box Plot';
-      default:
-        return 'Chart';
-    }
-  }, [config]);
+  const chartContainerRef = useRef<HTMLElement | null>(null);
 
-  const handleSpeciesToggle = (updatedSpecies: string[]) => {
-    setVisibleSpecies(updatedSpecies);
+  const handleVisibilityChange = (species: string, visible: boolean) => {
+    setVisibleSpecies((prev) => {
+      if (visible) {
+        return prev.includes(species) ? prev : [...prev, species];
+      }
+      return prev.filter((s) => s !== species);
+    });
   };
 
-  const filteredData = React.useMemo(
+  const filteredData = useMemo(
     () => penguins.filter((p: Penguin) => visibleSpecies.includes(p.species)),
     [penguins, visibleSpecies]
   );
 
-  if (filteredData.length === 0) {
-    return (
-      <Alert severity="info" role="alert" aria-live="polite">
-        No data available for the selected species. Adjust filters or legend to
-        see penguin measurements.
-      </Alert>
-    );
-  }
+  const resolvedConfig = useMemo(() => {
+    const defaultField: NumericField = 'bill_length_mm';
+    return {
+      ...config,
+      x: config.x ?? defaultField,
+      y: config.y ?? ('body_mass_g' as NumericField),
+      field: config.field ?? defaultField,
+      bins: config.bins ?? 12,
+    };
+  }, [config]);
+
+  const chartTitle = useMemo(() => {
+    switch (resolvedConfig.type) {
+      case 'scatter':
+        return `Scatter Plot: ${getFieldLabel(resolvedConfig.x)} vs ${getFieldLabel(resolvedConfig.y)}`;
+      case 'histogram':
+        return `Histogram of ${getFieldLabel(resolvedConfig.field)}`;
+      case 'box':
+        return `Distribution of ${getFieldLabel(resolvedConfig.field)} by Species`;
+      default:
+        return 'Visualization';
+    }
+  }, [resolvedConfig]);
 
   const renderChart = () => {
-    switch (config.type) {
+    if (filteredData.length === 0) {
+      return (
+        <Alert severity="info" role="alert" aria-live="polite">
+          No data available for the selected species. Adjust filters or legend
+          to see penguin measurements.
+        </Alert>
+      );
+    }
+
+    switch (resolvedConfig.type) {
       case 'scatter':
         return (
           <ChartContainer
-            ref={chartRef}
             data={filteredData}
             chartType="scatter"
-            fields={{ x: config.x!, y: config.y! }}
+            fields={{ x: resolvedConfig.x, y: resolvedConfig.y }}
             title={chartTitle}
+            ref={chartContainerRef}
           >
             <ScatterPlot
               data={filteredData}
-              xField={config.x!}
-              yField={config.y!}
+              xField={resolvedConfig.x}
+              yField={resolvedConfig.y}
               visibleSpecies={visibleSpecies}
             />
           </ChartContainer>
@@ -84,16 +91,16 @@ export const VisualizationPanel: React.FC = () => {
       case 'histogram':
         return (
           <ChartContainer
-            ref={chartRef}
             data={filteredData}
             chartType="histogram"
-            fields={{ field: config.field! }}
+            fields={{ field: resolvedConfig.field }}
             title={chartTitle}
+            ref={chartContainerRef}
           >
             <Histogram
               data={filteredData}
-              field={config.field!}
-              bins={config.bins!}
+              field={resolvedConfig.field}
+              bins={resolvedConfig.bins ?? 12}
               visibleSpecies={visibleSpecies}
             />
           </ChartContainer>
@@ -101,15 +108,15 @@ export const VisualizationPanel: React.FC = () => {
       case 'box':
         return (
           <ChartContainer
-            ref={chartRef}
             data={filteredData}
             chartType="box"
-            fields={{ field: config.field! }}
+            fields={{ field: resolvedConfig.field }}
             title={chartTitle}
+            ref={chartContainerRef}
           >
             <BoxPlot
               data={filteredData}
-              field={config.field!}
+              field={resolvedConfig.field}
               visibleSpecies={visibleSpecies}
             />
           </ChartContainer>
@@ -121,27 +128,27 @@ export const VisualizationPanel: React.FC = () => {
 
   return (
     <Box sx={{ p: 2 }} data-testid="visualization-panel">
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={2}
-        alignItems={{ xs: 'stretch', md: 'center' }}
-        justifyContent="space-between"
-        sx={{ mb: 2 }}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 2,
+          mb: 2,
+        }}
       >
-        <AxisControls config={config} onConfigChange={updateConfig} />
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: { xs: 'flex-start', md: 'flex-end' },
-          }}
-        >
-          <ExportButton chartRef={chartRef} chartConfig={config} />
-        </Box>
-      </Stack>
+        <AxisControls config={resolvedConfig} onConfigChange={updateConfig} />
+        <ExportButton
+          containerRef={chartContainerRef}
+          chartType={resolvedConfig.type}
+          title={chartTitle}
+          disabled={filteredData.length === 0}
+        />
+      </Box>
       <ChartLegend
-        allSpecies={ALL_SPECIES}
-        initialVisibleSpecies={visibleSpecies}
-        onToggleSpecies={handleSpeciesToggle}
+        visibleSpecies={visibleSpecies}
+        onVisibilityChange={handleVisibilityChange}
       />
       {renderChart()}
     </Box>
