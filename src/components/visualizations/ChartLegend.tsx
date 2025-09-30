@@ -1,34 +1,32 @@
-import React, { useState } from 'react';
 import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
 
+const SPECIES = ['Adelie', 'Chinstrap', 'Gentoo'] as const;
+
 interface ChartLegendProps {
-  allSpecies: string[];
-  initialVisibleSpecies: string[];
-  onToggleSpecies: (species: string[]) => void;
+  visibleSpecies: string[];
+  onVisibilityChange: (species: string, visible: boolean) => void;
 }
 
-// Define a color mapping for each species
-const SPECIES_COLORS: { [key: string]: string } = {
-  Adelie: '#FF8C00', // Dark Orange
-  Chinstrap: '#9932CC', // Dark Orchid
-  Gentoo: '#00CED1', // Dark Turquoise
-};
+const ChartLegend = ({
+  visibleSpecies,
+  onVisibilityChange,
+}: ChartLegendProps) => {
+  const handleToggle =
+    (species: (typeof SPECIES)[number]) =>
+    (_event: unknown, checked: boolean) => {
+      onVisibilityChange(species, checked);
+    };
 
-const ChartLegend: React.FC<ChartLegendProps> = ({
-  allSpecies,
-  initialVisibleSpecies,
-  onToggleSpecies,
-}) => {
-  const [visibleSpecies, setVisibleSpecies] = useState<string[]>(
-    initialVisibleSpecies
-  );
-
-  const handleToggle = (s: string) => {
-    const newVisibleSpecies = visibleSpecies.includes(s)
-      ? visibleSpecies.filter((item) => item !== s)
-      : [...visibleSpecies, s];
-    setVisibleSpecies(newVisibleSpecies);
-    onToggleSpecies(newVisibleSpecies);
+  const getColorForSpecies = (species: (typeof SPECIES)[number]) => {
+    switch (species) {
+      case 'Adelie':
+        return '#FF8C00';
+      case 'Chinstrap':
+        return '#9932CC';
+      case 'Gentoo':
+      default:
+        return '#00CED1';
+    }
   };
 
   return (
@@ -38,49 +36,56 @@ const ChartLegend: React.FC<ChartLegendProps> = ({
         flexDirection: 'column',
         gap: 1,
         p: 2,
-        border: '1px solid #ccc',
+        border: '1px solid',
+        borderColor: 'divider',
         borderRadius: 1,
+        minWidth: 240,
       }}
+      role="group"
+      aria-label="Toggle species visibility"
     >
-      <Typography variant="h6">Species Legend</Typography>
-      {allSpecies.map((s) => (
-        <FormControlLabel
-          key={s}
-          control={
-            <Switch
-              checked={visibleSpecies.includes(s)}
-              onChange={() => handleToggle(s)}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: SPECIES_COLORS[s],
-                  '&:hover': {
-                    backgroundColor: `${SPECIES_COLORS[s]}10`, // Add a slight hover effect
-                  },
-                },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: SPECIES_COLORS[s],
-                },
-              }}
-            />
-          }
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box
-                sx={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: '50%',
-                  backgroundColor: SPECIES_COLORS[s],
-                  mr: 1,
+      <Typography variant="subtitle1" component="h3">
+        Species Legend
+      </Typography>
+      {SPECIES.map((species) => {
+        const isVisible = visibleSpecies.includes(species);
+        const color = getColorForSpecies(species);
+
+        return (
+          <FormControlLabel
+            key={species}
+            control={
+              <Switch
+                checked={isVisible}
+                onChange={handleToggle(species)}
+                color="primary"
+                inputProps={{
+                  'aria-label': `Toggle ${species} series ${
+                    isVisible ? 'off' : 'on'
+                  }`,
                 }}
               />
-              <Typography>{s}</Typography>
-            </Box>
-          }
-        />
-      ))}
+            }
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    backgroundColor: color,
+                  }}
+                  aria-hidden
+                />
+                <Typography>{species}</Typography>
+              </Box>
+            }
+          />
+        );
+      })}
     </Box>
   );
 };
 
 export default ChartLegend;
+export { ChartLegend };

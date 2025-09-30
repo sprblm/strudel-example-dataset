@@ -1,16 +1,13 @@
-import React, { FC, useRef, useEffect, useState, useMemo } from 'react';
+import { FC, useRef, useEffect, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { Penguin } from '@/types/penguin';
 import { useTheme } from '@mui/material/styles';
-
-const formatFieldName = (field: string): string => {
-  return field.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-};
+import { coerceNumericValue, NumericField, getFieldLabel } from '../types';
 
 interface ScatterPlotProps {
   data: Penguin[];
-  xField: string;
-  yField: string;
+  xField: NumericField;
+  yField: NumericField;
   visibleSpecies: string[];
 }
 
@@ -43,13 +40,16 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
   );
 
   const filteredData = useMemo(() => {
-    let fd = data.filter(
-      (d) => (d as any)[xField] != null && (d as any)[yField] != null
-    );
-    if (visibleSpecies.length > 0) {
-      fd = fd.filter((d) => visibleSpecies.includes(d.species));
-    }
-    return fd;
+    return data.filter((penguin) => {
+      const xValue = coerceNumericValue(penguin[xField]);
+      const yValue = coerceNumericValue(penguin[yField]);
+      return (
+        xValue !== null &&
+        yValue !== null &&
+        (visibleSpecies.length === 0 ||
+          visibleSpecies.includes(penguin.species))
+      );
+    });
   }, [data, xField, yField, visibleSpecies]);
 
   const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
@@ -77,16 +77,19 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
 
     svg.selectAll('*').remove();
 
-    const xExtent = d3.extent(
-      filteredData,
-      (d: Penguin) => (d as any)[xField]
-    ) as [number, number];
-    const yExtent = d3.extent(
-      filteredData,
-      (d: Penguin) => (d as any)[yField]
-    ) as [number, number];
+    const xExtent = d3.extent(filteredData, (penguin) => {
+      return coerceNumericValue(penguin[xField]) ?? 0;
+    }) as [number, number];
+    const yExtent = d3.extent(filteredData, (penguin) => {
+      return coerceNumericValue(penguin[yField]) ?? 0;
+    }) as [number, number];
 
-    if (!xExtent[0] || !yExtent[0]) return; // Invalid extents
+    if (xExtent[0] == null || xExtent[1] == null) {
+      return;
+    }
+    if (yExtent[0] == null || yExtent[1] == null) {
+      return;
+    }
 
     const xScale = d3.scaleLinear().domain(xExtent).range([0, w]).nice();
     const yScale = d3.scaleLinear().domain(yExtent).range([h, 0]).nice();
@@ -105,7 +108,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .attr('y', 35)
       .attr('fill', 'currentColor')
       .style('text-anchor', 'middle')
-      .text(formatFieldName(xField));
+      .text(getFieldLabel(xField));
 
     const yAxis = g.append('g');
 
@@ -118,7 +121,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .attr('x', -h / 2)
       .attr('fill', 'currentColor')
       .style('text-anchor', 'middle')
-      .text(formatFieldName(yField));
+      .text(getFieldLabel(yField));
 
     const circles = g
       .selectAll('.data-point')
@@ -126,8 +129,14 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .enter()
       .append('circle')
       .attr('class', 'data-point')
-      .attr('cx', (d: Penguin) => xScale((d as any)[xField] as number))
-      .attr('cy', (d: Penguin) => yScale((d as any)[yField] as number))
+      .attr('cx', (penguin: Penguin) => {
+        const value = coerceNumericValue(penguin[xField]);
+        return xScale(value ?? 0);
+      })
+      .attr('cy', (penguin: Penguin) => {
+        const value = coerceNumericValue(penguin[yField]);
+        return yScale(value ?? 0);
+      })
       .attr('r', 4)
       .attr('fill', (d: Penguin) => colorScale(d.species))
       .attr('stroke', '#fff')
@@ -137,7 +146,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
       .attr(
         'aria-label',
         (d: Penguin) =>
-          `Point: ${d.species}, ${formatFieldName(xField)}: ${(d as any)[xField]}, ${formatFieldName(yField)}: ${(d as any)[yField]}`
+          `Point: ${d.species}, ${getFieldLabel(xField)}: ${coerceNumericValue(d[xField])}, ${getFieldLabel(yField)}: ${coerceNumericValue(d[yField])}`
       );
 
     const handleMouseEnter = (event: MouseEvent, d: Penguin) => {
@@ -185,7 +194,7 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
         width={dimensions.width}
         height={dimensions.height}
         role="img"
-        aria-label={`Scatter plot of ${formatFieldName(xField)} vs ${formatFieldName(yField)} colored by species`}
+        aria-label={`Scatter plot of ${getFieldLabel(xField)} vs ${getFieldLabel(yField)} colored by species`}
         aria-describedby="scatter-desc"
       />
       <div id="scatter-desc" className="sr-only">
@@ -212,10 +221,12 @@ export const ScatterPlot: FC<ScatterPlotProps> = ({
             <strong>{tooltip.datum.species}</strong>
           </div>
           <div>
-            {formatFieldName(xField)}: {tooltip.datum[xField as keyof Penguin]}
+            {getFieldLabel(xField)}:{' '}
+            {coerceNumericValue(tooltip.datum[xField]) ?? '—'}
           </div>
           <div>
-            {formatFieldName(yField)}: {tooltip.datum[yField as keyof Penguin]}
+            {getFieldLabel(yField)}:{' '}
+            {coerceNumericValue(tooltip.datum[yField]) ?? '—'}
           </div>
           <div>
             Island: {tooltip.datum.island}, Sex:{' '}

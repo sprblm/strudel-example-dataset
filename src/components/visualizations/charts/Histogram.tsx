@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as d3 from 'd3';
 import { Box, Typography, Tooltip } from '@mui/material';
 import { Penguin } from '@/types/penguin';
-import { NumericField } from '../types';
+import { NumericField, coerceNumericValue } from '../types';
 
 const fieldLabels: Record<NumericField, string> = {
   bill_length_mm: 'Bill Length (mm)',
@@ -41,12 +41,12 @@ export const Histogram: React.FC<HistogramProps> = ({
 
   const filteredData = useMemo(
     () =>
-      data.filter(
-        (p) =>
-          visibleSpecies.includes(p.species) &&
-          p[field] != null &&
-          !isNaN(p[field] as number)
-      ),
+      data.filter((penguin) => {
+        const numericValue = coerceNumericValue(penguin[field]);
+        return (
+          visibleSpecies.includes(penguin.species) && numericValue !== null
+        );
+      }),
     [data, field, visibleSpecies]
   );
 
@@ -70,23 +70,20 @@ export const Histogram: React.FC<HistogramProps> = ({
 
     // Scales
     const xValues = filteredData
-      .map((d) => d[field] as number)
-      .filter((v) => v != null && !isNaN(v));
+      .map((penguin) => coerceNumericValue(penguin[field]))
+      .filter((value): value is number => value !== null);
 
-    const x = d3
-      .scaleLinear()
-      .domain(
-        xValues.length > 0
-          ? [Math.min(...xValues), Math.max(...xValues)]
-          : [0, 1]
-      )
-      .range([0, innerWidth])
-      .nice();
+    const xDomain: [number, number] =
+      xValues.length > 0
+        ? [Math.min(...xValues), Math.max(...xValues)]
+        : [0, 1];
+
+    const x = d3.scaleLinear().domain(xDomain).range([0, innerWidth]).nice();
 
     const histogram = d3
       .histogram<Penguin, number>()
-      .value((d) => d[field] as number)
-      .domain(x.domain())
+      .value((penguin) => coerceNumericValue(penguin[field]) ?? 0)
+      .domain(xDomain)
       .thresholds(bins);
 
     const allBins = histogram(filteredData);

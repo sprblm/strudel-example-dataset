@@ -1,52 +1,60 @@
-import { useState, useEffect } from 'react';
-import { useSearch, useNavigate } from '@tanstack/router';
-import { NumericField } from '@/components/visualizations/types';
+import { useCallback, useState } from 'react';
+import {
+  DEFAULT_CHART_FIELDS,
+  NumericField,
+} from '@/components/visualizations/types';
+
+export type ChartType = 'scatter' | 'histogram' | 'box';
 
 export interface ChartConfig {
-  type: 'scatter' | 'histogram' | 'box';
+  type: ChartType;
   x?: NumericField;
   y?: NumericField;
   field?: NumericField;
   bins?: number;
 }
 
-export const useChartConfig = () => {
-  const navigate = useNavigate();
-  const search = useSearch({ from: '/visualize' });
+const INITIAL_CONFIG: ChartConfig = {
+  type: 'scatter',
+  x: DEFAULT_CHART_FIELDS.x,
+  y: DEFAULT_CHART_FIELDS.y,
+  field: DEFAULT_CHART_FIELDS.x,
+  bins: 12,
+};
 
-  const [config, setConfig] = useState<ChartConfig>({
-    type: 'scatter' as const,
-    x: 'bill_length_mm',
-    y: 'body_mass_g',
-    field: 'bill_length_mm',
-    bins: 10,
-  });
+const normaliseConfig = (config: ChartConfig): ChartConfig => {
+  if (config.type === 'scatter') {
+    return {
+      type: 'scatter',
+      x: config.x ?? DEFAULT_CHART_FIELDS.x,
+      y: config.y ?? DEFAULT_CHART_FIELDS.y,
+      field: undefined,
+      bins: undefined,
+    };
+  }
 
-  useEffect(() => {
-    const type = (search.type as ChartConfig['type']) || 'scatter';
-    const x = (search.x as NumericField) || 'bill_length_mm';
-    const y = (search.y as NumericField) || 'body_mass_g';
-    const field = (search.field as NumericField) || 'bill_length_mm';
-    const bins = Number(search.bins) || 10;
+  if (config.type === 'histogram') {
+    return {
+      type: 'histogram',
+      field: config.field ?? DEFAULT_CHART_FIELDS.x,
+      bins: config.bins ?? INITIAL_CONFIG.bins,
+    };
+  }
 
-    setConfig({ type, x, y, field, bins });
-  }, [search]);
-
-  const updateConfig = (updates: Partial<ChartConfig>) => {
-    const newConfig = { ...config, ...updates };
-    setConfig(newConfig);
-
-    // Sync to URL
-    const params = new URLSearchParams();
-    if (newConfig.type !== 'scatter') params.set('type', newConfig.type);
-    if (newConfig.x) params.set('x', newConfig.x);
-    if (newConfig.y) params.set('y', newConfig.y);
-    if (newConfig.field) params.set('field', newConfig.field);
-    if (newConfig.bins && newConfig.type === 'histogram')
-      params.set('bins', newConfig.bins.toString());
-
-    navigate({ search: params.toString() }, { replace: true });
+  return {
+    type: 'box',
+    field: config.field ?? DEFAULT_CHART_FIELDS.x,
   };
+};
+
+export const useChartConfig = () => {
+  const [config, setConfig] = useState<ChartConfig>(INITIAL_CONFIG);
+
+  const updateConfig = useCallback((updates: Partial<ChartConfig>) => {
+    setConfig((prev) => normaliseConfig({ ...prev, ...updates }));
+  }, []);
 
   return { config, updateConfig };
 };
+
+export default useChartConfig;
