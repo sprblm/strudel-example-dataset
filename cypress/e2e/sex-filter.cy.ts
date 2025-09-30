@@ -17,7 +17,7 @@ describe('Sex Filter E2E', () => {
   });
 
   it('tests keyboard navigation', () => {
-    cy.get('[data-testid="sex-radio-all"] input').focus({ force: true });
+    cy.get('[data-testid="sex-radio-all"] input').focus();
     cy.realPress('ArrowDown');
     cy.wait(500);
     cy.get('[data-testid="sex-radio-all"] input').should('be.checked');

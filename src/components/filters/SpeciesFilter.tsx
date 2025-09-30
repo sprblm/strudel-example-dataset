@@ -58,6 +58,8 @@ export const SpeciesFilter: React.FC = () => {
                 }}
                 data-testid={`species-checkbox-${species.toLowerCase()}`}
                 sx={{
+                  width: 48,
+                  height: 48,
                   '&.Mui-focusVisible': {
                     outline: '3px solid',
                     outlineColor: 'primary.main',
@@ -78,6 +80,15 @@ export const SpeciesFilter: React.FC = () => {
               </Typography>
             }
             data-testid={`species-label-${species.toLowerCase()}`}
+            sx={{
+              alignItems: 'center',
+              minHeight: 48,
+              gap: 1,
+              pl: 0,
+              '& .MuiTypography-root': {
+                fontSize: '0.95rem',
+              },
+            }}
           />
         ))}
       </FormGroup>
