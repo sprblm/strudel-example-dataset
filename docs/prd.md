@@ -6,13 +6,13 @@
 
 ## Executive Summary
 
-Palmer Penguins Explorer is a demonstration application showcasing Strudel Kit's capabilities for building accessible scientific data exploration tools. This 30-day prototype will serve as both a functional tool for biology education and a reference implementation for developers.
+Palmer Penguins Explorer is a demo application showcasing Strudel Kit's capabilities for building accessible scientific data exploration tools. This prototype will serve as both a functional tool for biology science and a reference implementation for developers.
 
 ## Product Overview
 
 ### Vision
 
-Create a best-in-class demonstration of how modern, accessible data exploration tools can be built rapidly using Strudel Kit components.
+Create a demo of how modern, accessible data exploration tools can be built rapidly using Strudel Kit components.
 
 ### Success Criteria
 
