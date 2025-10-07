@@ -32,7 +32,10 @@
       "Bash(for:*)",
       "Bash(done)",
       "Bash(npx vitest run:*)",
-      "Bash(cypress run:*)"
+      "Bash(cypress run:*)",
+      "Bash(npx cypress run:*)",
+      "Bash(eza:*)",
+      "Bash(xargs kill:*)"
     ],
     "deny": [],
     "ask": []
