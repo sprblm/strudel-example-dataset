@@ -28,7 +28,11 @@ describe('useExport', () => {
     fillRect: vi.fn(),
     scale: vi.fn(),
     drawImage: vi.fn(),
-  } as const;
+    fillText: vi.fn(),
+    font: '',
+    textAlign: 'left' as CanvasTextAlign,
+    textBaseline: 'alphabetic' as CanvasTextBaseline,
+  };
 
   let canvasMock: HTMLCanvasElement;
   let anchorClickSpy: ReturnType<typeof vi.fn>;
@@ -107,6 +111,7 @@ describe('useExport', () => {
     await act(async () => {
       await result.current.exportToPNG(figure, {
         filename: 'penguins-histogram.png',
+        title: 'Histogram Chart',
         scale: 2,
       });
     });

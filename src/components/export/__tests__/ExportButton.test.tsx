@@ -6,10 +6,15 @@ import { ExportButton } from '../ExportButton';
 import { ChartConfig } from '@/hooks/useChartConfig';
 
 const exportToPNG = vi.fn();
+const buildFilename = vi.fn((options: { chartType: string }) => {
+  return `test-${options.chartType}.png`;
+});
 
 vi.mock('@/hooks/useExport', () => ({
   useExport: () => ({
+    exporting: false,
     exportToPNG,
+    buildFilename,
   }),
 }));
 
