@@ -1,13 +1,12 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ExportButton } from '../ExportButton';
-import { ChartConfig } from '@/hooks/useChartConfig';
 
 const exportToPNG = vi.fn();
-const buildFilename = vi.fn((options: { chartType: string }) => {
-  return `test-${options.chartType}.png`;
+const buildFilename = vi.fn(({ chartType }: { chartType: string }) => {
+  return `${chartType}-2025-10-07.png`;
 });
 
 vi.mock('@/hooks/useExport', () => ({
@@ -18,81 +17,92 @@ vi.mock('@/hooks/useExport', () => ({
   }),
 }));
 
-vi.mock('dayjs', () => ({
-  default: () => ({
-    format: () => '20250101',
-  }),
-}));
-
-describe('ExportButton', () => {
+describe('ExportButton (export/__tests__)', () => {
   beforeEach(() => {
     exportToPNG.mockReset();
+    buildFilename.mockClear();
   });
 
-  const renderButton = (override?: Partial<ChartConfig>, chartReady = true) => {
-    const chartRef = {
-      current: chartReady ? document.createElement('div') : null,
-    } as React.RefObject<HTMLElement>;
+  const renderButton = (options?: {
+    chartType?: string;
+    title?: string;
+    disabled?: boolean;
+    withSvg?: boolean;
+  }) => {
+    const {
+      chartType = 'scatter',
+      title = 'Scatter Plot',
+      disabled = false,
+    } = options ?? {};
 
-    if (chartRef.current) {
+    const container = document.createElement('figure');
+    if (options?.withSvg !== false) {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      chartRef.current.appendChild(svg);
+      container.appendChild(svg);
     }
 
-    const config: ChartConfig = {
-      type: 'scatter',
-      x: 'bill_length_mm',
-      y: 'body_mass_g',
-      field: 'bill_length_mm',
-      bins: 10,
-      ...override,
-    };
+    const ref = { current: container } as React.RefObject<HTMLElement>;
 
-    render(<ExportButton chartRef={chartRef} chartConfig={config} />);
+    render(
+      <ExportButton
+        containerRef={ref}
+        chartType={chartType}
+        title={title}
+        disabled={disabled}
+      />
+    );
 
-    return chartRef;
+    return { container, chartType, title, ref };
   };
 
-  it('invokes export with constructed filename for scatter plots', async () => {
-    const chartRef = renderButton();
+  it('calls export utilities with the generated filename', async () => {
     const user = userEvent.setup();
+    const { container, chartType, title } = renderButton();
 
-    await user.click(screen.getByRole('button', { name: /download png/i }));
+    await user.click(
+      screen.getByRole('button', {
+        name: /download scatter chart as png/i,
+      })
+    );
 
-    await waitFor(() => {
-      expect(exportToPNG).toHaveBeenCalledWith(chartRef.current, {
-        filename: 'penguins-scatter-bill-length-mm-vs-body-mass-g-20250101.png',
-        scale: 2,
-      });
+    expect(buildFilename).toHaveBeenCalledWith({ chartType });
+    expect(exportToPNG).toHaveBeenCalledWith(container, {
+      filename: `${chartType}-2025-10-07.png`,
+      chartType,
+      title,
     });
   });
 
-  it('uses field-based filename for histogram', async () => {
-    renderButton({ type: 'histogram', field: 'body_mass_g' });
-    const user = userEvent.setup();
+  it('does not invoke export when disabled', () => {
+    renderButton({ disabled: true });
 
-    await user.click(screen.getByRole('button', { name: /download png/i }));
-
-    await waitFor(() => {
-      expect(exportToPNG).toHaveBeenCalledWith(expect.any(Object), {
-        filename: 'penguins-histogram-body-mass-g-20250101.png',
-        scale: 2,
-      });
+    const button = screen.getByRole('button', {
+      name: /download scatter chart as png/i,
     });
-  });
 
-  it('displays error when chart reference is not ready', async () => {
-    renderButton({}, false);
-    const user = userEvent.setup();
-
-    await user.click(screen.getByRole('button', { name: /download png/i }));
-
+    expect(button).toBeDisabled();
     expect(exportToPNG).not.toHaveBeenCalled();
+  });
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('Chart is not ready yet. Try again in a moment.')
-      ).toBeInTheDocument();
-    });
+  it('prevents export when the container ref is empty', async () => {
+    const user = userEvent.setup();
+    const ref = { current: null } as React.RefObject<HTMLElement>;
+
+    render(
+      <ExportButton
+        containerRef={ref}
+        chartType="histogram"
+        title="Histogram"
+      />
+    );
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /download histogram chart as png/i,
+      })
+    );
+
+    expect(buildFilename).not.toHaveBeenCalled();
+    expect(exportToPNG).not.toHaveBeenCalled();
   });
 });

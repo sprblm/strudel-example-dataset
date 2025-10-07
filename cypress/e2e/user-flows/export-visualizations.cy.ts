@@ -3,8 +3,8 @@ describe('Export Visualizations', () => {
 
   beforeEach(() => {
     cy.visit('/visualizations/');
-    // Clock must be set AFTER visit to avoid breaking data fetching
-    cy.clock(fixedNow);
+    // Stub Date after navigation without freezing timers used by React Query
+    cy.clock(fixedNow, ['Date']);
   });
 
   it('exports a PNG with chart metadata and remains accessible', () => {

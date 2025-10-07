@@ -13,7 +13,7 @@ describe('ExportButton', () => {
     const exportToPNG = vi.fn().mockResolvedValue(undefined);
     const buildFilename = vi.fn().mockReturnValue('scatter-2025-09-25.png');
 
-    vi.spyOn(useExportModule, 'default').mockReturnValue({
+    vi.spyOn(useExportModule, 'useExport').mockReturnValue({
       exporting: false,
       exportToPNG,
       buildFilename,
@@ -50,7 +50,7 @@ describe('ExportButton', () => {
     const exportToPNG = vi.fn();
     const buildFilename = vi.fn();
 
-    vi.spyOn(useExportModule, 'default').mockReturnValue({
+    vi.spyOn(useExportModule, 'useExport').mockReturnValue({
       exporting: false,
       exportToPNG,
       buildFilename,

@@ -1,8 +1,10 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { VisualizationPanel } from './VisualizationPanel';
 import { AppProvider } from '@/context/ContextProvider';
+import * as useExportModule from '@/hooks/useExport';
 
 vi.mock('@tanstack/react-router', () => ({
   useSearch: () => ({}),
@@ -55,6 +57,23 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('VisualizationPanel', () => {
+  const exportToPNG = vi.fn().mockResolvedValue(undefined);
+  const buildFilename = vi.fn().mockReturnValue('scatter-2025-10-07.png');
+
+  beforeEach(() => {
+    exportToPNG.mockClear();
+    buildFilename.mockClear();
+    vi.spyOn(useExportModule, 'useExport').mockReturnValue({
+      exporting: false,
+      exportToPNG,
+      buildFilename,
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('renders scatter plot components', () => {
     render(<VisualizationPanel />, { wrapper });
 
@@ -76,5 +95,29 @@ describe('VisualizationPanel', () => {
       })
     ).toBeInTheDocument();
     expect(screen.getByTestId('export-visualization-button')).toBeEnabled();
+  });
+
+  it('invokes export workflow when the download button is clicked', async () => {
+    const user = userEvent.setup();
+    render(<VisualizationPanel />, { wrapper });
+
+    const button = await screen.findByRole('button', {
+      name: /download scatter chart as png/i,
+    });
+
+    await user.click(button);
+
+    await waitFor(() => {
+      expect(buildFilename).toHaveBeenCalledWith({ chartType: 'scatter' });
+      expect(exportToPNG).toHaveBeenCalledTimes(1);
+    });
+
+    const [containerArg, optionsArg] = exportToPNG.mock.calls[0] ?? [];
+    expect(containerArg).toBeInstanceOf(HTMLElement);
+    expect(optionsArg).toMatchObject({
+      chartType: 'scatter',
+      title: 'Scatter Plot: Bill Length Mm vs Body Mass G',
+    });
+    expect(optionsArg.filename).toBe(buildFilename.mock.results[0]?.value);
   });
 });

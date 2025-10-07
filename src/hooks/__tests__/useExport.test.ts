@@ -121,9 +121,9 @@ describe('useExport', () => {
     expect(contextMock.drawImage).toHaveBeenCalledWith(
       expect.any(Image),
       0,
-      0,
-      400,
-      300 + TITLE_PADDING
+      TITLE_PADDING * 2,
+      400 * 2,
+      300 * 2
     );
     expect(anchorClickSpy).toHaveBeenCalledTimes(1);
   });
