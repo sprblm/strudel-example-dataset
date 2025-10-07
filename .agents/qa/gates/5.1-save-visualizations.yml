@@ -1,0 +1,64 @@
+schema: 1
+story: '5.1'
+story_title: 'Save Visualizations'
+gate: FAIL
+status_reason: 'Vitest and Cypress suites for the export flow are failing, so AC coverage cannot be trusted.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-09-26T00:00:00Z'
+top_issues:
+  - id: 'TEST-201'
+    severity: high
+    finding: 'Visualization panel spec fails because the combobox matcher still expects “X axis/Y axis,” breaking the unit regression suite.'
+    suggested_action: 'Update `VisualizationPanel.test.tsx` to align with the new accessible labels (“X-axis”, “Y-axis”) and re-run Vitest.'
+    refs:
+      - src/components/visualizations/VisualizationPanel.test.tsx:62
+  - id: 'TEST-202'
+    severity: high
+    finding: 'Cypress export flow uses stale selectors (`export-chart-button`) and filename expectations, so AC3/AC4 checks never execute.'
+    suggested_action: 'Synchronize the Cypress spec with `ExportButton` (`data-testid="export-visualization-button"`) and new filename convention before rerunning the suite.'
+    refs:
+      - cypress/e2e/user-flows/export-visualizations.cy.ts:22
+      - src/components/export/ExportButton.tsx:36
+  - id: 'DOC-202'
+    severity: medium
+    finding: 'Story artifact still lists Status “Ready for Done” and omits the required Testing section, leaving downstream agents without a reliable source of truth.'
+    suggested_action: 'Realign the story document with the template (valid status + Testing section describing validations).' 
+    refs:
+      - docs/stories/5.1.save-visualizations.story.md:5
+      - docs/stories/5.1.save-visualizations.story.md:48
+waiver:
+  active: false
+quality_score: 60
+evidence:
+  tests_reviewed: 3
+  risks_identified: 3
+  trace:
+    ac_covered: [1, 2]
+    ac_gaps: [3, 4]
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'No new attack surface; download flow operates on client-side SVG to PNG rendering.'
+  performance:
+    status: PASS
+    notes: 'Canvas scaling is bounded (scale=2) and reuses existing lazy-loaded dependencies.'
+  reliability:
+    status: FAIL
+    notes: 'Vitest spec fails on label mismatch, leaving regression suite broken.'
+  maintainability:
+    status: FAIL
+    notes: 'Selector drift between code and Cypress tests plus template misalignment will continue to regress without correction.'
+recommendations:
+  immediate:
+    - action: 'Fix failing Vitest spec and regenerate Cypress selectors/expectations, then rerun `npm run test` and Cypress suite.'
+      refs:
+        - src/components/visualizations/VisualizationPanel.test.tsx
+        - cypress/e2e/user-flows/export-visualizations.cy.ts
+    - action: 'Restore story template compliance (valid Status value, populate Testing section with traceable steps).'
+      refs:
+        - docs/stories/5.1.save-visualizations.story.md
+  future:
+    - action: 'Add filename-focused unit test for `useExport.buildFilename` and extend Cypress to cover histogram/box charts.'
+      refs:
+        - src/hooks/useExport.ts
+        - cypress/e2e/user-flows/export-visualizations.cy.ts
