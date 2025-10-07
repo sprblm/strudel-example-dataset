@@ -66,7 +66,9 @@ describe('VisualizationPanel', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Adelie')).toBeInTheDocument();
     expect(
-      screen.getByRole('img', { name: /scatter plot/i })
+      screen.getByRole('img', {
+        name: /scatter plot of bill length mm vs body mass g/i,
+      })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', {

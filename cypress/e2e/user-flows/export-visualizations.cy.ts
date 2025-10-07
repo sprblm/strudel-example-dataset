@@ -2,14 +2,18 @@ describe('Export Visualizations', () => {
   const fixedNow = new Date(2025, 8, 24, 12, 0, 0).getTime();
 
   beforeEach(() => {
+    cy.visit('/visualizations/');
+    // Clock must be set AFTER visit to avoid breaking data fetching
     cy.clock(fixedNow);
-    cy.visit('/penguins/');
   });
 
   it('exports a PNG with chart metadata and remains accessible', () => {
     cy.injectAxe();
 
     cy.get('[data-testid="visualization-panel"]').should('exist');
+
+    // Wait for data to load and chart to render
+    cy.contains('Adelie').should('be.visible');
     cy.get('figure[role="img"] svg', { timeout: 10000 }).should('be.visible');
     cy.contains('figcaption', 'Scatter Plot: Bill Length Mm vs Body Mass G').should(
       'be.visible'

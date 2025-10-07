@@ -12,6 +12,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { Route as rootRouteImport } from './pages/__root';
 import { Route as IndexRouteImport } from './pages/index';
+import { Route as VisualizationsIndexRouteImport } from './pages/visualizations/index';
 import { Route as SearchDataRepositoriesIndexRouteImport } from './pages/search-data-repositories/index';
 import { Route as PlaygroundIndexRouteImport } from './pages/playground/index';
 import { Route as PenguinsIndexRouteImport } from './pages/penguins/index';
@@ -63,6 +64,11 @@ const CompareDataRoute = CompareDataRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const VisualizationsIndexRoute = VisualizationsIndexRouteImport.update({
+  id: '/visualizations/',
+  path: '/visualizations/',
   getParentRoute: () => rootRouteImport,
 } as any);
 const SearchDataRepositoriesIndexRoute =
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/penguins': typeof PenguinsIndexRoute;
   '/playground': typeof PlaygroundIndexRoute;
   '/search-data-repositories': typeof SearchDataRepositoriesIndexRoute;
+  '/visualizations': typeof VisualizationsIndexRoute;
   '/compare-data/compare': typeof CompareDataLayoutCompareRoute;
   '/compare-data/new': typeof CompareDataLayoutNewRoute;
   '/contribute-data/new': typeof ContributeDataLayoutNewRoute;
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/penguins': typeof PenguinsIndexRoute;
   '/playground': typeof PlaygroundIndexRoute;
   '/search-data-repositories': typeof SearchDataRepositoriesIndexRoute;
+  '/visualizations': typeof VisualizationsIndexRoute;
   '/compare-data/compare': typeof CompareDataLayoutCompareRoute;
   '/compare-data/new': typeof CompareDataLayoutNewRoute;
   '/contribute-data/new': typeof ContributeDataLayoutNewRoute;
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/penguins/': typeof PenguinsIndexRoute;
   '/playground/': typeof PlaygroundIndexRoute;
   '/search-data-repositories/': typeof SearchDataRepositoriesIndexRoute;
+  '/visualizations/': typeof VisualizationsIndexRoute;
   '/compare-data/_layout/compare': typeof CompareDataLayoutCompareRoute;
   '/compare-data/_layout/new': typeof CompareDataLayoutNewRoute;
   '/contribute-data/_layout/new': typeof ContributeDataLayoutNewRoute;
@@ -307,6 +316,7 @@ export interface FileRouteTypes {
     | '/penguins'
     | '/playground'
     | '/search-data-repositories'
+    | '/visualizations'
     | '/compare-data/compare'
     | '/compare-data/new'
     | '/contribute-data/new'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/penguins'
     | '/playground'
     | '/search-data-repositories'
+    | '/visualizations'
     | '/compare-data/compare'
     | '/compare-data/new'
     | '/contribute-data/new'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/penguins/'
     | '/playground/'
     | '/search-data-repositories/'
+    | '/visualizations/'
     | '/compare-data/_layout/compare'
     | '/compare-data/_layout/new'
     | '/contribute-data/_layout/new'
@@ -393,6 +405,7 @@ export interface RootRouteChildren {
   PenguinsIndexRoute: typeof PenguinsIndexRoute;
   PlaygroundIndexRoute: typeof PlaygroundIndexRoute;
   SearchDataRepositoriesIndexRoute: typeof SearchDataRepositoriesIndexRoute;
+  VisualizationsIndexRoute: typeof VisualizationsIndexRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -423,6 +436,13 @@ declare module '@tanstack/react-router' {
       path: '/';
       fullPath: '/';
       preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/visualizations/': {
+      id: '/visualizations/';
+      path: '/visualizations';
+      fullPath: '/visualizations';
+      preLoaderRoute: typeof VisualizationsIndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/search-data-repositories/': {
@@ -744,6 +764,7 @@ const rootRouteChildren: RootRouteChildren = {
   PenguinsIndexRoute: PenguinsIndexRoute,
   PlaygroundIndexRoute: PlaygroundIndexRoute,
   SearchDataRepositoriesIndexRoute: SearchDataRepositoriesIndexRoute,
+  VisualizationsIndexRoute: VisualizationsIndexRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
