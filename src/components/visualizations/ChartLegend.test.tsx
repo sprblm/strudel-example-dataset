@@ -14,67 +14,81 @@ vi.mock('@mui/material', async (importOriginal) => {
 });
 
 describe('ChartLegend', () => {
-  const mockOnToggleSpecies = vi.fn();
+  const mockOnVisibilityChange = vi.fn();
   const ALL_SPECIES = ['Adelie', 'Chinstrap', 'Gentoo']; // All possible species
 
   beforeEach(() => {
-    mockOnToggleSpecies.mockClear();
+    mockOnVisibilityChange.mockClear();
   });
 
   it('renders correctly with all species visible initially', () => {
     render(
       <ChartLegend
-        allSpecies={ALL_SPECIES}
-        initialVisibleSpecies={ALL_SPECIES} // All visible initially
-        onToggleSpecies={mockOnToggleSpecies}
+        visibleSpecies={ALL_SPECIES}
+        onVisibilityChange={mockOnVisibilityChange}
       />
     );
 
     ALL_SPECIES.forEach((s) => {
       expect(screen.getByText(s)).toBeInTheDocument();
-      expect(screen.getByLabelText(s)).toBeChecked();
+      expect(screen.getByLabelText(`Toggle ${s} series off`)).toBeChecked();
     });
   });
 
   it('toggles species visibility when a switch is clicked', async () => {
-    render(
+    let visibleSpecies = [...ALL_SPECIES];
+
+    const handleVisibilityChange = (species: string, visible: boolean) => {
+      mockOnVisibilityChange(species, visible);
+      if (!visible) {
+        visibleSpecies = visibleSpecies.filter((s) => s !== species);
+      } else {
+        visibleSpecies = [...visibleSpecies, species];
+      }
+    };
+
+    const { rerender } = render(
       <ChartLegend
-        allSpecies={ALL_SPECIES}
-        initialVisibleSpecies={ALL_SPECIES}
-        onToggleSpecies={mockOnToggleSpecies}
+        visibleSpecies={visibleSpecies}
+        onVisibilityChange={handleVisibilityChange}
       />
     );
 
-    const adelieSwitch = screen.getByLabelText('Adelie');
+    const adelieSwitch = screen.getByLabelText('Toggle Adelie series off');
     await userEvent.click(adelieSwitch);
 
-    expect(adelieSwitch).not.toBeChecked();
-    expect(mockOnToggleSpecies).toHaveBeenCalledTimes(1);
-    expect(mockOnToggleSpecies).toHaveBeenCalledWith(['Chinstrap', 'Gentoo']);
+    expect(mockOnVisibilityChange).toHaveBeenCalledTimes(1);
+    expect(mockOnVisibilityChange).toHaveBeenCalledWith('Adelie', false);
 
-    await userEvent.click(adelieSwitch);
+    // Rerender with updated visible species
+    rerender(
+      <ChartLegend
+        visibleSpecies={visibleSpecies}
+        onVisibilityChange={handleVisibilityChange}
+      />
+    );
 
-    expect(adelieSwitch).toBeChecked();
-    expect(mockOnToggleSpecies).toHaveBeenCalledTimes(2);
-    expect(mockOnToggleSpecies).toHaveBeenCalledWith([
-      'Chinstrap',
-      'Gentoo',
-      'Adelie',
-    ]);
+    expect(screen.getByLabelText('Toggle Adelie series on')).not.toBeChecked();
+
+    await userEvent.click(screen.getByLabelText('Toggle Adelie series on'));
+
+    expect(mockOnVisibilityChange).toHaveBeenCalledTimes(2);
+    expect(mockOnVisibilityChange).toHaveBeenCalledWith('Adelie', true);
   });
 
   it('correctly displays initial visible species when a subset is provided', () => {
     const INITIAL_VISIBLE_SUBSET = ['Adelie'];
     render(
       <ChartLegend
-        allSpecies={ALL_SPECIES} // Pass all species
-        initialVisibleSpecies={INITIAL_VISIBLE_SUBSET} // Only Adelie visible
-        onToggleSpecies={mockOnToggleSpecies}
+        visibleSpecies={INITIAL_VISIBLE_SUBSET} // Only Adelie visible
+        onVisibilityChange={mockOnVisibilityChange}
       />
     );
 
-    expect(screen.getByLabelText('Adelie')).toBeChecked();
-    expect(screen.getByLabelText('Chinstrap')).not.toBeChecked();
-    expect(screen.getByLabelText('Gentoo')).not.toBeChecked();
+    expect(screen.getByLabelText('Toggle Adelie series off')).toBeChecked();
+    expect(
+      screen.getByLabelText('Toggle Chinstrap series on')
+    ).not.toBeChecked();
+    expect(screen.getByLabelText('Toggle Gentoo series on')).not.toBeChecked();
   });
 });

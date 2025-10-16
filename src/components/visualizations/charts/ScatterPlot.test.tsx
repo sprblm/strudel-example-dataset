@@ -61,7 +61,7 @@ const mockData: Penguin[] = [
   },
 ];
 
-const visibleSpecies = new Set(['Adelie', 'Chinstrap']);
+const visibleSpecies = ['Adelie', 'Chinstrap'];
 
 describe('ScatterPlot', () => {
   it('renders SVG for data', () => {
@@ -86,7 +86,7 @@ describe('ScatterPlot', () => {
           data={[]}
           xField="bill_length_mm"
           yField="body_mass_g"
-          visibleSpecies={new Set()}
+          visibleSpecies={[]}
         />
       </ThemeProvider>
     );
@@ -132,7 +132,7 @@ describe('ScatterPlot', () => {
           data={allData}
           xField="bill_length_mm"
           yField="body_mass_g"
-          visibleSpecies={new Set(['Adelie'])}
+          visibleSpecies={['Adelie']}
         />
       </ThemeProvider>
     );
