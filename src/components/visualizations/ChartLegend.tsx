@@ -54,6 +54,7 @@ const ChartLegend = ({
         return (
           <FormControlLabel
             key={species}
+            data-testid={`species-checkbox-${species.toLowerCase()}`}
             control={
               <Switch
                 checked={isVisible}
