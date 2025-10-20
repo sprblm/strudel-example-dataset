@@ -7,123 +7,179 @@ import type {} from '@mui/x-data-grid/themeAugmentation';
  * Learn more about theme options: https://mui.com/material-ui/customization/theming/
  */
 export const theme = createTheme({
-  // Color palette to use throughout the app
   palette: {
-    mode: 'light',
+    mode: 'dark',
     background: {
-      default: '#F5F5F6',
-      paper: '#fff',
+      default: '#0d0d0d',
+      paper: '#131313',
     },
     primary: {
-      main: '#1976d2',
-      // Exclude light, dark, or contrastText to have them
-      // calculated automatically based on the main color.
-      light: '#42a5f5',
-      dark: '#1565c0',
-      contrastText: '#fff',
+      main: '#f5f5f0',
+      contrastText: '#0a0a0a',
     },
     secondary: {
-      main: '#9c27b0',
-      light: '#ba68c8',
-      dark: '#7b1fa2',
-      contrastText: '#fff',
+      main: '#5c5c5c',
+      light: '#6f6f6f',
+      dark: '#3c3c3c',
+      contrastText: '#f5f5f0',
     },
     info: {
-      main: '#0288d1',
-      light: '#03a9f4',
-      dark: '#01579b',
-      contrastText: '#fff',
+      main: '#8ba7ff',
+      light: '#a6bbff',
+      dark: '#5163c9',
+      contrastText: '#0a0a0a',
     },
     success: {
-      main: '#2e7d32',
-      light: '#4caf50',
-      dark: '#1b5e20',
-      contrastText: '#fff',
+      main: '#7ed17a',
+      contrastText: '#0a0a0a',
     },
     warning: {
-      main: '#ed6c02',
-      light: '#ff9800',
-      dark: '#e65100',
-      contrastText: '#fff',
+      main: '#f5c16c',
+      contrastText: '#0a0a0a',
     },
     error: {
-      main: '#d32f2f',
-      light: '#ef5350',
-      dark: '#c62828',
-      contrastText: '#fff',
+      main: '#ff8080',
+      contrastText: '#0a0a0a',
     },
     neutral: {
-      main: '#DADADA',
-      light: '#e0e0e0',
-      dark: '#828282',
+      main: '#262626',
+      light: '#2f2f2f',
+      dark: '#191919',
     },
     common: {
       black: '#000',
       white: '#fff',
     },
     grey: {
-      50: '#ddd',
-      500: '#999',
-      900: '#444',
+      50: '#f2f2f2',
+      200: '#d1d1d1',
+      500: '#8a8a8a',
+      700: '#3e3e3e',
+      900: '#1a1a1a',
+    },
+    divider: '#1f1f1f',
+    text: {
+      primary: '#f5f5f5',
+      secondary: '#b0b0b0',
     },
   },
-  // Control the default border radius
   shape: {
-    borderRadius: 4,
+    borderRadius: 6,
   },
-  // Control the font, size, and font weights
   typography: {
     htmlFontSize: 16,
-    fontFamily: `"Helvetica", "Verdana", "Arial", sans-serif`,
-    fontSize: 14,
+    fontFamily: `"Space Grotesk", "Helvetica Neue", "Arial", sans-serif`,
+    fontSize: 16,
     fontWeightLight: 300,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
-    fontWeightBold: 700,
+    fontWeightBold: 600,
+    h1: {
+      fontSize: '3.25rem',
+      fontWeight: 300,
+      letterSpacing: '-0.035em',
+    },
+    h2: {
+      fontSize: '2.5rem',
+      fontWeight: 300,
+      letterSpacing: '-0.03em',
+    },
+    h3: {
+      fontSize: '1.75rem',
+      fontWeight: 400,
+    },
+    h4: {
+      fontSize: '1.5rem',
+      fontWeight: 400,
+    },
+    h5: {
+      fontSize: '1.25rem',
+      fontWeight: 500,
+    },
+    body1: {
+      lineHeight: 1.7,
+      fontSize: '1rem',
+    },
+    body2: {
+      lineHeight: 1.6,
+      fontSize: '0.95rem',
+    },
+    overline: {
+      fontSize: '0.75rem',
+      letterSpacing: '0.14em',
+      textTransform: 'uppercase',
+      fontWeight: 500,
+    },
   },
-  // Default options for MUI components used throughout the app
   components: {
-    /**
-     * Example component customization.
-     * Learn more at https://mui.com/material-ui/customization/theme-components/
-     * 
-        MuiComponentName: {
-          defaultProps: {
-            // Put prop names and values here
-          },
-          styleOverrides: {
-            root: {
-              // Put styles here
-            }
-          },
-          // Create new custom variants of certain components
-          variants: [
-            {
-              props: { variant: '' },
-              style: {
-                // Put styles here
-              },
-            },
-          ],
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: '#0d0d0d',
+          color: '#f5f5f5',
+          letterSpacing: '0.01em',
         },
-     *
-     */
+      },
+    },
     MuiButton: {
-      variants: [
-        {
-          props: { color: 'neutral' },
-          style: {
-            backgroundColor: 'white',
-            borderColor: '#bdbdbd',
-            color: '#757575',
+      defaultProps: {
+        disableElevation: true,
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: 999,
+          textTransform: 'none',
+          letterSpacing: '0.02em',
+          paddingInline: '1.4rem',
+          paddingBlock: '0.65rem',
+        },
+        containedPrimary: {
+          backgroundColor: '#f5f5f0',
+          color: '#0a0a0a',
+          '&:hover': {
+            backgroundColor: '#e2e2da',
           },
         },
-      ],
+        outlined: {
+          borderColor: '#2d2d2d',
+          color: '#f5f5f5',
+          '&:hover': {
+            borderColor: '#404040',
+            backgroundColor: 'rgba(255,255,255,0.04)',
+          },
+        },
+      },
     },
     MuiLink: {
       styleOverrides: {
         root: {
+          color: '#f5f5f5',
           textDecoration: 'none',
+          '&:hover': {
+            color: '#ffffff',
+            textDecoration: 'underline',
+            textDecorationThickness: '1px',
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          backgroundColor: '#131313',
+          borderRadius: 12,
+          border: '1px solid rgba(255,255,255,0.06)',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#131313',
+          borderRadius: 12,
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: 'none',
         },
       },
     },
@@ -136,6 +192,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           border: 0,
+          backgroundColor: '#131313',
           '& .MuiDataGrid-cell:focus-within': {
             outline: 'none',
           },
@@ -143,10 +200,11 @@ export const theme = createTheme({
             minHeight: '4rem',
           },
           '& .MuiDataGrid-columnHeaderTitle': {
-            color: 'grey.900',
+            color: '#e1e1e1',
             fontSize: '0.85rem',
-            fontWeight: 'bold',
+            fontWeight: 500,
             textTransform: 'uppercase',
+            letterSpacing: '0.1em',
           },
         },
       },

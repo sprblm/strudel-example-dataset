@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Box, Alert, Stack } from '@mui/material';
+import { Box, Alert, Stack, Button } from '@mui/material';
 import { useChartConfig } from '@/hooks/useChartConfig';
 import { AxisControls } from './AxisControls';
 import { ChartLegend } from './ChartLegend';
@@ -17,6 +17,7 @@ import {
   updateIslandFilter,
   updateSexFilter,
   updateSpeciesFilter,
+  openHelpModal,
 } from '@/context/actions';
 import { useURLSync } from '@/hooks/useURLSync';
 
@@ -28,6 +29,7 @@ export const VisualizationPanel: React.FC = () => {
     'Chinstrap',
     'Gentoo',
   ]);
+  const [highContrast, setHighContrast] = useState(false);
   const { config, updateConfig } = useChartConfig();
   const chartContainerRef = useRef<HTMLElement | null>(null);
 
@@ -71,6 +73,10 @@ export const VisualizationPanel: React.FC = () => {
     [penguins, visibleSpecies]
   );
 
+  const chartContainerClassName = highContrast
+    ? 'chart-container--high-contrast'
+    : undefined;
+
   const chartTitle = useMemo(() => {
     switch (resolvedConfig.type) {
       case 'scatter':
@@ -103,6 +109,7 @@ export const VisualizationPanel: React.FC = () => {
             fields={{ x: resolvedConfig.x, y: resolvedConfig.y }}
             title={chartTitle}
             ref={chartContainerRef}
+            className={chartContainerClassName}
           >
             <ScatterPlot
               data={filteredData}
@@ -120,6 +127,7 @@ export const VisualizationPanel: React.FC = () => {
             fields={{ field: resolvedConfig.field }}
             title={chartTitle}
             ref={chartContainerRef}
+            className={chartContainerClassName}
           >
             <Histogram
               data={filteredData}
@@ -137,6 +145,7 @@ export const VisualizationPanel: React.FC = () => {
             fields={{ field: resolvedConfig.field }}
             title={chartTitle}
             ref={chartContainerRef}
+            className={chartContainerClassName}
           >
             <BoxPlot
               data={filteredData}
@@ -152,30 +161,48 @@ export const VisualizationPanel: React.FC = () => {
 
   return (
     <Box sx={{ p: 2 }} data-testid="visualization-panel">
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 2,
-          mb: 2,
-        }}
-      >
-        <AxisControls config={resolvedConfig} onConfigChange={updateConfig} />
-        <Stack direction="row" spacing={1}>
-          <ShareButton
-            getShareUrl={buildShareUrl}
-            disabled={!hydrated || filteredData.length === 0}
-          />
-          <ExportButton
-            containerRef={chartContainerRef}
-            chartType={resolvedConfig.type}
-            title={chartTitle}
-            disabled={filteredData.length === 0}
-          />
+      <Stack spacing={2.5} sx={{ mb: 2.5 }}>
+        <Stack
+          direction={{ xs: 'column', lg: 'row' }}
+          spacing={2}
+          alignItems={{ xs: 'stretch', lg: 'center' }}
+          justifyContent="space-between"
+        >
+          <AxisControls config={resolvedConfig} onConfigChange={updateConfig} />
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1}
+            alignItems={{ xs: 'stretch', sm: 'center' }}
+          >
+            <Button
+              variant="outlined"
+              onClick={() => dispatch(openHelpModal())}
+              aria-label="Open help dialog"
+            >
+              Help
+            </Button>
+            <Button
+              variant={highContrast ? 'contained' : 'outlined'}
+              onClick={() => setHighContrast((prev) => !prev)}
+              aria-pressed={highContrast}
+            >
+              {highContrast ? 'Standard contrast' : 'High contrast'}
+            </Button>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <ShareButton
+                getShareUrl={buildShareUrl}
+                disabled={!hydrated || filteredData.length === 0}
+              />
+              <ExportButton
+                containerRef={chartContainerRef}
+                chartType={resolvedConfig.type}
+                title={chartTitle}
+                disabled={filteredData.length === 0}
+              />
+            </Stack>
+          </Stack>
         </Stack>
-      </Box>
+      </Stack>
       <ChartLegend
         visibleSpecies={visibleSpecies}
         onVisibilityChange={handleVisibilityChange}
