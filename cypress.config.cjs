@@ -1,8 +1,25 @@
 const { defineConfig } = require('cypress');
 
+const resolveBaseUrl = () => {
+  const explicitBaseUrl = process.env.CYPRESS_BASE_URL;
+  if (explicitBaseUrl) {
+    return explicitBaseUrl.endsWith('/')
+      ? explicitBaseUrl
+      : `${explicitBaseUrl}/`;
+  }
+
+  const preferredPort =
+    process.env.VITE_DEV_SERVER_PORT ||
+    process.env.DEV_SERVER_PORT ||
+    process.env.PORT ||
+    '5175';
+
+  return `http://localhost:${preferredPort}/`;
+};
+
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:5175/',
+    baseUrl: resolveBaseUrl(),
     specPattern: [
       'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
       'src/**/*.cy.{js,jsx,ts,tsx}',

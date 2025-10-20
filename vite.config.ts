@@ -9,12 +9,14 @@ export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd());
+  const preferredPort = Number(env.VITE_DEV_SERVER_PORT) || 5175;
+
   return {
     plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react()],
     base: env.VITE_BASE_URL,
     server: {
-      port: 5175,
-      strictPort: true,
+      port: preferredPort,
+      strictPort: false,
     },
     resolve: {
       alias: {
