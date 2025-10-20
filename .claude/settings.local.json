@@ -35,7 +35,12 @@
       "Bash(cypress run:*)",
       "Bash(npx cypress run:*)",
       "Bash(eza:*)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "Bash(mkdir -p docs/qa/assessments)",
+      "Bash(echo:*)",
+      "Bash(review:*)",
+      "Bash(z:*)",
+      "Bash(bash:*)"
     ],
     "deny": [],
     "ask": []
