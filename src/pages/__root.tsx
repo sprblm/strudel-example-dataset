@@ -1,9 +1,8 @@
 import { Box, Stack } from '@mui/material';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { TopBar } from '../components/TopBar';
 
 /**
- * Basic layout with navbar and footer
+ * Root layout shell for route content
  */
 export const Route = createRootRoute({
   component: () => (
@@ -13,7 +12,6 @@ export const Route = createRootRoute({
         height: '100%',
       }}
     >
-      <TopBar />
       <Box
         component="main"
         sx={{

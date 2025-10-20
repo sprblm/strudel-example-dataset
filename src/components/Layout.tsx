@@ -4,10 +4,9 @@ import { SkipLinks } from './a11y/SkipLinks';
 import { KeyboardShortcutsProvider } from './a11y/KeyboardShortcutsProvider';
 import { LiveRegion } from './a11y/LiveRegion';
 import { Footer } from './Footer';
-import { TopBar } from './TopBar';
 
 /**
- * Basic layout with navbar and footer
+ * Page layout wrapper with skip links and footer
  */
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -20,7 +19,6 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       >
         <SkipLinks />
         <LiveRegion />
-        <TopBar />
         <Box
           component="main"
           id="main-content"
