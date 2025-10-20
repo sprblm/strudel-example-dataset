@@ -8,80 +8,80 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './pages/__root';
-import { Route as IndexRouteImport } from './pages/index';
-import { Route as VisualizationsIndexRouteImport } from './pages/visualizations/index';
-import { Route as PenguinsIndexRouteImport } from './pages/penguins/index';
+import { Route as rootRouteImport } from './pages/__root'
+import { Route as IndexRouteImport } from './pages/index'
+import { Route as VisualizationsIndexRouteImport } from './pages/visualizations/index'
+import { Route as PenguinsIndexRouteImport } from './pages/penguins/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const VisualizationsIndexRoute = VisualizationsIndexRouteImport.update({
   id: '/visualizations/',
   path: '/visualizations/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PenguinsIndexRoute = PenguinsIndexRouteImport.update({
   id: '/penguins/',
   path: '/penguins/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/penguins': typeof PenguinsIndexRoute;
-  '/visualizations': typeof VisualizationsIndexRoute;
+  '/': typeof IndexRoute
+  '/penguins': typeof PenguinsIndexRoute
+  '/visualizations': typeof VisualizationsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/penguins': typeof PenguinsIndexRoute;
-  '/visualizations': typeof VisualizationsIndexRoute;
+  '/': typeof IndexRoute
+  '/penguins': typeof PenguinsIndexRoute
+  '/visualizations': typeof VisualizationsIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
-  '/penguins/': typeof PenguinsIndexRoute;
-  '/visualizations/': typeof VisualizationsIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/penguins/': typeof PenguinsIndexRoute
+  '/visualizations/': typeof VisualizationsIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/penguins' | '/visualizations';
-  fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/penguins' | '/visualizations';
-  id: '__root__' | '/' | '/penguins/' | '/visualizations/';
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/penguins' | '/visualizations'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/penguins' | '/visualizations'
+  id: '__root__' | '/' | '/penguins/' | '/visualizations/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  PenguinsIndexRoute: typeof PenguinsIndexRoute;
-  VisualizationsIndexRoute: typeof VisualizationsIndexRoute;
+  IndexRoute: typeof IndexRoute
+  PenguinsIndexRoute: typeof PenguinsIndexRoute
+  VisualizationsIndexRoute: typeof VisualizationsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/visualizations/': {
-      id: '/visualizations/';
-      path: '/visualizations';
-      fullPath: '/visualizations';
-      preLoaderRoute: typeof VisualizationsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/visualizations/'
+      path: '/visualizations'
+      fullPath: '/visualizations'
+      preLoaderRoute: typeof VisualizationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/penguins/': {
-      id: '/penguins/';
-      path: '/penguins';
-      fullPath: '/penguins';
-      preLoaderRoute: typeof PenguinsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/penguins/'
+      path: '/penguins'
+      fullPath: '/penguins'
+      preLoaderRoute: typeof PenguinsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,7 +89,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PenguinsIndexRoute: PenguinsIndexRoute,
   VisualizationsIndexRoute: VisualizationsIndexRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

@@ -1,19 +1,31 @@
 import React from 'react';
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridValueFormatter,
+} from '@mui/x-data-grid';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import { usePenguinData } from '@/hooks/usePenguinData';
 import { formatValue } from '@/utils/dataHelpers';
 import type { Penguin } from '@/types/penguin';
 
 // Define columns with proper typing and formatting
-const formatNumericCell: GridColDef<Penguin>['valueFormatter'] = (params) => {
-  const value = params?.value;
-  return formatValue((value as number | null) ?? null);
+const formatNumericCell: GridValueFormatter<
+  Penguin,
+  number | null,
+  number | string,
+  number | null
+> = (value) => {
+  return formatValue(value ?? null);
 };
 
-const formatSexCell: GridColDef<Penguin>['valueFormatter'] = (params) => {
-  const value = params?.value;
-  return (value as string | null) ? (value as string) : '—';
+const formatSexCell: GridValueFormatter<
+  Penguin,
+  string | null,
+  string,
+  string | null
+> = (value) => {
+  return value && value.length > 0 ? value : '—';
 };
 
 const columns: GridColDef<Penguin>[] = [

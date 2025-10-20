@@ -8,10 +8,11 @@ import {
 export type ChartType = ChartConfig['type'];
 
 const CHART_TYPES: readonly ChartType[] = ['scatter', 'histogram', 'box'];
-const SPECIES: readonly string[] = ['Adelie', 'Chinstrap', 'Gentoo'];
+const SPECIES = ['Adelie', 'Chinstrap', 'Gentoo'] as const;
+type Species = (typeof SPECIES)[number];
 const ISLANDS: readonly string[] = ['all', 'Biscoe', 'Dream', 'Torgersen'];
 const SEXES: readonly string[] = ['all', 'male', 'female'];
-const DEFAULT_SPECIES = [...SPECIES];
+const DEFAULT_SPECIES: Species[] = [...SPECIES];
 const DEFAULT_ISLAND = 'all';
 const DEFAULT_SEX = 'all';
 const DEFAULT_BINS = DEFAULT_CHART_CONFIG.bins ?? 12;
@@ -62,22 +63,24 @@ const toURLSearchParams = (
   return params;
 };
 
-const normaliseSpecies = (value: string | null): string[] => {
+const toSpecies = (value: string): Species | null => {
+  const lower = value.toLowerCase();
+  if (lower === 'adelie') return 'Adelie';
+  if (lower === 'chinstrap') return 'Chinstrap';
+  if (lower === 'gentoo') return 'Gentoo';
+  return null;
+};
+
+const normaliseSpecies = (value: string | null): Species[] => {
   if (!value) {
     return DEFAULT_SPECIES;
   }
-  const normalised = value
+  const normalised: Species[] = value
     .split(',')
     .map((token) => token.trim())
-    .filter(Boolean)
-    .map((token) => {
-      const lower = token.toLowerCase();
-      if (lower === 'adelie') return 'Adelie';
-      if (lower === 'chinstrap') return 'Chinstrap';
-      if (lower === 'gentoo') return 'Gentoo';
-      return '';
-    })
-    .filter(Boolean);
+    .filter((token): token is string => token.length > 0)
+    .map(toSpecies)
+    .filter((token): token is Species => token !== null);
 
   const uniqueInOrder = SPECIES.filter((species) =>
     normalised.includes(species)
