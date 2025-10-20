@@ -40,7 +40,11 @@
       "Bash(echo:*)",
       "Bash(review:*)",
       "Bash(z:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(npm update:*)",
+      "Bash(npm view @typescript-eslint/eslint-plugin@latest version:*)",
+      "Bash(npm view eslint-config-airbnb-typescript versions:*)",
+      "Bash(npm info:*)"
     ],
     "deny": [],
     "ask": []
