@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { VisualizationPanel } from './VisualizationPanel';
 import { AppProvider } from '@/context/ContextProvider';
 import * as useExportModule from '@/hooks/useExport';
+import * as useURLSyncModule from '@/hooks/useURLSync';
 
 vi.mock('@tanstack/react-router', () => ({
   useSearch: () => ({}),
@@ -59,6 +60,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('VisualizationPanel', () => {
   const exportToPNG = vi.fn().mockResolvedValue(undefined);
   const buildFilename = vi.fn().mockReturnValue('scatter-2025-10-07.png');
+  const buildShareUrl = vi.fn().mockReturnValue('https://example.test/share');
 
   beforeEach(() => {
     exportToPNG.mockClear();
@@ -67,6 +69,10 @@ describe('VisualizationPanel', () => {
       exporting: false,
       exportToPNG,
       buildFilename,
+    });
+    vi.spyOn(useURLSyncModule, 'useURLSync').mockReturnValue({
+      buildShareUrl,
+      hydrated: true,
     });
   });
 
@@ -95,6 +101,12 @@ describe('VisualizationPanel', () => {
       })
     ).toBeInTheDocument();
     expect(screen.getByTestId('export-visualization-button')).toBeEnabled();
+    expect(
+      screen.getByRole('button', {
+        name: /copy shareable visualization link/i,
+      })
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('share-visualization-button')).toBeEnabled();
   });
 
   it('invokes export workflow when the download button is clicked', async () => {

@@ -42,10 +42,10 @@ Then proceed with the manual method below ONLY if markdownExploder is false.]]
 
    ```bash
    # For PRD
-   md-tree explode docs/prd.md docs/prd
+   md-tree explode .agents/prd.md .agents/prd
 
    # For Architecture
-   md-tree explode docs/architecture.md docs/architecture
+   md-tree explode .agents/architecture.md .agents/architecture
 
    # For any document
    md-tree explode [source-document] [destination-folder]
@@ -68,8 +68,8 @@ If the user has @kayvan/markdown-tree-parser installed, use it and skip the manu
 1. Identify Document and Target Location
 
 - Determine which document to shard (user-provided path)
-- Create a new folder under `docs/` with the same name as the document (without extension)
-- Example: `docs/prd.md` → create folder `docs/prd/`
+- Create a new folder under `.agents/` with the same name as the document (without extension)
+- Example: `.agents/prd.md` → create folder `.agents/prd/`
 
 2. Parse and Extract Sections
 
@@ -171,7 +171,7 @@ Provide a summary:
 ```text
 Document sharded successfully:
 - Source: [original document path]
-- Destination: docs/[folder-name]/
+- Destination: .agents/[folder-name]/
 - Files created: [count]
 - Sections:
   - section-name-1.md: "Section Title 1"

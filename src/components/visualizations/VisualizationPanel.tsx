@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Box, Alert } from '@mui/material';
+import { Box, Alert, Stack } from '@mui/material';
 import { useChartConfig } from '@/hooks/useChartConfig';
 import { AxisControls } from './AxisControls';
 import { ChartLegend } from './ChartLegend';
@@ -10,9 +10,18 @@ import { ChartContainer } from './charts/ChartContainer';
 import { usePenguinData } from '@/hooks/usePenguinData';
 import { Penguin } from '@/types/penguin';
 import { ExportButton } from '@/components/export/ExportButton';
+import { ShareButton } from '@/components/export/ShareButton';
 import { getFieldLabel, type NumericField } from './types';
+import { useAppState } from '@/context/ContextProvider';
+import {
+  updateIslandFilter,
+  updateSexFilter,
+  updateSpeciesFilter,
+} from '@/context/actions';
+import { useURLSync } from '@/hooks/useURLSync';
 
 export const VisualizationPanel: React.FC = () => {
+  const { state, dispatch } = useAppState();
   const { data: penguins = [] } = usePenguinData();
   const [visibleSpecies, setVisibleSpecies] = useState<string[]>([
     'Adelie',
@@ -31,11 +40,6 @@ export const VisualizationPanel: React.FC = () => {
     });
   };
 
-  const filteredData = useMemo(
-    () => penguins.filter((p: Penguin) => visibleSpecies.includes(p.species)),
-    [penguins, visibleSpecies]
-  );
-
   const resolvedConfig = useMemo(() => {
     const defaultField: NumericField = 'bill_length_mm';
     return {
@@ -46,6 +50,26 @@ export const VisualizationPanel: React.FC = () => {
       bins: config.bins ?? 12,
     };
   }, [config]);
+
+  const { buildShareUrl, hydrated } = useURLSync({
+    chartConfig: resolvedConfig,
+    onChartConfigChange: updateConfig,
+    filters: {
+      species: state.selectedSpecies,
+      island: state.selectedIsland,
+      sex: state.selectedSex,
+    },
+    setFilters: {
+      setSpecies: (species: string[]) => dispatch(updateSpeciesFilter(species)),
+      setIsland: (island: string) => dispatch(updateIslandFilter(island)),
+      setSex: (sex: string) => dispatch(updateSexFilter(sex)),
+    },
+  });
+
+  const filteredData = useMemo(
+    () => penguins.filter((p: Penguin) => visibleSpecies.includes(p.species)),
+    [penguins, visibleSpecies]
+  );
 
   const chartTitle = useMemo(() => {
     switch (resolvedConfig.type) {
@@ -139,12 +163,18 @@ export const VisualizationPanel: React.FC = () => {
         }}
       >
         <AxisControls config={resolvedConfig} onConfigChange={updateConfig} />
-        <ExportButton
-          containerRef={chartContainerRef}
-          chartType={resolvedConfig.type}
-          title={chartTitle}
-          disabled={filteredData.length === 0}
-        />
+        <Stack direction="row" spacing={1}>
+          <ShareButton
+            getShareUrl={buildShareUrl}
+            disabled={!hydrated || filteredData.length === 0}
+          />
+          <ExportButton
+            containerRef={chartContainerRef}
+            chartType={resolvedConfig.type}
+            title={chartTitle}
+            disabled={filteredData.length === 0}
+          />
+        </Stack>
       </Box>
       <ChartLegend
         visibleSpecies={visibleSpecies}

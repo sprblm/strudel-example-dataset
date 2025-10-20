@@ -2584,10 +2584,10 @@ Then proceed with the manual method below ONLY if markdownExploder is false.]]
 
    ```bash
    # For PRD
-   md-tree explode docs/prd.md docs/prd
+   md-tree explode .agents/prd.md .agents/prd
 
    # For Architecture
-   md-tree explode docs/architecture.md docs/architecture
+   md-tree explode .agents/architecture.md .agents/architecture
 
    # For any document
    md-tree explode [source-document] [destination-folder]
@@ -2610,8 +2610,8 @@ If the user has @kayvan/markdown-tree-parser installed, use it and skip the manu
 1. Identify Document and Target Location
 
 - Determine which document to shard (user-provided path)
-- Create a new folder under `docs/` with the same name as the document (without extension)
-- Example: `docs/prd.md` → create folder `docs/prd/`
+- Create a new folder under `.agents/` with the same name as the document (without extension)
+- Example: `.agents/prd.md` → create folder `.agents/prd/`
 
 2. Parse and Extract Sections
 
@@ -2713,7 +2713,7 @@ Provide a summary:
 ```text
 Document sharded successfully:
 - Source: [original document path]
-- Destination: docs/[folder-name]/
+- Destination: .agents/[folder-name]/
 - Files created: [count]
 - Sections:
   - section-name-1.md: "Section Title 1"
@@ -2746,7 +2746,7 @@ Generate a comprehensive risk assessment matrix for a story implementation using
 ```yaml
 required:
   - story_id: '{epic}.{story}' # e.g., "1.3"
-  - story_path: 'docs/stories/{epic}.{story}.*.md'
+  - story_path: '.agents/stories/{epic}.{story}.*.md'
   - story_title: '{title}' # If missing, derive from story file H1
   - story_slug: '{slug}' # If missing, derive from title (lowercase, hyphenated)
 ````
@@ -3189,9 +3189,9 @@ required:
 
 ### 4. Standards Compliance Check
 
-- Verify adherence to `docs/coding-standards.md`
-- Check compliance with `docs/unified-project-structure.md`
-- Validate testing approach against `docs/testing-strategy.md`
+- Verify adherence to `.agents/coding-standards.md`
+- Check compliance with `.agents/unified-project-structure.md`
+- Validate testing approach against `.agents/testing-strategy.md`
 - Ensure all guidelines mentioned in the story are followed
 
 ### 5. Acceptance Criteria Validation
@@ -3653,8 +3653,8 @@ Which NFRs should I assess? (Enter numbers or press Enter for default)
 Look for NFR requirements in:
 
 - Story acceptance criteria
-- `docs/architecture/*.md` files
-- `docs/technical-preferences.md`
+- `.agents/architecture/*.md` files
+- `.agents/technical-preferences.md`
 
 **Interactive mode:** Ask for missing thresholds
 **Non-interactive mode:** Mark as CONCERNS with "Target unknown"
@@ -4039,7 +4039,7 @@ Source: .bmad-core/tasks/index-docs.md
 
 ## Purpose
 
-This task maintains the integrity and completeness of the `docs/index.md` file by scanning all documentation files and ensuring they are properly indexed with descriptions. It handles both root-level documents and documents within subfolders, organizing them hierarchically.
+This task maintains the integrity and completeness of the `.agents/index.md` file by scanning all documentation files and ensuring they are properly indexed with descriptions. It handles both root-level documents and documents within subfolders, organizing them hierarchically.
 
 ## Task Instructions
 
@@ -4048,12 +4048,12 @@ You are now operating as a Documentation Indexer. Your goal is to ensure all doc
 ### Required Steps
 
 1. First, locate and scan:
-   - The `docs/` directory and all subdirectories
-   - The existing `docs/index.md` file (create if absent)
+   - The `.agents/` directory and all subdirectories
+   - The existing `.agents/index.md` file (create if absent)
    - All markdown (`.md`) and text (`.txt`) files in the documentation structure
    - Note the folder structure for hierarchical organization
 
-2. For the existing `docs/index.md`:
+2. For the existing `.agents/index.md`:
    - Parse current entries
    - Note existing file references and descriptions
    - Identify any broken links or missing files
@@ -4076,7 +4076,7 @@ You are now operating as a Documentation Indexer. Your goal is to ensure all doc
      - Provide option to update the path if file was moved
      - Log the decision (remove/update/keep) for final report
 
-5. Update `docs/index.md`:
+5. Update `.agents/index.md`:
    - Maintain existing structure and organization
    - Create level 2 sections (`##`) for each subfolder
    - List root-level documents first
@@ -4202,8 +4202,8 @@ For each file referenced in the index but not found in the filesystem:
 
 Please provide:
 
-1. Location of the `docs/` directory (default: `./docs`)
-2. Confirmation of write access to `docs/index.md`
+1. Location of the `.agents/` directory (default: `./docs`)
+2. Confirmation of write access to `.agents/index.md`
 3. Any specific categorization preferences
 4. Any files or directories to exclude from indexing (e.g., `.git`, `node_modules`)
 5. Whether to include hidden files/folders (starting with `.`)
@@ -4281,7 +4281,7 @@ Source: .bmad-core/tasks/facilitate-brainstorming-session.md
 ```md
 ## <!-- Powered by BMAD™ Core -->
 
-docOutputLocation: docs/brainstorming-session-results.md
+docOutputLocation: .agents/brainstorming-session-results.md
 template: '.bmad-core/templates/brainstorming-output-tmpl.yaml'
 
 ---
@@ -4714,8 +4714,8 @@ Instead of duplicating, reference actual model files:
 
 ### API Specifications
 
-- **OpenAPI Spec**: `docs/api/openapi.yaml` (if exists)
-- **Postman Collection**: `docs/api/postman-collection.json`
+- **OpenAPI Spec**: `.agents/api/openapi.yaml` (if exists)
+- **Postman Collection**: `.agents/api/postman-collection.json`
 - **Manual Endpoints**: [List any undocumented endpoints discovered]
 
 ## Technical Debt and Known Issues
@@ -4818,17 +4818,17 @@ npm run seed        # Seed test data
 
 - **Logs**: Check `logs/app.log` for application logs
 - **Debug Mode**: Set `DEBUG=app:*` for verbose logging
-- **Common Issues**: See `docs/troubleshooting.md`]]
+- **Common Issues**: See `.agents/troubleshooting.md`]]
 
 ### 4. Document Delivery
 
 1. **In Web UI (Gemini, ChatGPT, Claude)**:
    - Present the entire document in one response (or multiple if too long)
-   - Tell user to copy and save as `docs/brownfield-architecture.md` or `docs/project-architecture.md`
+   - Tell user to copy and save as `.agents/brownfield-architecture.md` or `.agents/project-architecture.md`
    - Mention it can be sharded later in IDE if needed
 
 2. **In IDE Environment**:
-   - Create the document as `docs/brownfield-architecture.md`
+   - Create the document as `.agents/brownfield-architecture.md`
    - Inform user this single document contains all architectural information
    - Can be sharded later using PO agent if desired
 
@@ -4950,7 +4950,7 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
 
 ### 4. Verify Project Structure Alignment
 
-- Cross-reference story requirements with Project Structure Guide from `docs/architecture/unified-project-structure.md`
+- Cross-reference story requirements with Project Structure Guide from `.agents/architecture/unified-project-structure.md`
 - Ensure file paths, component locations, or module names align with defined structures
 - Document any structural conflicts in "Project Structure Notes" section within the story draft
 
@@ -5431,17 +5431,17 @@ Create detailed, implementation-ready stories for brownfield projects where trad
 
 Check for available documentation in this order:
 
-1. **Sharded PRD/Architecture** (docs/prd/, docs/architecture/)
+1. **Sharded PRD/Architecture** (.agents/prd/, .agents/architecture/)
    - If found, recommend using create-next-story task instead
 
-2. **Brownfield Architecture Document** (docs/brownfield-architecture.md or similar)
+2. **Brownfield Architecture Document** (.agents/brownfield-architecture.md or similar)
    - Created by document-project task
    - Contains actual system state, technical debt, workarounds
 
-3. **Brownfield PRD** (docs/prd.md)
+3. **Brownfield PRD** (.agents/prd.md)
    - May contain embedded technical details
 
-4. **Epic Files** (docs/epics/ or similar)
+4. **Epic Files** (.agents/epics/ or similar)
    - Created by brownfield-create-epic task
 
 5. **User-Provided Documentation**
@@ -5651,8 +5651,8 @@ Before finalizing:
 
 Save the story with appropriate naming:
 
-- If from epic: `docs/stories/epic-{n}-story-{m}.md`
-- If standalone: `docs/stories/brownfield-{feature-name}.md`
+- If from epic: `.agents/stories/epic-{n}-story-{m}.md`
+- If standalone: `.agents/stories/brownfield-{feature-name}.md`
 - If sequential: Follow existing story numbering
 
 Include header noting documentation context:
@@ -6151,8 +6151,8 @@ Implement fixes based on QA results (gate and assessments) for a specific story.
 ```yaml
 required:
   - story_id: '{epic}.{story}' # e.g., "2.2"
-  - qa_root: from `bmad-core/core-config.yaml` key `qa.qaLocation` (e.g., `docs/project/qa`)
-  - story_root: from `bmad-core/core-config.yaml` key `devStoryLocation` (e.g., `docs/project/stories`)
+  - qa_root: from `bmad-core/core-config.yaml` key `qa.qaLocation` (e.g., `.agents/project/qa`)
+  - story_root: from `bmad-core/core-config.yaml` key `devStoryLocation` (e.g., `.agents/project/stories`)
 
 optional:
   - story_title: '{title}' # derive from story H1 if missing
@@ -6216,7 +6216,7 @@ Guidance:
 
 - Implement code fixes per plan
 - Add missing tests to close coverage gaps (unit first; integration where required by AC)
-- Keep imports centralized via `deps.ts` (see `docs/project/typescript-rules.md`)
+- Keep imports centralized via `deps.ts` (see `.agents/project/typescript-rules.md`)
 - Follow DI boundaries in `src/core/di.ts` and existing patterns
 
 ### 4) Validate
@@ -6266,7 +6266,7 @@ Status Rule:
 
 ## Example: Story 2.2
 
-Given gate `docs/project/qa/gates/2.2-*.yml` shows
+Given gate `.agents/project/qa/gates/2.2-*.yml` shows
 
 - `coverage_gaps`: Back action behavior untested (AC2)
 - `coverage_gaps`: Centralized dependencies enforcement untested (AC4)

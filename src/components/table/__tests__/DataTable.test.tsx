@@ -152,7 +152,7 @@ describe('DataTable', () => {
     expect(emDashes.length).toBeGreaterThan(0);
   });
 
-  it('renders card layout on mobile viewports', () => {
+  it('renders as data table on mobile viewports', () => {
     mockUsePenguinData.mockReturnValue({
       data: mockPenguinData,
       isLoading: false,
@@ -160,27 +160,18 @@ describe('DataTable', () => {
       isError: false,
     });
 
-    const originalMatchMedia = window.matchMedia;
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
-      matches: query.includes('max-width'),
-      media: query,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-
     render(
       <TestWrapper>
         <DataTable />
       </TestWrapper>
     );
 
-    expect(screen.getByTestId('penguin-card-list')).toBeInTheDocument();
-    expect(screen.getAllByText('Bill Length').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Body Mass').length).toBeGreaterThan(0);
-
-    window.matchMedia = originalMatchMedia;
+    // DataTable should render grid regardless of viewport
+    expect(screen.getByRole('grid')).toBeInTheDocument();
+    // Check that headers are present
+    expect(screen.getByText('Bill Length (mm)')).toBeInTheDocument();
+    expect(screen.getByText('Body Mass (g)')).toBeInTheDocument();
+    // Check that data is present
+    expect(screen.getByText('Adelie')).toBeInTheDocument();
   });
 });

@@ -24,8 +24,8 @@ top_issues:
     finding: 'Story artifact still lists Status “Ready for Done” and omits the required Testing section, leaving downstream agents without a reliable source of truth.'
     suggested_action: 'Realign the story document with the template (valid status + Testing section describing validations).' 
     refs:
-      - docs/stories/5.1.save-visualizations.story.md:5
-      - docs/stories/5.1.save-visualizations.story.md:48
+      - .agents/stories/5.1.save-visualizations.story.md:5
+      - .agents/stories/5.1.save-visualizations.story.md:48
 waiver:
   active: false
 quality_score: 60
@@ -56,7 +56,7 @@ recommendations:
         - cypress/e2e/user-flows/export-visualizations.cy.ts
     - action: 'Restore story template compliance (valid Status value, populate Testing section with traceable steps).'
       refs:
-        - docs/stories/5.1.save-visualizations.story.md
+        - .agents/stories/5.1.save-visualizations.story.md
   future:
     - action: 'Add filename-focused unit test for `useExport.buildFilename` and extend Cypress to cover histogram/box charts.'
       refs:

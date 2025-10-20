@@ -14,13 +14,15 @@ export interface ChartConfig {
   bins?: number;
 }
 
-const INITIAL_CONFIG: ChartConfig = {
+export const DEFAULT_CHART_CONFIG: ChartConfig = {
   type: 'scatter',
   x: DEFAULT_CHART_FIELDS.x,
   y: DEFAULT_CHART_FIELDS.y,
   field: DEFAULT_CHART_FIELDS.x,
   bins: 12,
 };
+
+const INITIAL_CONFIG: ChartConfig = { ...DEFAULT_CHART_CONFIG };
 
 const normaliseConfig = (config: ChartConfig): ChartConfig => {
   if (config.type === 'scatter') {

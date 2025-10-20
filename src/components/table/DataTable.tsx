@@ -6,11 +6,15 @@ import { formatValue } from '@/utils/dataHelpers';
 import type { Penguin } from '@/types/penguin';
 
 // Define columns with proper typing and formatting
-const formatNumericCell: GridColDef<Penguin>['valueFormatter'] = ({ value }) =>
-  formatValue((value as number | null) ?? null);
+const formatNumericCell: GridColDef<Penguin>['valueFormatter'] = (params) => {
+  const value = params?.value;
+  return formatValue((value as number | null) ?? null);
+};
 
-const formatSexCell: GridColDef<Penguin>['valueFormatter'] = ({ value }) =>
-  (value as string | null) ? (value as string) : '—';
+const formatSexCell: GridColDef<Penguin>['valueFormatter'] = (params) => {
+  const value = params?.value;
+  return (value as string | null) ? (value as string) : '—';
+};
 
 const columns: GridColDef<Penguin>[] = [
   {

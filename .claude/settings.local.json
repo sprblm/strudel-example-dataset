@@ -35,7 +35,16 @@
       "Bash(cypress run:*)",
       "Bash(npx cypress run:*)",
       "Bash(eza:*)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "Bash(mkdir -p docs/qa/assessments)",
+      "Bash(echo:*)",
+      "Bash(review:*)",
+      "Bash(z:*)",
+      "Bash(bash:*)",
+      "Bash(npm update:*)",
+      "Bash(npm view @typescript-eslint/eslint-plugin@latest version:*)",
+      "Bash(npm view eslint-config-airbnb-typescript versions:*)",
+      "Bash(npm info:*)"
     ],
     "deny": [],
     "ask": []
