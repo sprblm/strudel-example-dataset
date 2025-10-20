@@ -43,7 +43,7 @@ top_issues:
     suggested_action: 'Implement using React Query for data fetching as specified in updated story'
     suggested_owner: 'dev'
     refs:
-      ['src/hooks/usePenguinData.ts', 'docs/stories/1.1.data-table.story.md']
+      ['src/hooks/usePenguinData.ts', '.agents/stories/1.1.data-table.story.md']
 
 quality_score: 0
 expires: '2025-09-22T00:00:00Z'
@@ -84,15 +84,15 @@ recommendations:
 
   future:
     - action: 'Implement comprehensive test suite (18 scenarios designed)'
-      refs: ['docs/stories/1.1.data-table.design.md']
+      refs: ['.agents/stories/1.1.data-table.design.md']
     - action: 'Add performance monitoring for sort operations'
       refs: ['src/components/table/DataTable.tsx']
     - action: 'Configure Vitest for unit testing framework'
       refs: ['vitest.config.ts']
 
 # Assessment references
-planning_ref: 'docs/stories/1.1.data-table.design.md'
-trace_ref: 'docs/stories/1.1.data-table.trace.md'
+planning_ref: '.agents/stories/1.1.data-table.design.md'
+trace_ref: '.agents/stories/1.1.data-table.trace.md'
 
 # Risk assessment
 risk_summary:

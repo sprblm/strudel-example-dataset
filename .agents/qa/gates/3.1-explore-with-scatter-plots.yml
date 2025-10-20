@@ -43,7 +43,7 @@ nfr_validation:
 recommendations:
   immediate:
     - action: 'Complete missing implementation and fix TS errors'
-      refs: ['docs/stories/3.1.explore-with-scatter-plots.md Tasks 3-4']
+      refs: ['.agents/stories/3.1.explore-with-scatter-plots.md Tasks 3-4']
   future:
     - action: 'Add performance monitoring for D3 charts'
       refs: ['src/components/visualizations/charts/ScatterPlot.tsx']
