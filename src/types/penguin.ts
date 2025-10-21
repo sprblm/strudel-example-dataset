@@ -6,7 +6,10 @@ export interface Penguin {
   flipper_length_mm: number | null;
   body_mass_g: number | null;
   sex: 'male' | 'female' | null;
-  year: number; // 2007, 2008, 2009
+  year: number; // 2007, 2008, 2009, 2021-2025
+  diet: string | null; // Extended field with null-safe handling
+  life_stage: string | null; // Extended field with null-safe handling
+  health_metrics: string | null; // Extended field with null-safe handling
 }
 
 // Raw data interface from the actual JSON file

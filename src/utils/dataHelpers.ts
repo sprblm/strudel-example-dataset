@@ -36,3 +36,39 @@ export const formatNumericValue = (
 export const isMissingValue = (value: unknown): boolean => {
   return value === null || value === undefined || value === '';
 };
+
+/**
+ * Normalize categorical values that might have variants
+ * Maps known variants to standard forms (e.g., Torgensen → Torgersen)
+ * @param value - The categorical value to normalize
+ * @returns The normalized categorical value
+ */
+export const normalizeCategoricalValue = (
+  value: string | null | undefined
+): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  // Known island name variants
+  const islandVariants: Record<string, string> = {
+    Torgensen: 'Torgersen',
+    Torgesen: 'Torgersen',
+    'Biscoe Island': 'Biscoe',
+    'Dream Island': 'Dream',
+  };
+
+  const normalizedValue = value.trim();
+  return islandVariants[normalizedValue] || normalizedValue;
+};
+
+/**
+ * Normalize an array of categorical values
+ * @param values - The array of categorical values to normalize
+ * @returns The array of normalized categorical values
+ */
+export const normalizeCategoricalArray = (
+  values: (string | null | undefined)[]
+): (string | null)[] => {
+  return values.map((value) => normalizeCategoricalValue(value));
+};

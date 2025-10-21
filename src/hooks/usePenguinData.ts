@@ -16,6 +16,13 @@ const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
     body_mass_g: item.body_mass_g === 0 ? null : item.body_mass_g,
     sex: item.sex === '' || !item.sex ? null : (item.sex as 'male' | 'female'),
     year: item.year,
+    diet: item.diet === '' || !item.diet ? null : item.diet,
+    life_stage:
+      item.life_stage === '' || !item.life_stage ? null : item.life_stage,
+    health_metrics:
+      item.health_metrics === '' || !item.health_metrics
+        ? null
+        : item.health_metrics,
   }));
 };
 
