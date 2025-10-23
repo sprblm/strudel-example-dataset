@@ -95,7 +95,9 @@ export const PenguinCardList: React.FC<PenguinCardListProps> = ({
           variant="outlined"
           sx={{
             borderRadius: 3,
-            boxShadow: '0px 2px 8px rgba(15, 23, 42, 0.08)',
+            borderColor: (theme) => theme.palette.divider,
+            backgroundColor: (theme) => theme.palette.background.paper,
+            boxShadow: 'none',
           }}
         >
           <CardHeader
