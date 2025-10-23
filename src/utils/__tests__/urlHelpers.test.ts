@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import {
   buildShareQueryString,
   buildShareSearchParams,
@@ -8,6 +8,16 @@ import {
 } from '../urlHelpers';
 
 describe('urlHelpers', () => {
+  const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+  afterEach(() => {
+    warnSpy.mockClear();
+  });
+
+  afterAll(() => {
+    warnSpy.mockRestore();
+  });
+
   it('returns default state when search params are empty', () => {
     const result = parseShareSearchParams('');
     expect(result).toEqual(defaultURLState);
@@ -54,6 +64,15 @@ describe('urlHelpers', () => {
       island: 'all',
       sex: 'all',
     });
+  });
+
+  it('normalises known island variants in search params', () => {
+    const result = parseShareSearchParams({
+      chart: 'scatter',
+      island: 'Torgensen',
+    });
+
+    expect(result.filters.island).toBe('Torgersen');
   });
 
   it('serialises non-default state to query string', () => {

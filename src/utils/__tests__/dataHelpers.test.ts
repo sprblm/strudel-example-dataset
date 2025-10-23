@@ -1,8 +1,16 @@
 import {
   formatValue,
   formatNumericValue,
+  getUnexpectedCategorySummary,
   isMissingValue,
+  normalizeDietValue,
+  normalizeHealthMetricValue,
+  normalizeIslandValue,
+  normalizeLifeStageValue,
+  normalizeYearValue,
+  resetUnexpectedCategorySummary,
 } from '../dataHelpers';
+import { vi } from 'vitest';
 
 describe('dataHelpers', () => {
   describe('formatValue', () => {
@@ -61,6 +69,40 @@ describe('dataHelpers', () => {
       expect(isMissingValue(42)).toBe(false);
       expect(isMissingValue('hello')).toBe(false);
       expect(isMissingValue(false)).toBe(false);
+    });
+  });
+
+  describe('normalizers', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    afterEach(() => {
+      warnSpy.mockClear();
+      resetUnexpectedCategorySummary();
+    });
+
+    afterAll(() => {
+      warnSpy.mockRestore();
+    });
+
+    it('normalizes known variants for island names', () => {
+      expect(normalizeIslandValue('Torgensen')).toBe('Torgersen');
+      expect(normalizeIslandValue('Dream')).toBe('Dream');
+      expect(normalizeIslandValue('')).toBeNull();
+    });
+
+    it('guards and records unexpected categories', () => {
+      expect(normalizeDietValue('krill')).toBe('krill');
+      expect(normalizeDietValue('unknown')).toBeNull();
+      expect(normalizeHealthMetricValue('healthy')).toBe('healthy');
+      expect(normalizeLifeStageValue('hatchling')).toBeNull();
+      expect(normalizeYearValue(2026)).toBe(2026);
+
+      expect(warnSpy).toHaveBeenCalledTimes(3);
+      expect(getUnexpectedCategorySummary()).toEqual({
+        diet: ['unknown'],
+        life_stage: ['hatchling'],
+        year: ['2026'],
+      });
     });
   });
 });

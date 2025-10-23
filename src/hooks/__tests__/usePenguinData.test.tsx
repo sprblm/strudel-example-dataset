@@ -43,20 +43,20 @@ const mockRawData = [
     diet: 'fish',
     life_stage: 'adult',
     health_metrics: 'overweight',
-    year: 2021,
+    year: 2024,
   },
   {
     species: 'Chinstrap',
-    island: 'Dream',
+    island: 'Torgensen',
     bill_length_mm: 0, // This will be converted to null
     bill_depth_mm: 18.1,
     flipper_length_mm: 245.0,
     body_mass_g: 0, // This will be converted to null
     sex: '',
-    diet: 'fish',
-    life_stage: 'adult',
-    health_metrics: 'normal',
-    year: 2021,
+    diet: '',
+    life_stage: 'juvenile',
+    health_metrics: 'healthy',
+    year: 2025,
   },
 ];
 
@@ -90,21 +90,27 @@ describe('usePenguinData', () => {
       bill_length_mm: 53.4,
       bill_depth_mm: 17.8,
       flipper_length_mm: 219.0,
-      body_mass_g: 5687.0,
+      body_mass_g: 5687,
       sex: 'female',
-      year: 2021,
+      year: 2024,
+      diet: 'fish',
+      life_stage: 'adult',
+      health_metrics: 'overweight',
     });
 
     // Check transformation of falsy values to null
     expect(result.current.data[1]).toEqual({
       species: 'Chinstrap',
-      island: 'Dream',
+      island: 'Torgersen',
       bill_length_mm: null, // 0 should be converted to null
       bill_depth_mm: 18.1,
       flipper_length_mm: 245.0,
       body_mass_g: null, // 0 should be converted to null
       sex: null, // empty string should be converted to null
-      year: 2021,
+      year: 2025,
+      diet: null,
+      life_stage: 'juvenile',
+      health_metrics: 'healthy',
     });
   });
 

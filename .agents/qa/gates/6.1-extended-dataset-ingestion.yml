@@ -1,0 +1,12 @@
+schema: 1
+story: '6.1'
+gate: CONCERNS
+status_reason: 'Year normalization clamps future data to 2025; adjust before dataset expands.'
+reviewer: 'Quinn'
+updated: '2025-10-18T00:00:00Z'
+top_issues:
+  - id: 'REQ-001'
+    severity: medium
+    finding: 'normalizeYearValue coerces any year outside 2021-2025 to 2025, which would mislabel future dataset entries.'
+    suggested_action: 'Derive acceptable year range from the dataset (or preserve out-of-range years) so new data is represented accurately.'
+waiver: { active: false }

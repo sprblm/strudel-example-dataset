@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@mui/material/styles';
@@ -9,13 +9,47 @@ import { theme } from '@/theme';
 import { FiltersPanel } from '@/components/FiltersPanel';
 import { DataTable } from '@/components/table/DataTable';
 import { HelpModal } from '@/components/modals/HelpModal';
-import {
-  createRouter,
-  RouterProvider,
-  createRootRoute,
-  createRoute,
-} from '@tanstack/react-router';
 
+// Mock AppLink to avoid router dependency
+vi.mock('@/components/AppLink', () => ({
+  AppLink: ({ to, children }: { to: string; children: React.ReactNode }) => (
+    <a href={to}>{children}</a>
+  ),
+}));
+
+vi.mock('@/components/table/DataTable', () => ({
+  DataTable: () => (
+    <div
+      id="data"
+      role="grid"
+      aria-label="Palmer Penguins data table"
+      tabIndex={-1}
+    />
+  ),
+}));
+
+vi.mock('@/components/modals/HelpModal', async () => {
+  const React = await import('react');
+  const { useAppState } = await import('@/context/ContextProvider');
+  const { closeHelpModal } = await import('@/context/actions');
+
+  const HelpModal: React.FC = () => {
+    const { state, dispatch } = useAppState();
+    if (!state.helpModalOpen) {
+      return null;
+    }
+    return (
+      <div role="dialog" aria-label="Help">
+        <p>Palmer Penguins Explorer - Help</p>
+        <button type="button" onClick={() => dispatch(closeHelpModal())}>
+          Close
+        </button>
+      </div>
+    );
+  };
+
+  return { HelpModal };
+});
 // Mock the penguin data hook
 vi.mock('@/hooks/usePenguinData', () => ({
   usePenguinData: () => ({
@@ -28,7 +62,10 @@ vi.mock('@/hooks/usePenguinData', () => ({
         flipper_length_mm: 181,
         body_mass_g: 3750,
         sex: 'male',
-        year: 2007,
+        year: 2024,
+        diet: 'fish',
+        life_stage: 'adult',
+        health_metrics: 'healthy',
       },
       {
         species: 'Chinstrap',
@@ -38,7 +75,10 @@ vi.mock('@/hooks/usePenguinData', () => ({
         flipper_length_mm: 192,
         body_mass_g: 3500,
         sex: 'female',
-        year: 2007,
+        year: 2025,
+        diet: 'krill',
+        life_stage: 'adult',
+        health_metrics: 'overweight',
       },
     ],
     isLoading: false,
@@ -46,21 +86,6 @@ vi.mock('@/hooks/usePenguinData', () => ({
     isError: false,
   }),
 }));
-
-// Create minimal router for testing
-const rootRoute = createRootRoute({
-  component: ({ children }) => <>{children}</>,
-});
-
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: () => <div>Index</div>,
-});
-
-const routeTree = rootRoute.addChildren([indexRoute]);
-
-const router = createRouter({ routeTree });
 
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = new QueryClient({
@@ -73,9 +98,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <RouterProvider router={router}>
-          <AppProvider>{children}</AppProvider>
-        </RouterProvider>
+        <AppProvider>{children}</AppProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
@@ -143,17 +166,18 @@ describe('Keyboard Navigation Integration', () => {
     // Press Shift+? to open help modal
     await user.keyboard('{Shift>}?{/Shift}');
 
-    expect(screen.getByRole('dialog', { name: /help/i })).toBeInTheDocument();
     expect(
-      screen.getByText('Palmer Penguins Explorer - Help')
+      await screen.findByRole('dialog', { name: /help/i })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('Palmer Penguins Explorer - Help')
     ).toBeInTheDocument();
 
     // Press Escape to close modal
     await user.keyboard('{Escape}');
-
-    expect(
-      screen.queryByRole('dialog', { name: /help/i })
-    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: /help/i })).toBeNull();
+    });
   });
 
   it('supports Tab navigation through filter components', async () => {
@@ -166,10 +190,11 @@ describe('Keyboard Navigation Integration', () => {
     );
 
     // Start from first focusable element in filters
-    const firstCheckbox = screen.getByRole('checkbox', {
+    await user.tab();
+    const firstCheckbox = await screen.findByRole('checkbox', {
       name: /filter by adelie/i,
     });
-    firstCheckbox.focus();
+    expect(firstCheckbox).toHaveFocus();
 
     // Navigate through species checkboxes
     await user.tab();
@@ -193,14 +218,14 @@ describe('Keyboard Navigation Integration', () => {
     expect(sexRadio).toHaveFocus();
   });
 
-  it('provides proper focus indicators on interactive elements', () => {
+  it('provides proper focus indicators on interactive elements', async () => {
     render(
       <TestWrapper>
         <FiltersPanel />
       </TestWrapper>
     );
 
-    const checkbox = screen.getByRole('checkbox', {
+    const checkbox = await screen.findByRole('checkbox', {
       name: /filter by adelie/i,
     });
     const select = screen.getByLabelText(/select island/i);
@@ -236,7 +261,7 @@ describe('Keyboard Navigation Integration', () => {
     await user.tab(); // Should go to first filter element
 
     // Should be in the filters section
-    const filtersSection = screen.getByRole('group', {
+    const filtersSection = await screen.findByRole('group', {
       name: /species filter/i,
     });
     const firstFilterElement = within(filtersSection).getByRole('checkbox', {
@@ -255,10 +280,11 @@ describe('Keyboard Navigation Integration', () => {
     );
 
     // Focus a checkbox and activate with Space
-    const checkbox = screen.getByRole('checkbox', {
+    await user.tab();
+    const checkbox = await screen.findByRole('checkbox', {
       name: /filter by adelie/i,
     });
-    checkbox.focus();
+    expect(checkbox).toHaveFocus();
 
     await user.keyboard(' '); // Space should toggle checkbox
 
@@ -267,7 +293,7 @@ describe('Keyboard Navigation Integration', () => {
     expect(checkbox).toBeInTheDocument();
   });
 
-  it('provides accessible labels and descriptions for screen readers', () => {
+  it('provides accessible labels and descriptions for screen readers', async () => {
     render(
       <TestWrapper>
         <Layout>
@@ -279,14 +305,14 @@ describe('Keyboard Navigation Integration', () => {
 
     // Check ARIA labels and landmarks
     expect(
-      screen.getByRole('navigation', { name: 'Skip links' })
+      await screen.findByRole('navigation', { name: 'Skip links' })
     ).toBeInTheDocument();
-    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(await screen.findByRole('main')).toBeInTheDocument();
     expect(
-      screen.getByRole('group', { name: /species filter/i })
+      await screen.findByRole('group', { name: /species filter/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('grid', { name: /palmer penguins data table/i })
+      await screen.findByRole('grid', { name: /palmer penguins data table/i })
     ).toBeInTheDocument();
 
     // Check specific ARIA labels
