@@ -1,126 +1,149 @@
 import { createTheme } from '@mui/material';
 import type {} from '@mui/x-data-grid/themeAugmentation';
 
-/**
- * MUI Theme object for setting app-wide and component-wide styles.
- * Specify colors, spacing, fonts, and more.
- * Learn more about theme options: https://mui.com/material-ui/customization/theming/
- */
+const bodyFontFamily =
+  '"Inter", "Helvetica Neue", "Arial", "Segoe UI", sans-serif';
+const displayFontFamily =
+  '"Source Serif 4", "Iowan Old Style", "Times New Roman", serif';
+
 export const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     background: {
-      default: '#0d0d0d',
-      paper: '#131313',
+      default: '#f8f8f5',
+      paper: '#ffffff',
     },
     primary: {
-      main: '#f5f5f0',
-      contrastText: '#0a0a0a',
+      main: '#1c336b',
+      light: '#3f4f8f',
+      dark: '#111c45',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#5c5c5c',
-      light: '#6f6f6f',
-      dark: '#3c3c3c',
-      contrastText: '#f5f5f0',
+      main: '#6f7f6b',
+      light: '#95a38f',
+      dark: '#556452',
+      contrastText: '#ffffff',
     },
     info: {
-      main: '#8ba7ff',
-      light: '#a6bbff',
-      dark: '#5163c9',
-      contrastText: '#0a0a0a',
+      main: '#55708e',
+      light: '#7a93b0',
+      dark: '#354c63',
+      contrastText: '#ffffff',
     },
     success: {
-      main: '#7ed17a',
-      contrastText: '#0a0a0a',
+      main: '#2f6b3d',
+      light: '#4b8758',
+      dark: '#1b4d27',
+      contrastText: '#ffffff',
     },
     warning: {
-      main: '#f5c16c',
-      contrastText: '#0a0a0a',
+      main: '#b36b04',
+      light: '#d5851c',
+      dark: '#764601',
+      contrastText: '#ffffff',
     },
     error: {
-      main: '#ff8080',
-      contrastText: '#0a0a0a',
+      main: '#b23b3b',
+      light: '#d15b5b',
+      dark: '#7a2626',
+      contrastText: '#ffffff',
     },
+    text: {
+      primary: '#1f1f1f',
+      secondary: '#494943',
+    },
+    divider: '#e0e0da',
     neutral: {
-      main: '#262626',
-      light: '#2f2f2f',
-      dark: '#191919',
+      main: '#deded8',
+      light: '#f1f1ed',
+      dark: '#9f9f9a',
     },
     common: {
-      black: '#000',
-      white: '#fff',
+      black: '#0d0d0d',
+      white: '#ffffff',
     },
     grey: {
-      50: '#f2f2f2',
-      200: '#d1d1d1',
-      500: '#8a8a8a',
-      700: '#3e3e3e',
-      900: '#1a1a1a',
-    },
-    divider: '#1f1f1f',
-    text: {
-      primary: '#f5f5f5',
-      secondary: '#b0b0b0',
+      50: '#f4f4f0',
+      100: '#e5e5e0',
+      300: '#c7c7c0',
+      500: '#8a8a84',
+      700: '#5b5b57',
+      900: '#1f1f1c',
     },
   },
   shape: {
-    borderRadius: 6,
+    borderRadius: 8,
   },
   typography: {
     htmlFontSize: 16,
-    fontFamily: `"Space Grotesk", "Helvetica Neue", "Arial", sans-serif`,
-    fontSize: 16,
+    fontFamily: bodyFontFamily,
+    fontSize: 15,
     fontWeightLight: 300,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
-    fontWeightBold: 600,
+    fontWeightBold: 700,
     h1: {
-      fontSize: '3.25rem',
-      fontWeight: 300,
-      letterSpacing: '-0.035em',
+      fontFamily: displayFontFamily,
+      fontWeight: 600,
+      fontSize: '3rem',
+      lineHeight: 1.08,
+      letterSpacing: '-0.015em',
     },
     h2: {
-      fontSize: '2.5rem',
-      fontWeight: 300,
-      letterSpacing: '-0.03em',
+      fontFamily: displayFontFamily,
+      fontWeight: 600,
+      fontSize: '2.25rem',
+      lineHeight: 1.1,
+      letterSpacing: '-0.01em',
     },
     h3: {
-      fontSize: '1.75rem',
-      fontWeight: 400,
+      fontFamily: displayFontFamily,
+      fontWeight: 600,
+      fontSize: '1.8rem',
+      lineHeight: 1.18,
     },
     h4: {
+      fontFamily: bodyFontFamily,
+      fontWeight: 600,
       fontSize: '1.5rem',
-      fontWeight: 400,
     },
     h5: {
+      fontFamily: bodyFontFamily,
+      fontWeight: 600,
       fontSize: '1.25rem',
+    },
+    h6: {
+      fontFamily: bodyFontFamily,
+      fontWeight: 600,
+      fontSize: '1.1rem',
+    },
+    overline: {
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      letterSpacing: '0.16em',
+      fontSize: '0.75rem',
+    },
+    subtitle1: {
       fontWeight: 500,
+    },
+    subtitle2: {
+      fontWeight: 500,
+      letterSpacing: '0.015em',
     },
     body1: {
       lineHeight: 1.7,
-      fontSize: '1rem',
     },
     body2: {
       lineHeight: 1.6,
-      fontSize: '0.95rem',
     },
-    overline: {
-      fontSize: '0.75rem',
-      letterSpacing: '0.14em',
-      textTransform: 'uppercase',
+    button: {
       fontWeight: 500,
+      letterSpacing: '0.02em',
+      textTransform: 'none',
     },
   },
   components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: '#0d0d0d',
-          color: '#f5f5f5',
-          letterSpacing: '0.01em',
-        },
-      },
-    },
     MuiButton: {
       defaultProps: {
         disableElevation: true,
@@ -128,58 +151,38 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 999,
-          textTransform: 'none',
-          letterSpacing: '0.02em',
-          paddingInline: '1.4rem',
-          paddingBlock: '0.65rem',
+          paddingBlock: '0.6rem',
+          paddingInline: '1.25rem',
+        },
+        contained: {
+          boxShadow: 'none',
         },
         containedPrimary: {
-          backgroundColor: '#f5f5f0',
-          color: '#0a0a0a',
+          backgroundColor: '#1c336b',
           '&:hover': {
-            backgroundColor: '#e2e2da',
+            backgroundColor: '#162856',
           },
         },
         outlined: {
-          borderColor: '#2d2d2d',
-          color: '#f5f5f5',
+          borderWidth: 1,
+          borderColor: '#1c336b',
+          color: '#1c336b',
+          backgroundColor: 'transparent',
           '&:hover': {
-            borderColor: '#404040',
-            backgroundColor: 'rgba(255,255,255,0.04)',
+            borderColor: '#162856',
+            backgroundColor: 'rgba(28, 51, 107, 0.06)',
           },
+        },
+        text: {
+          color: '#1c336b',
+          paddingInline: '0.75rem',
         },
       },
     },
     MuiLink: {
       styleOverrides: {
         root: {
-          color: '#f5f5f5',
           textDecoration: 'none',
-          '&:hover': {
-            color: '#ffffff',
-            textDecoration: 'underline',
-            textDecorationThickness: '1px',
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-          backgroundColor: '#131313',
-          borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.06)',
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backgroundColor: '#131313',
-          borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.08)',
-          boxShadow: 'none',
         },
       },
     },
@@ -188,11 +191,44 @@ export const theme = createTheme({
         spacing: 2,
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          border: '1px solid #e0e0da',
+          boxShadow: 'none',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: 999,
+          paddingInline: 6,
+          fontFamily: bodyFontFamily,
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+        },
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 999,
+          textTransform: 'none',
+          borderColor: '#d0d0cc',
+          '&.Mui-selected': {
+            backgroundColor: 'rgba(28, 51, 107, 0.12)',
+            borderColor: '#1c336b',
+            color: '#1c336b',
+          },
+        },
+      },
+    },
     MuiDataGrid: {
       styleOverrides: {
         root: {
           border: 0,
-          backgroundColor: '#131313',
           '& .MuiDataGrid-cell:focus-within': {
             outline: 'none',
           },
@@ -200,12 +236,94 @@ export const theme = createTheme({
             minHeight: '4rem',
           },
           '& .MuiDataGrid-columnHeaderTitle': {
-            color: '#e1e1e1',
+            color: '#1f1f1f',
             fontSize: '0.85rem',
-            fontWeight: 500,
+            fontWeight: 600,
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.08em',
           },
+        },
+      },
+    },
+  },
+});
+
+export const highContrastTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#060606',
+      paper: '#111111',
+    },
+    primary: {
+      main: '#ffbf47',
+      dark: '#e09b00',
+      light: '#ffd36d',
+      contrastText: '#000000',
+    },
+    secondary: {
+      main: '#64ffda',
+      dark: '#1de9b6',
+      light: '#9cfffb',
+      contrastText: '#001b1a',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#e5e7eb',
+    },
+    divider: '#374151',
+    neutral: {
+      main: '#dadada',
+      light: '#e0e0e0',
+      dark: '#828282',
+    },
+    grey: {
+      50: '#1f2937',
+      500: '#6b7280',
+      900: '#f3f4f6',
+    },
+  },
+  shape: {
+    borderRadius: 8,
+  },
+  typography: {
+    htmlFontSize: 16,
+    fontFamily: bodyFontFamily,
+    fontSize: 15,
+    fontWeightLight: 300,
+    fontWeightRegular: 400,
+    fontWeightMedium: 500,
+    fontWeightBold: 700,
+    h1: {
+      fontFamily: displayFontFamily,
+      fontWeight: 600,
+      fontSize: '3rem',
+      lineHeight: 1.08,
+    },
+    h2: {
+      fontFamily: displayFontFamily,
+      fontWeight: 600,
+      fontSize: '2.25rem',
+    },
+    h3: {
+      fontFamily: displayFontFamily,
+      fontWeight: 600,
+      fontSize: '1.8rem',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          border: '1px solid #374151',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        contained: {
+          boxShadow: 'none',
         },
       },
     },
