@@ -296,4 +296,102 @@
 
 ---
 
+## Epic 6: Extended Dataset Alignment
+
+### US6.1: As a data engineer, I want the extended dataset ingested accurately
+
+**Priority**: P0
+
+**Acceptance Criteria:**
+
+- `Penguin` type includes `diet`, `life_stage`, and `health_metrics` fields with null-safe handling
+- Year range supports 2021–2025 and matches source data
+- Ingestion pipeline retains all extended fields in `public/data/penguins.json`
+- Category normalization maps variants (e.g., `Torgensen` → `Torgersen`) before filters consume data
+- Data assumptions and transformations documented for QA review
+
+**Definition of Done:**
+
+- [ ] Type definitions and transformers updated
+- [ ] Normalization utilities unit tested
+- [ ] Source data spot-checked against UI output
+- [ ] Documentation describing mappings committed
+
+### US6.2: As a researcher, I want controls for the new categorical dimensions
+
+**Priority**: P0
+
+**Acceptance Criteria:**
+
+- Diet multi-select filter with summary chips reflecting active selections
+- Life stage selector with accessible keyboard navigation and screen reader labels
+- Year control (range slider or discrete toggle) covering 2021–2025 plus “All years” reset
+- Advanced filter panel collapses by default with clear affordance
+- Filter state persists in URL and share links
+
+**Definition of Done:**
+
+- [ ] New filters render across desktop and mobile breakpoints
+- [ ] URL synchronization validated for new parameters
+- [ ] Live region and focus states pass accessibility review
+- [ ] Regression tests confirm legacy filters remain functional
+
+### US6.3: As an educator, I want visualizations that surface extended insights
+
+**Priority**: P1
+
+**Acceptance Criteria:**
+
+- Existing chart types allow grouping or color encoding by diet or life stage
+- New longitudinal visualization shows health metrics trend by species and year
+- Legend and color palette updated to remain readable in high-contrast mode
+- Preset views added for key extended insights (diet vs body mass, health trend)
+- Chart descriptions narrate extended findings for assistive tech
+
+**Definition of Done:**
+
+- [ ] Visualization components updated with new encodings
+- [ ] Preset configurations accessible via navigation or key findings panel
+- [ ] High-contrast and default themes visually reviewed
+- [ ] Screen reader output verified for new chart states
+
+### US6.4: As a first-time visitor, I want narratives that reflect the extended scope
+
+**Priority**: P1
+
+**Acceptance Criteria:**
+
+- Homepage hero and supporting copy describe 3,430-record extended dataset
+- Help modal updated with provenance, new fields overview, and assumptions
+- Key Findings panel highlights at least three preset insight links leveraging share URLs
+- README / onboarding notes summarize extended dataset differences and new controls
+- Tone shifts from product marketing to academic, referencing Palmer Penguins research context
+
+**Definition of Done:**
+
+- [ ] Content revisions approved by stakeholders
+- [ ] Copy passes accessibility checks (plain language, heading structure)
+- [ ] Preset links validated end-to-end
+- [ ] Documentation merged alongside application changes
+
+### US6.5: As a QA analyst, I want quality gates that cover the extended dataset
+
+**Priority**: P1
+
+**Acceptance Criteria:**
+
+- Schema validation script warns on unexpected diet, life stage, or health metric values during build
+- Automated tests cover new filters, URL parameters, and visualization presets
+- Performance benchmarks confirm filter interactions <150 ms and charts render <300 ms on reference hardware
+- Accessibility regression suite updated for new components
+
+**Definition of Done:**
+
+- [ ] Validation script integrated into CI workflow
+- [ ] Unit, integration, and E2E tests updated and passing locally
+- [ ] Performance report documented and attached to release notes
+- [ ] Accessibility audit results logged with follow-up actions
+
+---
+
 _These user stories provide the detailed acceptance criteria and definition of done for all major features in the Palmer Penguins Explorer application._

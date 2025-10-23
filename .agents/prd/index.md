@@ -14,6 +14,7 @@
     - [Epic 3: Data Visualization](./user-stories-acceptance-criteria.md#epic-3-data-visualization)
     - [Epic 4: Accessibility & Usability](./user-stories-acceptance-criteria.md#epic-4-accessibility-usability)
     - [Epic 5: Data Export & Sharing](./user-stories-acceptance-criteria.md#epic-5-data-export-sharing)
+    - [Epic 6: Extended Dataset Alignment](./user-stories-acceptance-criteria.md#epic-6-extended-dataset-alignment)
   - [Technical Requirements](./technical-requirements.md)
     - [Architecture](./technical-requirements.md#architecture)
     - [Performance Requirements](./technical-requirements.md#performance-requirements)
