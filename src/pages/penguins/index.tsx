@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router';
 import {
   Box,
   Button,
@@ -12,9 +11,12 @@ import {
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { createFileRoute } from '@tanstack/react-router';
 import React from 'react';
 import { DataTable } from '@/components/table/DataTable';
 import { FiltersPanel } from '@/components/FiltersPanel';
+import { AppLink } from '@/components/AppLink';
 
 const FILTERS_STORAGE_KEY = 'penguins-filters-open';
 
@@ -108,11 +110,25 @@ function PenguinsPage() {
 
   return (
     <Container maxWidth="xl" sx={{ mt: 3, mb: 3 }}>
+      <Stack direction="row" sx={{ mb: 2 }}>
+        <Button
+          component={AppLink}
+          to="/"
+          variant="text"
+          startIcon={<ArrowBackIosNewIcon fontSize="small" />}
+        >
+          Back to home
+        </Button>
+      </Stack>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Palmer Penguins Explorer
         </Typography>
-        <Typography variant="body1" color="textSecondary">
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ maxWidth: 640 }}
+        >
           Browse and explore the Palmer Penguins dataset with interactive
           filtering and sorting.
         </Typography>

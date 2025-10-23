@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   Divider,
   Grid,
@@ -77,14 +78,13 @@ function Index() {
   ];
 
   return (
-    <Box
-      component="main"
-      sx={{
-        backgroundColor: 'background.default',
-        color: 'text.primary',
-      }}
-    >
-      <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
+    <Box component="main">
+      <Container
+        maxWidth="lg"
+        sx={{
+          py: { xs: 8, md: 12 },
+        }}
+      >
         <Stack spacing={{ xs: 8, md: 10 }}>
           <Stack spacing={2}>
             <Typography variant="overline" color="text.secondary">
@@ -103,6 +103,29 @@ function Index() {
               interactions restrained so the original field data remains the
               central voice.
             </Typography>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={2}
+              alignItems={{ xs: 'stretch', sm: 'center' }}
+            >
+              <Button
+                component={AppLink}
+                to="/penguins/"
+                variant="contained"
+                size="large"
+                color="primary"
+              >
+                Open data workspace
+              </Button>
+              <Button
+                component={AppLink}
+                to="/visualizations/"
+                variant="outlined"
+                size="large"
+              >
+                Launch visualizations
+              </Button>
+            </Stack>
           </Stack>
 
           <Grid container spacing={4} alignItems="stretch">
@@ -115,6 +138,8 @@ function Index() {
                     flexDirection: 'column',
                     gap: 2.5,
                     height: '100%',
+                    borderRadius: 3,
+                    border: (theme) => `1px solid ${theme.palette.divider}`,
                   }}
                 >
                   <Typography variant="h3" component="h2">
@@ -148,9 +173,11 @@ function Index() {
                           justifyContent: 'space-between',
                           transition:
                             'border-color 0.2s ease, transform 0.2s ease',
-                          borderColor: 'rgba(255,255,255,0.12)',
+                          borderRadius: 3,
+                          border: (theme) =>
+                            `1px solid ${theme.palette.divider}`,
                           '&:hover': {
-                            borderColor: 'text.primary',
+                            borderColor: (theme) => theme.palette.primary.main,
                             transform: 'translateY(-2px)',
                           },
                         }}
@@ -167,7 +194,7 @@ function Index() {
                             {action.description}
                           </Typography>
                         </Box>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="primary.main">
                           {action.ctaLabel}
                         </Typography>
                       </Paper>
@@ -184,6 +211,8 @@ function Index() {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 3,
+                  borderRadius: 3,
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
                 }}
               >
                 <Box>
@@ -199,8 +228,8 @@ function Index() {
                     <Box
                       key={point.label}
                       sx={{
-                        borderTop: '1px solid',
-                        borderColor: 'rgba(255,255,255,0.08)',
+                        borderTop: (theme) =>
+                          `1px solid ${theme.palette.divider}`,
                         pt: 1.5,
                       }}
                     >
@@ -235,7 +264,7 @@ function Index() {
             </Grid>
           </Grid>
 
-          <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+          <Divider />
 
           <Box component="section">
             <Stack spacing={3}>
@@ -257,11 +286,21 @@ function Index() {
                   interface.
                 </Typography>
               </Stack>
-              <Grid container spacing={3}>
+              <Grid container spacing={3} alignItems="stretch">
                 {FEATURE_SECTIONS.map((feature) => (
                   <Grid item xs={12} md={4} key={feature.title}>
-                    <Paper sx={{ p: { xs: 2.5, md: 3 } }}>
-                      <Stack spacing={1.5}>
+                    <Paper
+                      sx={{
+                        p: { xs: 2.5, md: 3 },
+                        borderRadius: 3,
+                        border: (theme) => `1px solid ${theme.palette.divider}`,
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <Stack spacing={1.5} alignItems="flex-start">
                         <Typography variant="h5" component="h3">
                           {feature.title}
                         </Typography>

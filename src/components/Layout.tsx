@@ -3,10 +3,9 @@ import React, { PropsWithChildren } from 'react';
 import { SkipLinks } from './a11y/SkipLinks';
 import { KeyboardShortcutsProvider } from './a11y/KeyboardShortcutsProvider';
 import { LiveRegion } from './a11y/LiveRegion';
-import { Footer } from './Footer';
 
 /**
- * Page layout wrapper with skip links and footer
+ * Page layout wrapper with global accessibility affordances
  */
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -32,7 +31,6 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         >
           {children}
         </Box>
-        <Footer />
       </Stack>
     </KeyboardShortcutsProvider>
   );
