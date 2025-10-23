@@ -3,27 +3,71 @@ import { useQuery } from '@tanstack/react-query';
 import { useAppState } from '@/context/ContextProvider';
 import { Penguin, RawPenguinData } from '@/types/penguin';
 import { filterPenguins } from '@/utils/filtering';
+import {
+  normalizeDietValue,
+  normalizeHealthMetricValue,
+  normalizeIslandValue,
+  normalizeLifeStageValue,
+  normalizeSpeciesValue,
+  normalizeYearValue,
+} from '@/utils/dataHelpers';
 
 // Transform raw data to match story specification
-const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
-  return rawData.map((item) => ({
-    species: item.species as 'Adelie' | 'Chinstrap' | 'Gentoo',
-    island: item.island as 'Biscoe' | 'Dream' | 'Torgersen',
-    bill_length_mm: item.bill_length_mm === 0 ? null : item.bill_length_mm,
-    bill_depth_mm: item.bill_depth_mm === 0 ? null : item.bill_depth_mm,
-    flipper_length_mm:
-      item.flipper_length_mm === 0 ? null : item.flipper_length_mm,
-    body_mass_g: item.body_mass_g === 0 ? null : item.body_mass_g,
-    sex: item.sex === '' || !item.sex ? null : (item.sex as 'male' | 'female'),
-    year: item.year,
-    diet: item.diet === '' || !item.diet ? null : item.diet,
-    life_stage:
-      item.life_stage === '' || !item.life_stage ? null : item.life_stage,
-    health_metrics:
-      item.health_metrics === '' || !item.health_metrics
-        ? null
-        : item.health_metrics,
-  }));
+export const transformPenguinData = (rawData: RawPenguinData[]): Penguin[] => {
+  const toNullableMeasurement = (
+    value: number | null | undefined
+  ): number | null => {
+    if (value === null || value === undefined) {
+      return null;
+    }
+    if (value === 0) {
+      return null;
+    }
+    if (Number.isNaN(value)) {
+      return null;
+    }
+    return value;
+  };
+
+  const toNormalizedSex = (
+    value: string | null | undefined
+  ): 'male' | 'female' | null => {
+    if (!value) {
+      return null;
+    }
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'male' || normalized === 'm') {
+      return 'male';
+    }
+    if (normalized === 'female' || normalized === 'f') {
+      return 'female';
+    }
+    return null;
+  };
+
+  return rawData
+    .map((item) => {
+      const species = normalizeSpeciesValue(item.species);
+      const island = normalizeIslandValue(item.island);
+      if (!species || !island) {
+        return null;
+      }
+
+      return {
+        species,
+        island,
+        bill_length_mm: toNullableMeasurement(item.bill_length_mm),
+        bill_depth_mm: toNullableMeasurement(item.bill_depth_mm),
+        flipper_length_mm: toNullableMeasurement(item.flipper_length_mm),
+        body_mass_g: toNullableMeasurement(item.body_mass_g),
+        sex: toNormalizedSex(item.sex),
+        year: normalizeYearValue(item.year),
+        diet: normalizeDietValue(item.diet),
+        life_stage: normalizeLifeStageValue(item.life_stage),
+        health_metrics: normalizeHealthMetricValue(item.health_metrics),
+      } satisfies Penguin;
+    })
+    .filter((item): item is Penguin => item !== null);
 };
 
 const fetchPenguinData = async (): Promise<Penguin[]> => {
