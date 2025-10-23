@@ -4,13 +4,17 @@ import {
   NUMERIC_FIELDS,
   type NumericField,
 } from '@/components/visualizations/types';
+import { PENGUIN_SPECIES, type PenguinSpecies } from '@/types/penguin';
+import {
+  normalizeIslandValue,
+  normalizeSpeciesValue,
+} from '@/utils/dataHelpers';
 
 export type ChartType = ChartConfig['type'];
 
 const CHART_TYPES: readonly ChartType[] = ['scatter', 'histogram', 'box'];
-const SPECIES = ['Adelie', 'Chinstrap', 'Gentoo'] as const;
-type Species = (typeof SPECIES)[number];
-const ISLANDS: readonly string[] = ['all', 'Biscoe', 'Dream', 'Torgersen'];
+const SPECIES = PENGUIN_SPECIES;
+type Species = PenguinSpecies;
 const SEXES: readonly string[] = ['all', 'male', 'female'];
 const DEFAULT_SPECIES: Species[] = [...SPECIES];
 const DEFAULT_ISLAND = 'all';
@@ -63,14 +67,6 @@ const toURLSearchParams = (
   return params;
 };
 
-const toSpecies = (value: string): Species | null => {
-  const lower = value.toLowerCase();
-  if (lower === 'adelie') return 'Adelie';
-  if (lower === 'chinstrap') return 'Chinstrap';
-  if (lower === 'gentoo') return 'Gentoo';
-  return null;
-};
-
 const normaliseSpecies = (value: string | null): Species[] => {
   if (!value) {
     return DEFAULT_SPECIES;
@@ -79,7 +75,7 @@ const normaliseSpecies = (value: string | null): Species[] => {
     .split(',')
     .map((token) => token.trim())
     .filter((token): token is string => token.length > 0)
-    .map(toSpecies)
+    .map((token) => normalizeSpeciesValue(token))
     .filter((token): token is Species => token !== null);
 
   const uniqueInOrder = SPECIES.filter((species) =>
@@ -90,10 +86,14 @@ const normaliseSpecies = (value: string | null): Species[] => {
 };
 
 const normaliseIsland = (value: string | null): string => {
-  if (!value) return DEFAULT_ISLAND;
-  const normalised = value.toLowerCase();
-  const matched = ISLANDS.find((island) => island.toLowerCase() === normalised);
-  return matched ?? DEFAULT_ISLAND;
+  if (!value) {
+    return DEFAULT_ISLAND;
+  }
+  if (value.toLowerCase() === 'all') {
+    return 'all';
+  }
+  const normalised = normalizeIslandValue(value);
+  return normalised ?? DEFAULT_ISLAND;
 };
 
 const normaliseSex = (value: string | null): string => {
