@@ -1,5 +1,3 @@
-import { CssBaseline } from '@mui/material';
-import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,8 +6,8 @@ import React from 'react';
 import { ApiModal } from './components/ApiModal';
 import { HelpModal } from './components/modals/HelpModal';
 import { AppProvider } from './context/ContextProvider';
+import { AccessibilityProvider } from './context/AccessibilityContext';
 import { routeTree } from './routeTree.gen';
-import { theme } from './theme';
 
 export const router = createRouter({ routeTree });
 
@@ -26,8 +24,7 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+        <AccessibilityProvider>
           <AppProvider>
             <RouterProvider
               router={router}
@@ -36,7 +33,7 @@ const App: React.FC = () => {
             <ApiModal />
             <HelpModal />
           </AppProvider>
-        </ThemeProvider>
+        </AccessibilityProvider>
       </LocalizationProvider>
     </QueryClientProvider>
   );

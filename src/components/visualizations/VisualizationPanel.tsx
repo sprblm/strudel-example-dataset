@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Alert, Stack, Button } from '@mui/material';
 import { useChartConfig } from '@/hooks/useChartConfig';
 import { AxisControls } from './AxisControls';
@@ -17,9 +17,9 @@ import {
   updateIslandFilter,
   updateSexFilter,
   updateSpeciesFilter,
-  openHelpModal,
 } from '@/context/actions';
 import { useURLSync } from '@/hooks/useURLSync';
+import { useAccessibility } from '@/context/AccessibilityContext';
 
 export const VisualizationPanel: React.FC = () => {
   const { state, dispatch } = useAppState();
@@ -29,9 +29,11 @@ export const VisualizationPanel: React.FC = () => {
     'Chinstrap',
     'Gentoo',
   ]);
-  const [highContrast, setHighContrast] = useState(false);
   const { config, updateConfig } = useChartConfig();
   const chartContainerRef = useRef<HTMLElement | null>(null);
+  const { announce, highContrastEnabled, toggleHighContrast } =
+    useAccessibility();
+  const hasAnnouncedContrastChange = useRef(false);
 
   const handleVisibilityChange = (species: string, visible: boolean) => {
     setVisibleSpecies((prev) => {
@@ -73,9 +75,22 @@ export const VisualizationPanel: React.FC = () => {
     [penguins, visibleSpecies]
   );
 
-  const chartContainerClassName = highContrast
+  const chartContainerClassName = highContrastEnabled
     ? 'chart-container--high-contrast'
     : undefined;
+
+  useEffect(() => {
+    if (!hasAnnouncedContrastChange.current) {
+      hasAnnouncedContrastChange.current = true;
+      return;
+    }
+
+    announce(
+      highContrastEnabled
+        ? 'High contrast mode enabled. Charts use stronger contrast.'
+        : 'Standard contrast restored.'
+    );
+  }, [announce, highContrastEnabled]);
 
   const chartTitle = useMemo(() => {
     switch (resolvedConfig.type) {
@@ -175,18 +190,21 @@ export const VisualizationPanel: React.FC = () => {
             alignItems={{ xs: 'stretch', sm: 'center' }}
           >
             <Button
+              component="a"
+              href="https://strudel.science/strudel-kit/docs/"
+              target="_blank"
+              rel="noreferrer"
               variant="outlined"
-              onClick={() => dispatch(openHelpModal())}
-              aria-label="Open help dialog"
+              aria-label="Open Strudel Kit documentation (opens in a new tab)"
             >
-              Help
+              Documentation
             </Button>
             <Button
-              variant={highContrast ? 'contained' : 'outlined'}
-              onClick={() => setHighContrast((prev) => !prev)}
-              aria-pressed={highContrast}
+              variant={highContrastEnabled ? 'contained' : 'outlined'}
+              onClick={() => toggleHighContrast()}
+              aria-pressed={highContrastEnabled}
             >
-              {highContrast ? 'Standard contrast' : 'High contrast'}
+              {highContrastEnabled ? 'Standard contrast' : 'High contrast'}
             </Button>
             <Stack direction="row" spacing={1} alignItems="center">
               <ShareButton

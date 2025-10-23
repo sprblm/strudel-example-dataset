@@ -9,29 +9,7 @@ interface SkipLinkProps {
 const SkipLink: React.FC<SkipLinkProps> = ({ href, children }) => (
   <Link
     href={href}
-    sx={{
-      position: 'absolute',
-      top: -1000,
-      left: -1000,
-      width: '1px',
-      height: '1px',
-      overflow: 'hidden',
-      '&:focus': {
-        position: 'absolute',
-        top: 4,
-        left: 4,
-        width: 'auto',
-        height: 'auto',
-        padding: 1,
-        backgroundColor: 'primary.main',
-        color: 'primary.contrastText',
-        textDecoration: 'none',
-        borderRadius: 1,
-        zIndex: 9999,
-        fontSize: '0.875rem',
-        fontWeight: 'medium',
-      },
-    }}
+    className="skip-link"
     onFocus={(e) => {
       e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }}
