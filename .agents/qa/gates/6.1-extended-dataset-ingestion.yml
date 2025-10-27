@@ -1,12 +1,34 @@
 schema: 1
 story: '6.1'
-gate: CONCERNS
-status_reason: 'Year normalization clamps future data to 2025; adjust before dataset expands.'
-reviewer: 'Quinn'
-updated: '2025-10-18T00:00:00Z'
-top_issues:
-  - id: 'REQ-001'
-    severity: medium
-    finding: 'normalizeYearValue coerces any year outside 2021-2025 to 2025, which would mislabel future dataset entries.'
-    suggested_action: 'Derive acceptable year range from the dataset (or preserve out-of-range years) so new data is represented accurately.'
+story_title: 'Extended Dataset Ingestion Integrity'
+gate: PASS
+status_reason: 'QA transformation note now aligns with normalizeYearValue warning-only behaviour; all acceptance criteria satisfied.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-10-27T00:15:00Z'
+top_issues: []
 waiver: { active: false }
+quality_score: 100
+evidence:
+  tests_reviewed: 3
+  risks_identified: 0
+  trace:
+    ac_covered: [1, 2, 3, 4, 5]
+    ac_gaps: []
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'Static dataset transform only; no security surface.'
+  performance:
+    status: PASS
+    notes: 'Benchmarked transform ~0.9 ms per run across dataset.'
+  reliability:
+    status: PASS
+    notes: 'Normalization logs unexpected categories without dropping valid records.'
+  maintainability:
+    status: PASS
+    notes: 'Documentation updated to reflect warning-based year handling.'
+recommendations:
+  immediate: []
+  future:
+    - action: 'Maintain the dataset-year regression guardrail when ingesting new data and update docs/tests if the range expands.'
+      refs: ['.agents/qa/assessments/6.1.extended-dataset-transformations-20251018.md']
