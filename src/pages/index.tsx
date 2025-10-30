@@ -142,8 +142,6 @@ function Index() {
                   width: '100%',
                   maxWidth: { xs: 260, sm: 320, md: 360 },
                   mx: { xs: 'auto', md: 0 },
-                  boxShadow: (theme) =>
-                    `0 18px 34px -18px ${theme.palette.grey[900]}`,
                 }}
               >
                 <Box
