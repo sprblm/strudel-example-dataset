@@ -31,6 +31,9 @@ describe('urlHelpers', () => {
       species: 'gentoo,adelie',
       island: 'Dream',
       sex: 'female',
+      diet: 'fish,squid',
+      lifeStage: 'adult',
+      years: '2022-2024',
     });
 
     expect(result.chart).toEqual({
@@ -44,12 +47,15 @@ describe('urlHelpers', () => {
       species: ['Adelie', 'Gentoo'],
       island: 'Dream',
       sex: 'female',
+      diet: ['fish', 'squid'],
+      lifeStage: 'adult',
+      yearRange: [2022, 2024],
     });
   });
 
   it('normalises histogram parameters and ignores invalid values', () => {
     const result = parseShareSearchParams(
-      'chart=histogram&field=body_mass_g&bins=24&species=chinstrap,invalid&island=unknown'
+      'chart=histogram&field=body_mass_g&bins=24&species=chinstrap,invalid&island=unknown&diet=fish,krill&lifeStage=juvenile&years=2021-2023'
     );
 
     expect(result.chart).toEqual({
@@ -63,6 +69,9 @@ describe('urlHelpers', () => {
       species: ['Chinstrap'],
       island: 'all',
       sex: 'all',
+      diet: ['fish', 'krill'],
+      lifeStage: 'juvenile',
+      yearRange: [2021, 2023],
     });
   });
 
@@ -86,6 +95,9 @@ describe('urlHelpers', () => {
         species: ['Adelie'],
         island: 'Dream',
         sex: 'male',
+        diet: ['fish', 'squid'],
+        lifeStage: 'adult',
+        yearRange: [2022, 2024],
       },
     });
 
@@ -97,6 +109,9 @@ describe('urlHelpers', () => {
         'species=Adelie',
         'island=Dream',
         'sex=male',
+        'diet=fish,squid',
+        'lifeStage=adult',
+        'years=2022-2024',
       ].sort()
     );
   });

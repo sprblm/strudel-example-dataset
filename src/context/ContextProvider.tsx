@@ -1,4 +1,5 @@
 import React, { useReducer, useContext } from 'react';
+import { PENGUIN_DIETS, PENGUIN_YEARS } from '@/types/penguin';
 import { AppAction, AppActionType } from './actions';
 
 export interface AppState {
@@ -8,6 +9,9 @@ export interface AppState {
   selectedSpecies: string[];
   selectedIsland: string;
   selectedSex: string;
+  selectedDiet: string[];
+  selectedLifeStage: string;
+  selectedYearRange: [number, number];
 }
 
 /**
@@ -21,6 +25,9 @@ interface AppProviderProps extends Partial<AppState> {
   selectedSpecies?: string[];
   selectedIsland?: string;
   selectedSex?: string;
+  selectedDiet?: string[];
+  selectedLifeStage?: string;
+  selectedYearRange?: [number, number];
   children: React.ReactNode;
 }
 
@@ -35,6 +42,12 @@ const initialState: AppState = {
   selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'], // All selected by default
   selectedIsland: 'all', // All islands by default
   selectedSex: 'all', // All sexes by default
+  selectedDiet: [...PENGUIN_DIETS],
+  selectedLifeStage: 'all',
+  selectedYearRange: [
+    PENGUIN_YEARS[0],
+    PENGUIN_YEARS[PENGUIN_YEARS.length - 1],
+  ],
 };
 
 const initState = (state: AppState, props: AppProviderProps) => {
@@ -96,12 +109,36 @@ function appReducer(state: AppState, action: AppAction): AppState {
         selectedSex: action.payload,
       };
     }
+    case 'UPDATE_DIET_FILTER' as any: {
+      return {
+        ...state,
+        selectedDiet: action.payload,
+      };
+    }
+    case 'UPDATE_LIFE_STAGE_FILTER' as any: {
+      return {
+        ...state,
+        selectedLifeStage: action.payload,
+      };
+    }
+    case 'UPDATE_YEAR_RANGE_FILTER' as any: {
+      return {
+        ...state,
+        selectedYearRange: action.payload,
+      };
+    }
     case AppActionType.CLEAR_ALL_FILTERS: {
       return {
         ...state,
         selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
         selectedIsland: 'all',
         selectedSex: 'all',
+        selectedDiet: [...PENGUIN_DIETS],
+        selectedLifeStage: 'all',
+        selectedYearRange: [
+          PENGUIN_YEARS[0],
+          PENGUIN_YEARS[PENGUIN_YEARS.length - 1],
+        ],
       };
     }
     default: {

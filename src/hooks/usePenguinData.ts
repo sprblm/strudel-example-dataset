@@ -81,7 +81,14 @@ const fetchPenguinData = async (): Promise<Penguin[]> => {
 
 export const usePenguinData = () => {
   const { state } = useAppState();
-  const { selectedSpecies, selectedIsland, selectedSex } = state;
+  const {
+    selectedSpecies,
+    selectedIsland,
+    selectedSex,
+    selectedDiet,
+    selectedLifeStage,
+    selectedYearRange,
+  } = state;
 
   const {
     data: allPenguins = [],
@@ -100,9 +107,20 @@ export const usePenguinData = () => {
       allPenguins,
       selectedSpecies,
       selectedIsland,
-      selectedSex
+      selectedSex,
+      selectedDiet,
+      selectedLifeStage,
+      selectedYearRange
     );
-  }, [allPenguins, selectedSpecies, selectedIsland, selectedSex]);
+  }, [
+    allPenguins,
+    selectedSpecies,
+    selectedIsland,
+    selectedSex,
+    selectedDiet,
+    selectedLifeStage,
+    selectedYearRange,
+  ]);
 
   return {
     data: filteredPenguins,

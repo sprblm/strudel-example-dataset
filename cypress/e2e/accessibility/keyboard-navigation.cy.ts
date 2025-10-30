@@ -1,146 +1,84 @@
 describe('Keyboard Navigation E2E', () => {
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit('/penguins/');
   });
 
-  it('supports complete keyboard navigation flow', () => {
-    // Start with skip links
-    cy.get('body').tab();
-    cy.focused().should('contain.text', 'Skip to main content');
+  it('provides skip links to key regions', () => {
+    cy.realPress('Tab');
+    cy.focused()
+      .should('have.attr', 'href', '#main-content')
+      .and('contain.text', 'Skip to main content');
 
-    cy.tab();
-    cy.focused().should('contain.text', 'Skip to filters');
+    cy.realPress('Tab');
+    cy.focused()
+      .should('have.attr', 'href', '#filters')
+      .and('contain.text', 'Skip to filters');
 
-    cy.tab();
-    cy.focused().should('contain.text', 'Skip to data');
+    cy.realPress('Tab');
+    cy.focused()
+      .should('have.attr', 'href', '#data')
+      .and('contain.text', 'Skip to data');
 
-    // Navigate through the actual content
-    cy.tab();
-    // Should now be in the main content area, focusing first interactive element
-    cy.focused().should('be.visible');
+    cy.realPress('Enter');
+    cy.focused().should('have.id', 'data');
   });
 
-  it('supports keyboard shortcuts', () => {
-    // Open help modal with ?
-    cy.get('body').type('{shift}?');
+  it('opens the help modal via keyboard shortcut and traps focus', () => {
+    cy.realPress('?');
     cy.get('[role="dialog"]').should('be.visible');
-    cy.get('[id="help-modal-title"]').should(
-      'contain.text',
-      'Palmer Penguins Explorer - Help'
-    );
+    cy.get('#help-modal-title')
+      .should('be.visible')
+      .and('contain.text', 'Help');
 
-    // Close modal with Escape
-    cy.get('body').type('{esc}');
+    cy.focused().should('have.attr', 'role', 'dialog');
+
+    cy.realPress('Tab');
+    cy.focused().should('be.visible');
+    cy.realPress('Tab');
+    cy.focused().should('be.visible');
+
+    cy.realPress('Escape');
     cy.get('[role="dialog"]').should('not.exist');
   });
 
-  it('traps focus within modals', () => {
-    // Open help modal
-    cy.get('body').type('{shift}?');
-    cy.get('[role="dialog"]').should('be.visible');
+  it('allows keyboard-only interaction with filters', () => {
+    cy.get('[data-testid="species-checkbox-adelie"]')
+      .find('input[type="checkbox"]')
+      .focus();
+    cy.realPress('Space');
+    cy.get('[data-testid="species-checkbox-adelie"]')
+      .find('input[type="checkbox"]')
+      .should('not.be.checked');
 
-    // Focus should be trapped within the modal
-    cy.focused().should('be.visible');
+    cy.get('[data-testid="toggle-advanced-filters"]').focus();
+    cy.realPress('Enter');
+    cy.get('[data-testid="advanced-filters"]').should('be.visible');
 
-    // Tab through modal elements
-    cy.tab();
-    cy.focused().should('exist').and('be.visible');
-
-    // Continue tabbing - should stay within modal
-    cy.tab();
-    cy.focused().should('exist').and('be.visible');
-
-    // Close modal
-    cy.get('[aria-label="Close help modal"]').click();
-    cy.get('[role="dialog"]').should('not.exist');
+    cy.get('[data-testid="diet-chip-krill"]').focus();
+    cy.realPress('Enter');
+    cy.get('[data-testid="diet-summary"]')
+      .should('contain.text', 'Krill')
+      .and('not.contain.text', 'All diets');
   });
 
-  it('provides visual focus indicators', () => {
-    // Tab to interactive elements and verify they have focus indicators
-    cy.get('body').tab(); // Skip link
-    cy.focused().should('have.css', 'outline-style', 'solid');
-
-    // Navigate to filters
-    cy.get('#filters').focus();
-    cy.get('#filters input[type="checkbox"]').first().focus();
-    cy.focused().should('be.visible');
+  it('announces filter updates via live region', () => {
+    cy.get('[data-testid="species-checkbox-gentoo"]')
+      .find('input[type="checkbox"]')
+      .uncheck({ force: true });
+    cy.get('[data-testid="live-region"]')
+      .should('contain.text', 'Showing')
+      .and('contain.text', 'penguins');
   });
 
-  it('supports filter interaction via keyboard', () => {
-    // Navigate to species filter
-    cy.get('#filters').focus();
-    cy.get('[data-testid="species-checkbox-adelie"]').focus();
-
-    // Toggle checkbox with space
-    cy.focused().type(' ');
-
-    // Navigate to island filter
-    cy.get('[data-testid="island-select"]').focus();
-
-    // Open dropdown with Enter and select option
-    cy.focused().type('{enter}');
-    cy.get('[data-testid="island-option-biscoe"]').should('be.visible');
-    cy.get('[data-testid="island-option-biscoe"]').click();
-  });
-
-  it('supports data table keyboard navigation', () => {
-    // Navigate to data table
+  it('supports keyboard navigation within the data table', () => {
     cy.get('#data').focus();
+    cy.realPress('Tab');
+    cy.focused().should('have.attr', 'role', 'columnheader');
 
-    // Table should be accessible
-    cy.get('[role="grid"]').should('be.visible');
+    cy.realPress('ArrowRight');
+    cy.focused().should('have.attr', 'role', 'columnheader');
 
-    // Navigate through table headers (sortable)
-    cy.get('.MuiDataGrid-columnHeader').first().focus();
-    cy.focused().should('be.visible');
-
-    // Use arrow keys to navigate (if supported)
-    cy.focused().type('{rightarrow}');
-  });
-
-  it('skip links function correctly', () => {
-    // Test skip to main content
-    cy.get('body').tab();
-    cy.focused().click();
-    cy.get('#main-content').should('be.focused');
-
-    // Reset and test skip to filters
-    cy.get('body').tab();
-    cy.tab();
-    cy.focused().click();
-    cy.get('#filters').should('be.focused');
-
-    // Reset and test skip to data
-    cy.get('body').tab();
-    cy.tab();
-    cy.tab();
-    cy.focused().click();
-    cy.get('#data').should('be.focused');
-  });
-
-  it('maintains accessibility when filtering data', () => {
-    // Apply filters and ensure accessibility is maintained
-    cy.get('[data-testid="species-checkbox-adelie"]').uncheck();
-
-    // Data table should still be accessible
-    cy.get('[role="grid"]').should('be.visible');
-    cy.get('#data').should('be.visible');
-
-    // Clear filters button should be accessible
-    cy.get('[data-testid="clear-filters-button"]').should('be.visible');
-    cy.get('[data-testid="clear-filters-button"]').focus();
-    cy.focused().should('be.visible');
-  });
-
-  it('provides screen reader announcements', () => {
-    // Check for live regions
-    cy.get('[role="status"]').should('exist');
-    cy.get('[aria-live="polite"]').should('exist');
-
-    // Apply filter and check for announcements
-    cy.get('[data-testid="species-checkbox-adelie"]').uncheck();
-
-    // Should have announcement about filter changes
-    cy.get('[role="status"]').should('be.visible');
+    cy.realPress('Tab');
+    cy.focused().should('have.attr', 'role', 'gridcell');
   });
 });

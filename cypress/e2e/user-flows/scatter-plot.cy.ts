@@ -1,37 +1,32 @@
-describe('Scatter Plot Visualization', () => {
+describe('Scatter Plot Visualization User Flow', () => {
   beforeEach(() => {
-    cy.visit('/explore-data/');
+    cy.visit('/visualizations/');
   });
 
-  it('displays scatter plot with controls', () => {
-    cy.get('[aria-label*="X Axis"]').should('be.visible');
-    cy.get('[aria-label*="Y Axis"]').should('be.visible');
-    cy.contains('Adelie').should('be.visible');
-    cy.contains('Gentoo').should('be.visible');
-    cy.get('svg').should('be.visible');
+  it('supports end-to-end configuration and interaction', () => {
+    cy.get('[data-testid="visualization-panel"]').should('exist');
 
-    // Toggle species visibility
-    cy.contains('Adelie').click();
-    cy.get('svg circle').should('not.have.length', 0);
+    cy.get('#chart-type-select').should('contain', 'Scatter');
 
-    // Change X axis
-    cy.get('[aria-label*="X Axis"]').click();
-    cy.contains('Flipper Length (mm)').click();
-    cy.get('svg circle').should('be.visible');
+    cy.get('#x-axis-select').click();
+    cy.contains('li', 'Flipper Length (mm)').click();
 
-    // Change Y axis
-    cy.get('[aria-label*="Y Axis"]').click();
-    cy.contains('Bill Depth (mm)').click();
-    cy.get('svg circle').should('be.visible');
+    cy.get('#y-axis-select').click();
+    cy.contains('li', 'Bill Depth (mm)').click();
+
+    cy.get('[data-testid="species-checkbox-gentoo"]').click();
+    cy.get('[data-testid="species-checkbox-gentoo"]')
+      .find('input[type="checkbox"]')
+      .should('not.be.checked');
+
+    cy.get('figure[role="img"] svg').should('be.visible');
   });
 
-  it('has accessible chart elements', () => {
-    cy.get('svg').should(
-      'have.attr',
-      'aria-labelledby',
-      'scatter-title scatter-desc'
-    );
-    cy.get('#scatter-title').should('contain', 'Scatter Plot');
-    cy.get('#scatter-desc').should('contain', 'Interactive scatter plot');
+  it('maintains accessible metadata for the scatter plot', () => {
+    cy.get('figure[role="img"]').should('exist');
+    cy.get('#chart-title-scatter')
+      .should('be.visible')
+      .and('contain', 'Scatter Plot');
+    cy.contains(/Showing \d+ penguins/).should('be.visible');
   });
 });

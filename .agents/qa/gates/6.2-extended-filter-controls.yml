@@ -1,0 +1,42 @@
+schema: 1
+story: '6.2'
+story_title: 'Extended Filter Controls'
+gate: CONCERNS
+status_reason: 'Port hand-off works, but the headless Cypress command still aborts unless a dev server is launched manually; automation needs an embedded server step or documented prerequisite.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-10-30T00:00:00Z'
+top_issues:
+  - severity: medium
+    description: '`npm run cy:test` exits with SIGABRT without a running dev/preview server; add automated server orchestration (e.g., start-server-and-test) or document the prerequisite.'
+    suggested_owner: dev
+    refs:
+      - package.json
+      - cypress.config.cjs
+waiver: { active: false }
+quality_score: 90
+evidence:
+  tests_reviewed: 9
+  risks_identified: 1
+  trace:
+    ac_covered: [1, 2, 3, 4, 5]
+    ac_gaps: []
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'No new transport/security surface; client-only state changes.'
+  performance:
+    status: PASS
+    notes: 'Advanced filters reuse memoized selectors; no hot-path regressions noted.'
+  reliability:
+    status: CONCERNS
+    notes: 'E2E command requires a manually launched dev server; CI flow would be brittle without orchestration.'
+  maintainability:
+    status: PASS
+    notes: 'Cypress specs align with updated components; .temp ignored and cleaned up.'
+recommendations:
+  immediate:
+    - action: 'Augment `npm run cy:test` to boot the dev server automatically (e.g., start-server-and-test) or update docs/build pipeline accordingly.'
+      refs: ['package.json', 'README.md']
+  future:
+    - action: 'Add a preflight check that fails fast with a clear message when the dev-server port file is absent.'
+      refs: ['cypress.config.cjs']

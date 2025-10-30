@@ -101,3 +101,4 @@ _*.config.ts
 .eslintcache
 # BMAD (local only)
 # BMAD (local only)
+.temp/

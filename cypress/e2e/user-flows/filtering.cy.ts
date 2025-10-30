@@ -7,24 +7,33 @@ describe('Filtering User Flows E2E', () => {
   });
 
   it('activates multiple filters and clears them', () => {
-    cy.get('[data-testid="species-checkbox-chinstrap"]').click();
-    cy.wait(1000);
-    cy.get('[data-testid="island-select"]').click();
-    cy.get('[data-value="Dream"]').click();
-    cy.wait(1000);
-    cy.get('[data-testid="sex-radio-male"]').click();
-    cy.wait(5000);
-    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
-      'be.checked'
-    );
-    cy.get('[data-value="Dream"]').should('be.visible');
-    cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
+    const getSpeciesCheckbox = (species: string) =>
+      cy
+        .get(`[data-testid="species-checkbox-${species}"]`)
+        .find('input[type="checkbox"]');
 
-    cy.get('[data-testid="data-table"]').should('be.visible');
+    cy.get('[data-testid="species-label-chinstrap"]').click();
+    getSpeciesCheckbox('chinstrap').should('not.be.checked');
+
+    cy.get('[data-testid="island-select"]').click();
+    cy.contains('[role="option"]', 'Dream').click();
+
+    cy.get('[data-testid="sex-option-male"]').click();
+    cy.get('[data-testid="sex-filter-feedback"]').should(
+      'contain',
+      'Filtering by: male'
+    );
+
+    cy.get('[aria-label="Palmer Penguins data table"][role="grid"]').should(
+      'be.visible'
+    );
+    cy.contains(/Showing \d+ penguins/).should('be.visible');
 
     cy.get('[data-testid="clear-filters-button"]').click();
-    cy.wait(1000);
-    cy.url().should('eq', 'http://localhost:5175/penguins/');
-    cy.get('[data-testid="data-table"]').should('be.visible');
+    cy.location('pathname').should('eq', '/penguins/');
+    cy.get('[aria-label="Palmer Penguins data table"][role="grid"]').should(
+      'be.visible'
+    );
+    cy.contains(/Showing \d+ penguins/).should('be.visible');
   });
 });

@@ -6,19 +6,24 @@ import { useAppState } from '@/context/ContextProvider';
 // Mock the useAppState hook for testing
 const mockDispatch = vi.fn();
 
+const baseState = {
+  appTitle: 'Penguins Explorer',
+  apiModalOpen: false,
+  selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+  selectedIsland: 'all',
+  selectedSex: 'all',
+  selectedDiet: ['fish', 'krill', 'squid', 'parental'],
+  selectedLifeStage: 'all',
+  selectedYearRange: [2021, 2025],
+};
+
 // Mock the useAppState to return our controlled state
 vi.mock('@/context/ContextProvider', async () => {
   const actual = await vi.importActual('@/context/ContextProvider');
   return {
     ...actual,
     useAppState: vi.fn(() => ({
-      state: {
-        appTitle: 'Penguins Explorer',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     })),
   };
@@ -28,13 +33,7 @@ describe('SexFilter Component', () => {
   beforeEach(() => {
     mockDispatch.mockClear();
     vi.mocked(useAppState).mockReturnValue({
-      state: {
-        appTitle: '',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     });
   });
@@ -127,13 +126,7 @@ describe('SexFilter Component', () => {
   it('shows visual feedback when a specific sex is selected', () => {
     // Update mock to select male
     useAppState.mockReturnValue({
-      state: {
-        appTitle: '',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'male',
-      },
+      state: { ...baseState, selectedSex: 'male' },
       dispatch: mockDispatch,
     });
 

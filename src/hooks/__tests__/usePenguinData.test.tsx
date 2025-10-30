@@ -143,4 +143,73 @@ describe('usePenguinData', () => {
 
     expect(result.current.error?.message).toBe('Failed to fetch penguin data');
   });
+
+  it('applies extended filters for diet, life stage, and year range', async () => {
+    const dataset = [
+      {
+        species: 'Adelie',
+        island: 'Biscoe',
+        bill_length_mm: 40,
+        bill_depth_mm: 18,
+        flipper_length_mm: 200,
+        body_mass_g: 4000,
+        sex: 'female',
+        diet: 'fish',
+        life_stage: 'adult',
+        health_metrics: 'healthy',
+        year: 2024,
+      },
+      {
+        species: 'Gentoo',
+        island: 'Dream',
+        bill_length_mm: 45,
+        bill_depth_mm: 15,
+        flipper_length_mm: 210,
+        body_mass_g: 4500,
+        sex: 'male',
+        diet: 'krill',
+        life_stage: 'juvenile',
+        health_metrics: 'healthy',
+        year: 2025,
+      },
+    ];
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => dataset,
+    } as Response);
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        <AppProvider
+          selectedDiet={['fish']}
+          selectedLifeStage="adult"
+          selectedYearRange={[2024, 2024]}
+        >
+          {children}
+        </AppProvider>
+      </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => usePenguinData(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.data).toHaveLength(1);
+    expect(result.current.data[0]).toMatchObject({
+      diet: 'fish',
+      life_stage: 'adult',
+      year: 2024,
+    });
+  });
 });

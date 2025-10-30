@@ -16,6 +16,9 @@ interface UseURLSyncOptions {
     setSpecies: (species: string[]) => void;
     setIsland: (island: string) => void;
     setSex: (sex: string) => void;
+    setDiet: (diet: string[]) => void;
+    setLifeStage: (lifeStage: string) => void;
+    setYearRange: (range: readonly [number, number]) => void;
   };
   debounceMs?: number;
 }
@@ -34,7 +37,11 @@ const filtersEqual = (a: FiltersState, b: FiltersState) => {
   return (
     areSpeciesEqual(a.species, b.species) &&
     a.island === b.island &&
-    a.sex === b.sex
+    a.sex === b.sex &&
+    areSpeciesEqual(a.diet, b.diet) &&
+    a.lifeStage === b.lifeStage &&
+    a.yearRange[0] === b.yearRange[0] &&
+    a.yearRange[1] === b.yearRange[1]
   );
 };
 
@@ -73,6 +80,18 @@ const applyFilters = (
   }
   if (current.sex !== next.sex) {
     setFilters.setSex(next.sex);
+  }
+  if (!areSpeciesEqual(current.diet, next.diet)) {
+    setFilters.setDiet(next.diet);
+  }
+  if (current.lifeStage !== next.lifeStage) {
+    setFilters.setLifeStage(next.lifeStage);
+  }
+  if (
+    current.yearRange[0] !== next.yearRange[0] ||
+    current.yearRange[1] !== next.yearRange[1]
+  ) {
+    setFilters.setYearRange(next.yearRange);
   }
 };
 

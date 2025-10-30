@@ -6,50 +6,45 @@ describe('Species Filter E2E', () => {
   });
 
   it('persists filter state in URL and reloads correctly', () => {
-    cy.get('[data-testid="species-checkbox-adelie"] input').should(
-      'be.checked'
-    );
-    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
-      'be.checked'
-    );
-    cy.get('[data-testid="species-checkbox-gentoo"] input').should(
-      'be.checked'
-    );
+    const getSpeciesCheckbox = (species: string) =>
+      cy
+        .get(`[data-testid="species-checkbox-${species}"]`)
+        .find('input[type="checkbox"]');
 
-    cy.get('[data-testid="species-checkbox-chinstrap"]').click();
-    cy.wait(5000);
-    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
-      'not.be.checked'
-    );
+    ['adelie', 'chinstrap', 'gentoo'].forEach((species) => {
+      getSpeciesCheckbox(species).should('be.checked');
+    });
 
-    cy.get('[data-testid="data-table"]').should('be.visible');
-    cy.get('[data-testid="showing-count"]')
-      .contains('Showing')
-      .should('be.visible');
+    cy.get('[data-testid="species-label-chinstrap"]').click();
+
+    getSpeciesCheckbox('chinstrap').should('not.be.checked');
+
+    cy.get('[aria-label="Palmer Penguins data table"][role="grid"]').should(
+      'be.visible'
+    );
+    cy.contains(/Showing \d+ penguins/).should('be.visible');
+
+    cy.location('search').should('contain', 'species=');
 
     cy.reload();
-    cy.wait(5000);
 
-    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
-      'not.be.checked'
-    );
-    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
-      'not.be.checked'
-    );
+    getSpeciesCheckbox('chinstrap').should('not.be.checked');
+    cy.location('search').should('contain', 'species=');
   });
 
   it('tests keyboard navigation', () => {
-    cy.get('[data-testid="species-checkbox-adelie"] input').focus();
+    const getSpeciesCheckbox = (species: string) =>
+      cy
+        .get(`[data-testid="species-checkbox-${species}"]`)
+        .find('input[type="checkbox"]');
+
+    getSpeciesCheckbox('adelie').focus();
     cy.realPress('Space');
-    cy.wait(500);
-    cy.get('[data-testid="species-checkbox-adelie"] input').should(
-      'be.checked'
-    );
+    getSpeciesCheckbox('adelie').should('not.be.checked');
+
     cy.realPress('Tab');
-    cy.wait(500);
-    cy.get('[data-testid="species-checkbox-chinstrap"] input').should(
-      'be.focused'
-    );
+    getSpeciesCheckbox('chinstrap').should('be.focused');
     cy.realPress('Space');
+    getSpeciesCheckbox('chinstrap').should('not.be.checked');
   });
 });

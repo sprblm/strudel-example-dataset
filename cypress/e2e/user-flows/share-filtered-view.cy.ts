@@ -36,12 +36,18 @@ describe('Share Filtered Visualization', () => {
 
     // Verify URL contains expected parameters and test state restoration
     cy.then(() => {
-      // URL should contain chart type
-      expect(clipboardText).to.contain('chart=scatter');
-      expect(clipboardText).to.match(/^http:\/\/localhost:5175\/visualizations\/\?chart=/);
+      // URL should contain chart type and match the current origin
+      const sharedUrl = new URL(clipboardText);
+      const configuredBaseUrl = Cypress.config('baseUrl');
+      if (configuredBaseUrl) {
+        const expectedOrigin = new URL(configuredBaseUrl).origin;
+        expect(sharedUrl.origin).to.eq(expectedOrigin);
+      }
+      expect(sharedUrl.pathname).to.eq('/visualizations/');
+      expect(sharedUrl.searchParams.get('chart')).to.eq('scatter');
 
       // Visit the shared URL to verify state restoration
-      cy.visit(clipboardText);
+      cy.visit(sharedUrl.toString());
     });
 
     // Verify visualization panel loads from shared URL

@@ -15,6 +15,9 @@ const defaultFilters = {
   species: ['Adelie', 'Chinstrap', 'Gentoo'],
   island: 'all',
   sex: 'all',
+  diet: ['fish', 'krill', 'squid', 'parental'],
+  lifeStage: 'all',
+  yearRange: [2021, 2025] as const,
 };
 
 describe('useURLSync', () => {
@@ -32,13 +35,16 @@ describe('useURLSync', () => {
     window.history.replaceState(
       {},
       '',
-      '/visualizations/?chart=histogram&field=body_mass_g&bins=18&species=gentoo&island=Dream&sex=female'
+      '/visualizations/?chart=histogram&field=body_mass_g&bins=18&species=gentoo&island=Dream&sex=female&diet=fish,squid&lifeStage=adult&years=2022-2024'
     );
 
     const onChartConfigChange = vi.fn();
     const setSpecies = vi.fn();
     const setIsland = vi.fn();
     const setSex = vi.fn();
+    const setDiet = vi.fn();
+    const setLifeStage = vi.fn();
+    const setYearRange = vi.fn();
 
     const { result, rerender } = renderHook(
       ({
@@ -56,6 +62,9 @@ describe('useURLSync', () => {
             setSpecies,
             setIsland,
             setSex,
+            setDiet,
+            setLifeStage,
+            setYearRange,
           },
           debounceMs: 0,
         }),
@@ -78,6 +87,9 @@ describe('useURLSync', () => {
     expect(setSpecies).toHaveBeenCalledWith(['Gentoo']);
     expect(setIsland).toHaveBeenCalledWith('Dream');
     expect(setSex).toHaveBeenCalledWith('female');
+    expect(setDiet).toHaveBeenCalledWith(['fish', 'squid']);
+    expect(setLifeStage).toHaveBeenCalledWith('adult');
+    expect(setYearRange).toHaveBeenCalledWith([2022, 2024]);
 
     rerender({
       chartConfig: {
@@ -91,6 +103,9 @@ describe('useURLSync', () => {
         species: ['Gentoo'],
         island: 'Dream',
         sex: 'female',
+        diet: ['fish', 'squid'],
+        lifeStage: 'adult',
+        yearRange: [2022, 2024],
       },
     });
 
@@ -108,6 +123,9 @@ describe('useURLSync', () => {
         species: ['Adelie', 'Chinstrap'],
         island: 'Biscoe',
         sex: 'all',
+        diet: ['fish', 'krill', 'squid', 'parental'],
+        lifeStage: 'all',
+        yearRange: [2021, 2025],
       },
     });
 

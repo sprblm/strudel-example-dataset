@@ -7,33 +7,47 @@ describe('Sex Filter E2E', () => {
   });
 
   it('persists filter state in URL and reloads correctly', () => {
-    cy.get('[data-testid="sex-radio-male"]').click({ force: true });
-    cy.wait(5000);
-    cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
+    const selectSex = (value: string) =>
+      cy.get(`[data-testid="sex-option-${value}"]`).click();
+
+    selectSex('male');
+    cy.get('[data-testid="sex-filter-feedback"]').should(
+      'contain',
+      'Filtering by: male'
+    );
+    cy.location('search').should('contain', 'sex=male');
+
     cy.reload();
-    cy.wait(5000);
-    cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
-    cy.get('[data-testid="sex-filter-feedback"]').should('contain', 'male');
+
+    cy.get('[data-testid="sex-filter-feedback"]').should(
+      'contain',
+      'Filtering by: male'
+    );
+    cy.location('search').should('contain', 'sex=male');
   });
 
   it('tests keyboard navigation', () => {
-    cy.get('[data-testid="sex-radio-all"] input').focus();
+    const radioInput = (value: string) =>
+      cy
+        .get('[data-testid="sex-radio-group"]')
+        .find(`input[type="radio"][value="${value}"]`);
+
+    radioInput('all').focus();
     cy.realPress('ArrowDown');
-    cy.wait(500);
-    cy.get('[data-testid="sex-radio-all"] input').should('be.checked');
-    cy.realPress('ArrowDown');
-    cy.wait(500);
-    cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
+    radioInput('male').should('be.focused');
     cy.realPress('Space');
-    cy.wait(500);
-    cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
+    radioInput('male').should('be.checked');
   });
 
   it('handles missing sex values', () => {
-    cy.get('[data-testid="sex-radio-all"]').click();
-    cy.wait(1000);
-    cy.get('[data-testid="data-table-row"]').should('exist');
-    cy.get('[data-testid="sex-radio-female"]').click();
+    cy.get('[data-testid="sex-option-all"]').click();
+    cy.get('[aria-label="Palmer Penguins data table"][role="grid"]').should(
+      'be.visible'
+    );
+    cy.get('[data-testid="sex-option-female"]').click();
+    cy.get('[aria-label="Palmer Penguins data table"][role="grid"]').should(
+      'be.visible'
+    );
   });
 
   it('validates accessibility', () => {
@@ -42,11 +56,12 @@ describe('Sex Filter E2E', () => {
   });
 
   it('integrates with other filters', () => {
-    cy.get('[data-testid="species-checkbox-adelie"]').click();
-    cy.wait(1000);
-    cy.get('[data-testid="sex-radio-male"]').click({ force: true });
-    cy.wait(1000);
-    cy.get('[data-testid="sex-radio-male"] input').should('be.checked');
-    cy.get('[data-testid="data-table-row"]').should('exist');
+    cy.get('[data-testid="species-label-adelie"]').click();
+    cy.get('[data-testid="sex-option-male"]').click();
+    cy.get('[data-testid="sex-filter-feedback"]').should(
+      'contain',
+      'Filtering by: male'
+    );
+    cy.contains(/Showing \d+ penguins/).should('be.visible');
   });
 });

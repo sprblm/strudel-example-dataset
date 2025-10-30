@@ -3,6 +3,9 @@ import {
   filterPenguinsBySpecies,
   filterPenguinsByIsland,
   filterPenguinsBySex,
+  filterPenguinsByDiet,
+  filterPenguinsByLifeStage,
+  filterPenguinsByYearRange,
   filterPenguins,
 } from '@/utils/filtering';
 import { Penguin } from '@/types/penguin';
@@ -17,7 +20,10 @@ const mockPenguins: Penguin[] = [
     flipper_length_mm: 181,
     body_mass_g: 3750,
     sex: 'male',
-    year: 2007,
+    year: 2021,
+    diet: 'fish',
+    life_stage: 'adult',
+    health_metrics: 'healthy',
   },
   {
     species: 'Adelie',
@@ -27,7 +33,10 @@ const mockPenguins: Penguin[] = [
     flipper_length_mm: 186,
     body_mass_g: 3800,
     sex: 'female',
-    year: 2007,
+    year: 2021,
+    diet: 'krill',
+    life_stage: 'juvenile',
+    health_metrics: 'healthy',
   },
   {
     species: 'Chinstrap',
@@ -37,7 +46,10 @@ const mockPenguins: Penguin[] = [
     flipper_length_mm: 192,
     body_mass_g: 3500,
     sex: 'female',
-    year: 2007,
+    year: 2022,
+    diet: 'krill',
+    life_stage: 'adult',
+    health_metrics: 'overweight',
   },
   {
     species: 'Gentoo',
@@ -47,7 +59,10 @@ const mockPenguins: Penguin[] = [
     flipper_length_mm: 211,
     body_mass_g: 4500,
     sex: 'female',
-    year: 2007,
+    year: 2023,
+    diet: 'squid',
+    life_stage: 'adult',
+    health_metrics: 'underweight',
   },
   {
     species: 'Gentoo',
@@ -57,7 +72,10 @@ const mockPenguins: Penguin[] = [
     flipper_length_mm: 215,
     body_mass_g: 5000,
     sex: 'male',
-    year: 2008,
+    year: 2024,
+    diet: 'fish',
+    life_stage: 'adult',
+    health_metrics: 'healthy',
   },
   {
     species: 'Adelie',
@@ -67,9 +85,15 @@ const mockPenguins: Penguin[] = [
     flipper_length_mm: 190,
     body_mass_g: 4000,
     sex: null, // Missing sex value
-    year: 2008,
+    year: 2025,
+    diet: 'parental',
+    life_stage: 'chick',
+    health_metrics: 'healthy',
   },
 ];
+
+const ALL_DIETS = ['fish', 'krill', 'squid', 'parental'];
+const ALL_YEAR_RANGE: [number, number] = [2021, 2025];
 
 describe('filterPenguinsBySpecies', () => {
   it('should return empty array when no species selected', () => {
@@ -183,9 +207,70 @@ describe('filterPenguinsBySex', () => {
   });
 });
 
+describe('filterPenguinsByDiet', () => {
+  it('returns all penguins when all diet options selected', () => {
+    const result = filterPenguinsByDiet(mockPenguins, ALL_DIETS);
+    expect(result).toEqual(mockPenguins);
+  });
+
+  it('filters penguins by selected diet values', () => {
+    const result = filterPenguinsByDiet(mockPenguins, ['fish', 'squid']);
+    expect(
+      result.every((p) => p.diet && ['fish', 'squid'].includes(p.diet))
+    ).toBe(true);
+    expect(result).toHaveLength(3);
+  });
+
+  it('excludes penguins without matching diets', () => {
+    const result = filterPenguinsByDiet(mockPenguins, ['parental']);
+    expect(result).toHaveLength(1);
+    expect(result[0].diet).toBe('parental');
+  });
+});
+
+describe('filterPenguinsByLifeStage', () => {
+  it('returns all penguins when "all" selected', () => {
+    const result = filterPenguinsByLifeStage(mockPenguins, 'all');
+    expect(result).toEqual(mockPenguins);
+  });
+
+  it('filters penguins by life stage selection', () => {
+    const result = filterPenguinsByLifeStage(mockPenguins, 'adult');
+    expect(result).toHaveLength(3);
+    expect(result.every((p) => p.life_stage === 'adult')).toBe(true);
+  });
+});
+
+describe('filterPenguinsByYearRange', () => {
+  it('returns all penguins when using default range', () => {
+    const result = filterPenguinsByYearRange(mockPenguins, ALL_YEAR_RANGE);
+    expect(result).toEqual(mockPenguins);
+  });
+
+  it('filters penguins within the provided range', () => {
+    const result = filterPenguinsByYearRange(mockPenguins, [2021, 2022]);
+    expect(result).toHaveLength(3);
+    expect(result.every((p) => p.year >= 2021 && p.year <= 2022)).toBe(true);
+  });
+
+  it('excludes penguins outside of range', () => {
+    const result = filterPenguinsByYearRange(mockPenguins, [2024, 2024]);
+    expect(result).toHaveLength(1);
+    expect(result[0].year).toBe(2024);
+  });
+});
+
 describe('filterPenguins (combined filtering)', () => {
   it('should apply species, island, and sex filters', () => {
-    const result = filterPenguins(mockPenguins, ['Adelie'], 'Biscoe', 'all');
+    const result = filterPenguins(
+      mockPenguins,
+      ['Adelie'],
+      'Biscoe',
+      'all',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
+    );
     expect(result).toHaveLength(2); // Both Adelie penguins on Biscoe (including one with null sex)
     expect(result.every((p) => p.species === 'Adelie')).toBe(true);
     expect(result.every((p) => p.island === 'Biscoe')).toBe(true);
@@ -196,13 +281,24 @@ describe('filterPenguins (combined filtering)', () => {
       mockPenguins,
       ['Chinstrap'],
       'Torgersen',
-      'all'
+      'all',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
     );
     expect(result).toEqual([]);
   });
 
   it('should work with "all" island and sex selection', () => {
-    const result = filterPenguins(mockPenguins, ['Gentoo'], 'all', 'all');
+    const result = filterPenguins(
+      mockPenguins,
+      ['Gentoo'],
+      'all',
+      'all',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
+    );
     expect(result).toHaveLength(2);
     expect(result.every((p) => p.species === 'Gentoo')).toBe(true);
   });
@@ -212,14 +308,25 @@ describe('filterPenguins (combined filtering)', () => {
       mockPenguins,
       ['Adelie', 'Chinstrap', 'Gentoo'],
       'Dream',
-      'all'
+      'all',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
     );
     expect(result).toHaveLength(2);
     expect(result.every((p) => p.island === 'Dream')).toBe(true);
   });
 
   it('should handle edge case with no species selected', () => {
-    const result = filterPenguins(mockPenguins, [], 'Biscoe', 'all');
+    const result = filterPenguins(
+      mockPenguins,
+      [],
+      'Biscoe',
+      'all',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
+    );
     expect(result).toEqual([]);
   });
 
@@ -228,14 +335,25 @@ describe('filterPenguins (combined filtering)', () => {
       mockPenguins,
       ['Adelie', 'Chinstrap', 'Gentoo'],
       'all',
-      'female'
+      'female',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
     );
     expect(result).toHaveLength(3);
     expect(result.every((p) => p.sex === 'female')).toBe(true);
   });
 
   it('should exclude missing sex values when filtering by specific sex', () => {
-    const result = filterPenguins(mockPenguins, ['Adelie'], 'Biscoe', 'male');
+    const result = filterPenguins(
+      mockPenguins,
+      ['Adelie'],
+      'Biscoe',
+      'male',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
+    );
     expect(result).toHaveLength(1); // Only the male Adelie on Biscoe
     expect(result[0].sex).toBe('male');
   });
@@ -253,7 +371,10 @@ describe('filterPenguins (combined filtering)', () => {
       mockPenguins,
       ['Adelie', 'Gentoo'],
       'Biscoe',
-      'all'
+      'all',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
     );
 
     expect(combinedResult).toEqual(sexThird);
@@ -265,7 +386,10 @@ describe('filterPenguins (combined filtering)', () => {
       mockPenguins,
       ['Adelie', 'Chinstrap'],
       'Dream',
-      'female'
+      'female',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
     );
     expect(result).toHaveLength(2);
     expect(result.every((p) => p.island === 'Dream')).toBe(true);
@@ -276,7 +400,15 @@ describe('filterPenguins (combined filtering)', () => {
   });
 
   it('should maintain data integrity after combined filtering', () => {
-    const result = filterPenguins(mockPenguins, ['Gentoo'], 'Biscoe', 'female');
+    const result = filterPenguins(
+      mockPenguins,
+      ['Gentoo'],
+      'Biscoe',
+      'female',
+      ALL_DIETS,
+      'all',
+      ALL_YEAR_RANGE
+    );
     expect(result).toHaveLength(1);
 
     const penguin = result[0];
@@ -287,6 +419,48 @@ describe('filterPenguins (combined filtering)', () => {
     expect(penguin.flipper_length_mm).toBe(211);
     expect(penguin.body_mass_g).toBe(4500);
     expect(penguin.sex).toBe('female');
-    expect(penguin.year).toBe(2007);
+    expect(penguin.year).toBe(2023);
+  });
+
+  it('should apply diet-specific filtering when subset selected', () => {
+    const result = filterPenguins(
+      mockPenguins,
+      ['Adelie', 'Gentoo', 'Chinstrap'],
+      'all',
+      'all',
+      ['fish', 'squid'],
+      'all',
+      ALL_YEAR_RANGE
+    );
+    expect(result.every((p) => p.diet && ['fish', 'squid'].includes(p.diet)))
+      .toBe(true);
+  });
+
+  it('should apply life stage filtering', () => {
+    const result = filterPenguins(
+      mockPenguins,
+      ['Adelie', 'Gentoo', 'Chinstrap'],
+      'all',
+      'all',
+      ALL_DIETS,
+      'juvenile',
+      ALL_YEAR_RANGE
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0].life_stage).toBe('juvenile');
+  });
+
+  it('should apply year range filtering', () => {
+    const result = filterPenguins(
+      mockPenguins,
+      ['Adelie', 'Gentoo', 'Chinstrap'],
+      'all',
+      'all',
+      ALL_DIETS,
+      'all',
+      [2024, 2025]
+    );
+    expect(result.every((p) => p.year >= 2024 && p.year <= 2025)).toBe(true);
+    expect(result).toHaveLength(2);
   });
 });

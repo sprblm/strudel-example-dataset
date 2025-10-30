@@ -30,6 +30,9 @@ describe('FiltersPanel', () => {
         selectedSpecies: ['Adelie'], // Only one species selected (out of 3) - this is an active filter
         selectedIsland: 'Biscoe', // Specific island selected (not 'all') - this is an active filter
         selectedSex: 'male', // Specific sex selected (not 'all') - this is an active filter
+        selectedDiet: ['fish', 'krill', 'squid', 'parental'],
+        selectedLifeStage: 'all',
+        selectedYearRange: [2021, 2025],
       },
       dispatch: mockDispatch,
     });
@@ -54,6 +57,9 @@ describe('FiltersPanel', () => {
         selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
         selectedIsland: 'all',
         selectedSex: 'all',
+        selectedDiet: ['fish', 'krill', 'squid', 'parental'],
+        selectedLifeStage: 'all',
+        selectedYearRange: [2021, 2025],
       }, // Default
       dispatch: mockDispatch,
     });
@@ -66,6 +72,19 @@ describe('FiltersPanel', () => {
     expect(
       screen.queryByTestId('clear-filters-button')
     ).not.toBeInTheDocument();
+  });
+
+  it('reveals advanced filters when toggled', () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <FiltersPanel />
+      </ThemeProvider>
+    );
+
+    const toggle = screen.getByTestId('toggle-advanced-filters');
+    fireEvent.click(toggle);
+
+    expect(screen.getByTestId('advanced-filters')).toBeInTheDocument();
   });
 
   it('dispatches clear and navigates on click', () => {
@@ -95,5 +114,34 @@ describe('FiltersPanel', () => {
     // Wait for the alert to appear
     const alert = await screen.findByRole('status');
     expect(alert).toHaveTextContent('All filters cleared');
+  });
+
+  it('displays advanced summary when advanced filters are active', () => {
+    mockUseAppState.mockReturnValueOnce({
+      state: {
+        appTitle: 'Penguins Explorer',
+        apiModalOpen: false,
+        helpModalOpen: false,
+        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+        selectedIsland: 'all',
+        selectedSex: 'all',
+        selectedDiet: ['fish', 'squid'],
+        selectedLifeStage: 'adult',
+        selectedYearRange: [2022, 2024],
+      },
+      dispatch: mockDispatch,
+    });
+
+    render(
+      <ThemeProvider theme={theme}>
+        <FiltersPanel />
+      </ThemeProvider>
+    );
+
+    const summary = screen.getByTestId('advanced-summary');
+    expect(summary).toHaveTextContent('Advanced filters active:');
+    expect(summary.textContent).toContain('diet: fish, squid');
+    expect(summary.textContent).toContain('life stage: adult');
+    expect(summary.textContent).toContain('years 2022-2024');
   });
 });

@@ -14,9 +14,12 @@ import { ShareButton } from '@/components/export/ShareButton';
 import { getFieldLabel, type NumericField } from './types';
 import { useAppState } from '@/context/ContextProvider';
 import {
+  updateDietFilter,
   updateIslandFilter,
+  updateLifeStageFilter,
   updateSexFilter,
   updateSpeciesFilter,
+  updateYearRangeFilter,
 } from '@/context/actions';
 import { useURLSync } from '@/hooks/useURLSync';
 import { useAccessibility } from '@/context/AccessibilityContext';
@@ -62,11 +65,19 @@ export const VisualizationPanel: React.FC = () => {
       species: state.selectedSpecies,
       island: state.selectedIsland,
       sex: state.selectedSex,
+      diet: state.selectedDiet,
+      lifeStage: state.selectedLifeStage,
+      yearRange: state.selectedYearRange,
     },
     setFilters: {
       setSpecies: (species: string[]) => dispatch(updateSpeciesFilter(species)),
       setIsland: (island: string) => dispatch(updateIslandFilter(island)),
       setSex: (sex: string) => dispatch(updateSexFilter(sex)),
+      setDiet: (diet: string[]) => dispatch(updateDietFilter(diet)),
+      setLifeStage: (lifeStage: string) =>
+        dispatch(updateLifeStageFilter(lifeStage)),
+      setYearRange: (range: readonly [number, number]) =>
+        dispatch(updateYearRangeFilter(range)),
     },
   });
 

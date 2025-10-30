@@ -15,6 +15,18 @@ const mockDispatch = vi.fn();
 
 const theme = createTheme();
 
+const baseState = {
+  appTitle: 'Penguins Explorer',
+  apiModalOpen: false,
+  helpModalOpen: false,
+  selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
+  selectedIsland: 'all',
+  selectedSex: 'all',
+  selectedDiet: ['fish', 'krill', 'squid', 'parental'],
+  selectedLifeStage: 'all',
+  selectedYearRange: [2021, 2025],
+};
+
 const renderWithTheme = (component: React.ReactElement) => {
   return render(<ThemeProvider theme={theme}>{component}</ThemeProvider>);
 };
@@ -27,13 +39,7 @@ describe('IslandFilter', () => {
 
   it('renders island filter with default "All" selection', () => {
     mockUseAppState.mockReturnValue({
-      state: {
-        appTitle: 'Penguins Explorer',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     });
 
@@ -48,13 +54,7 @@ describe('IslandFilter', () => {
 
   it('displays all island options when dropdown is opened', async () => {
     mockUseAppState.mockReturnValue({
-      state: {
-        appTitle: 'Penguins Explorer',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     });
 
@@ -73,13 +73,7 @@ describe('IslandFilter', () => {
 
   it('calls dispatch with UPDATE_ISLAND_FILTER when selection changes', async () => {
     mockUseAppState.mockReturnValue({
-      state: {
-        appTitle: 'Penguins Explorer',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     });
 
@@ -99,7 +93,7 @@ describe('IslandFilter', () => {
 
   it('shows visual feedback when specific island is selected', () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'Biscoe' },
+      state: { ...baseState, selectedIsland: 'Biscoe' },
       dispatch: mockDispatch,
     });
 
@@ -111,13 +105,7 @@ describe('IslandFilter', () => {
 
   it('does not show visual feedback when "All" is selected', () => {
     mockUseAppState.mockReturnValue({
-      state: {
-        appTitle: 'Penguins Explorer',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     });
 
@@ -130,13 +118,7 @@ describe('IslandFilter', () => {
 
   it('handles keyboard navigation properly', async () => {
     mockUseAppState.mockReturnValue({
-      state: {
-        appTitle: 'Penguins Explorer',
-        apiModalOpen: false,
-        selectedSpecies: ['Adelie', 'Chinstrap', 'Gentoo'],
-        selectedIsland: 'all',
-        selectedSex: 'all',
-      },
+      state: { ...baseState },
       dispatch: mockDispatch,
     });
 
@@ -179,7 +161,7 @@ describe('IslandFilter', () => {
 
   it('maintains selection state correctly', () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: 'Dream' },
+      state: { ...baseState, selectedIsland: 'Dream' },
       dispatch: mockDispatch,
     });
 
@@ -192,7 +174,7 @@ describe('IslandFilter', () => {
 
   it('handles empty or undefined selectedIsland gracefully', () => {
     mockUseAppState.mockReturnValue({
-      state: { selectedIsland: undefined },
+      state: { ...baseState, selectedIsland: undefined },
       dispatch: mockDispatch,
     });
 

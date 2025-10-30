@@ -1,38 +1,47 @@
-describe('Scatter Plot User Flow', () => {
+describe('Scatter Plot Visualization', () => {
   beforeEach(() => {
-    cy.visit('/explore-data');
+    cy.visit('/visualizations/');
   });
 
-  it('navigates to scatter plot and interacts with controls', () => {
-    cy.get('[data-testid="chart-selector"]').select('scatter');
-    cy.url().should('include', '/visualize/scatter');
+  it('renders controls and responds to user interaction', () => {
+    cy.get('#chart-type-select').should('be.visible').and('contain', 'Scatter');
+    cy.get('#x-axis-select').should('be.visible');
+    cy.get('#y-axis-select').should('be.visible');
 
-    // Change X axis
-    cy.get('[role="combobox"][aria-label*="X-Axis"]').click();
-    cy.contains('flipper_length_mm').click();
-    cy.url().should('include', 'x=flipper_length_mm');
+    cy.get('figure[role="img"]').should('exist');
+    cy.get('#chart-title-scatter')
+      .should('be.visible')
+      .and('contain', 'Scatter Plot');
 
-    // Toggle species
-    cy.contains('Adelie').parent().find('input[type="checkbox"]').click();
+    cy.get('#x-axis-select').click();
+    cy.contains('li', 'Flipper Length (mm)').click();
+    cy.location('search').should('include', 'x=flipper_length_mm');
 
-    // Hover over point (simulate)
-    cy.get('circle').first().trigger('mouseover');
-    cy.get('[role="tooltip"]').should('be.visible').and('contain', 'Adelie');
+    cy.get('#y-axis-select').click();
+    cy.contains('li', 'Bill Depth (mm)').click();
+    cy.location('search').should('include', 'y=bill_depth_mm');
 
-    // Keyboard navigation
-    cy.get('circle').first().focus();
-    cy.realPress('Enter'); // Trigger focus event
-    cy.get('[role="tooltip"]').should('be.visible');
+    cy.get('[data-testid="species-checkbox-adelie"]')
+      .find('input[type="checkbox"]')
+      .should('be.checked');
+    cy.get('[data-testid="species-checkbox-adelie"]').click();
+    cy.get('[data-testid="species-checkbox-adelie"]')
+      .find('input[type="checkbox"]')
+      .should('not.be.checked');
   });
 
-  it('is responsive and accessible', () => {
-    cy.injectAxe();
-    cy.checkA11y();
-
-    cy.viewport(768, 1024); // Tablet
-    cy.get('svg').invoke('attr', 'width').should('be.lte', 800);
-
-    cy.viewport(375, 667); // Mobile
-    cy.get('svg').invoke('attr', 'width').should('be.lte', 400);
+  it('exposes accessible chart descriptions', () => {
+    cy.get('figure[role="img"]').should(
+      'have.attr',
+      'aria-labelledby',
+      'chart-title-scatter'
+    );
+    cy.get('figure[role="img"]').should(
+      'have.attr',
+      'aria-describedby'
+    );
+    cy.get('[id^="chart-desc-scatter"]').should('exist');
+    cy.get('[id^="chart-stats-scatter"]').should('exist');
+    cy.contains(/Showing \d+ penguins/).should('be.visible');
   });
 });

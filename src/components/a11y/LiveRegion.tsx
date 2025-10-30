@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { useAppState } from '@/context/ContextProvider';
+import { PENGUIN_DIETS, PENGUIN_SPECIES, PENGUIN_YEARS } from '@/types/penguin';
 import { usePenguinData } from '@/hooks/usePenguinData';
 
 /**
@@ -15,14 +16,21 @@ export const LiveRegion: React.FC = () => {
 
   // Generate filter summary message
   const generateFilterSummary = React.useCallback(() => {
-    const { selectedSpecies, selectedIsland, selectedSex } = state;
+    const {
+      selectedSpecies,
+      selectedIsland,
+      selectedSex,
+      selectedDiet,
+      selectedLifeStage,
+      selectedYearRange,
+    } = state;
     const totalCount = filteredPenguins.length;
 
     // Build concise filter description
     const filterParts: string[] = [];
 
     // Species filter
-    if (selectedSpecies.length === 3) {
+    if (selectedSpecies.length === PENGUIN_SPECIES.length) {
       // All species selected - omit from summary
     } else if (selectedSpecies.length === 1) {
       filterParts.push(`${selectedSpecies[0]} penguins`);
@@ -40,6 +48,23 @@ export const LiveRegion: React.FC = () => {
     // Sex filter
     if (selectedSex !== 'all') {
       filterParts.push(`${selectedSex} only`);
+    }
+
+    if (selectedDiet.length > 0 && selectedDiet.length < PENGUIN_DIETS.length) {
+      filterParts.push(`diet ${selectedDiet.join(' and ')}`);
+    }
+
+    if (selectedLifeStage && selectedLifeStage !== 'all') {
+      filterParts.push(`${selectedLifeStage} life stage`);
+    }
+
+    if (
+      selectedYearRange[0] !== PENGUIN_YEARS[0] ||
+      selectedYearRange[1] !== PENGUIN_YEARS[PENGUIN_YEARS.length - 1]
+    ) {
+      filterParts.push(
+        `years ${selectedYearRange[0]} to ${selectedYearRange[1]}`
+      );
     }
 
     // Construct final message

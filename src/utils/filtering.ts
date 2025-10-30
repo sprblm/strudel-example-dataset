@@ -1,4 +1,9 @@
-import { Penguin } from '@/types/penguin';
+import {
+  Penguin,
+  PENGUIN_DIETS,
+  PENGUIN_LIFE_STAGES,
+  PENGUIN_YEARS,
+} from '@/types/penguin';
 
 export const filterPenguinsBySpecies = (
   penguins: Penguin[],
@@ -32,11 +37,69 @@ export const filterPenguinsBySex = (
   });
 };
 
+export const filterPenguinsByDiet = (
+  penguins: Penguin[],
+  selectedDiet: string[]
+): Penguin[] => {
+  if (!selectedDiet || selectedDiet.length === 0) {
+    return penguins;
+  }
+  const hasAllSelected = PENGUIN_DIETS.every((diet) =>
+    selectedDiet.includes(diet)
+  );
+  if (hasAllSelected) {
+    return penguins;
+  }
+  const allowed = new Set(selectedDiet);
+  return penguins.filter(
+    (penguin) => penguin.diet && allowed.has(penguin.diet)
+  );
+};
+
+export const filterPenguinsByLifeStage = (
+  penguins: Penguin[],
+  selectedLifeStage: string
+): Penguin[] => {
+  if (
+    !selectedLifeStage ||
+    selectedLifeStage === 'all' ||
+    !PENGUIN_LIFE_STAGES.includes(selectedLifeStage as any)
+  ) {
+    return penguins;
+  }
+  return penguins.filter((penguin) => penguin.life_stage === selectedLifeStage);
+};
+
+export const filterPenguinsByYearRange = (
+  penguins: Penguin[],
+  selectedYearRange: readonly [number, number]
+): Penguin[] => {
+  if (
+    !selectedYearRange ||
+    selectedYearRange.length !== 2 ||
+    (selectedYearRange[0] === PENGUIN_YEARS[0] &&
+      selectedYearRange[1] === PENGUIN_YEARS[PENGUIN_YEARS.length - 1])
+  ) {
+    return penguins;
+  }
+
+  const [minYear, maxYear] = selectedYearRange;
+  return penguins.filter((penguin) => {
+    if (!Number.isFinite(penguin.year)) {
+      return false;
+    }
+    return penguin.year >= minYear && penguin.year <= maxYear;
+  });
+};
+
 export const filterPenguins = (
   penguins: Penguin[],
   selectedSpecies: string[],
   selectedIsland: string,
-  selectedSex: string
+  selectedSex: string,
+  selectedDiet: string[],
+  selectedLifeStage: string,
+  selectedYearRange: readonly [number, number]
 ): Penguin[] => {
   let filtered = penguins;
 
@@ -48,6 +111,10 @@ export const filterPenguins = (
 
   // Apply sex filter
   filtered = filterPenguinsBySex(filtered, selectedSex);
+
+  filtered = filterPenguinsByDiet(filtered, selectedDiet);
+  filtered = filterPenguinsByLifeStage(filtered, selectedLifeStage);
+  filtered = filterPenguinsByYearRange(filtered, selectedYearRange);
 
   return filtered;
 };

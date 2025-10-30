@@ -4,7 +4,13 @@ import {
   NUMERIC_FIELDS,
   type NumericField,
 } from '@/components/visualizations/types';
-import { PENGUIN_SPECIES, type PenguinSpecies } from '@/types/penguin';
+import {
+  PENGUIN_DIETS,
+  PENGUIN_LIFE_STAGES,
+  PENGUIN_SPECIES,
+  PENGUIN_YEARS,
+  type PenguinSpecies,
+} from '@/types/penguin';
 import {
   normalizeIslandValue,
   normalizeSpeciesValue,
@@ -20,11 +26,21 @@ const DEFAULT_SPECIES: Species[] = [...SPECIES];
 const DEFAULT_ISLAND = 'all';
 const DEFAULT_SEX = 'all';
 const DEFAULT_BINS = DEFAULT_CHART_CONFIG.bins ?? 12;
+const DEFAULT_DIET = [...PENGUIN_DIETS];
+const LIFE_STAGE_OPTIONS: readonly string[] = ['all', ...PENGUIN_LIFE_STAGES];
+const DEFAULT_LIFE_STAGE = 'all';
+const DEFAULT_YEAR_RANGE: readonly [number, number] = [
+  PENGUIN_YEARS[0],
+  PENGUIN_YEARS[PENGUIN_YEARS.length - 1],
+];
 
 export interface FiltersState {
   species: string[];
   island: string;
   sex: string;
+  diet: string[];
+  lifeStage: string;
+  yearRange: readonly [number, number];
 }
 
 export interface URLState {
@@ -41,6 +57,9 @@ export interface ShareSearchParams {
   species?: string[];
   island?: string;
   sex?: string;
+  diet?: string[];
+  lifeStage?: string;
+  years?: string;
 }
 
 const toURLSearchParams = (
@@ -103,6 +122,63 @@ const normaliseSex = (value: string | null): string => {
   return matched ?? DEFAULT_SEX;
 };
 
+const normaliseDiet = (value: string | null): string[] => {
+  if (!value) {
+    return DEFAULT_DIET;
+  }
+
+  const tokens = value
+    .split(',')
+    .map((token) => token.trim().toLowerCase())
+    .filter((token): token is string => token.length > 0);
+
+  const uniqueInOrder = PENGUIN_DIETS.filter((diet) =>
+    tokens.includes(diet.toLowerCase())
+  );
+
+  return uniqueInOrder.length > 0 ? uniqueInOrder : DEFAULT_DIET;
+};
+
+const normaliseLifeStage = (value: string | null): string => {
+  if (!value) {
+    return DEFAULT_LIFE_STAGE;
+  }
+  const normalised = value.trim().toLowerCase();
+  const matched = LIFE_STAGE_OPTIONS.find(
+    (stage) => stage.toLowerCase() === normalised
+  );
+  return matched ?? DEFAULT_LIFE_STAGE;
+};
+
+const normaliseYearRange = (
+  value: string | null
+): readonly [number, number] => {
+  if (!value) {
+    return DEFAULT_YEAR_RANGE;
+  }
+
+  const parts = value.split('-').map((token) => Number.parseInt(token, 10));
+  if (parts.length !== 2 || parts.some((part) => !Number.isFinite(part))) {
+    return DEFAULT_YEAR_RANGE;
+  }
+
+  let [start, end] = parts as [number, number];
+  if (start > end) {
+    [start, end] = [end, start];
+  }
+
+  const minYear = PENGUIN_YEARS[0];
+  const maxYear = PENGUIN_YEARS[PENGUIN_YEARS.length - 1];
+  const clampedStart = Math.max(minYear, Math.min(start, maxYear));
+  const clampedEnd = Math.max(clampedStart, Math.min(end, maxYear));
+
+  if (clampedStart === minYear && clampedEnd === maxYear) {
+    return DEFAULT_YEAR_RANGE;
+  }
+
+  return [clampedStart, clampedEnd];
+};
+
 const normaliseNumericField = (
   value: string | null,
   fallback: NumericField
@@ -149,6 +225,9 @@ export const parseShareSearchParams = (
         species: normaliseSpecies(params.get('species')),
         island: normaliseIsland(params.get('island')),
         sex: normaliseSex(params.get('sex')),
+        diet: normaliseDiet(params.get('diet')),
+        lifeStage: normaliseLifeStage(params.get('lifeStage')),
+        yearRange: normaliseYearRange(params.get('years')),
       },
     };
   }
@@ -167,6 +246,9 @@ export const parseShareSearchParams = (
         species: normaliseSpecies(params.get('species')),
         island: normaliseIsland(params.get('island')),
         sex: normaliseSex(params.get('sex')),
+        diet: normaliseDiet(params.get('diet')),
+        lifeStage: normaliseLifeStage(params.get('lifeStage')),
+        yearRange: normaliseYearRange(params.get('years')),
       },
     };
   }
@@ -185,6 +267,9 @@ export const parseShareSearchParams = (
       species: normaliseSpecies(params.get('species')),
       island: normaliseIsland(params.get('island')),
       sex: normaliseSex(params.get('sex')),
+      diet: normaliseDiet(params.get('diet')),
+      lifeStage: normaliseLifeStage(params.get('lifeStage')),
+      yearRange: normaliseYearRange(params.get('years')),
     },
   };
 };
@@ -192,6 +277,19 @@ export const parseShareSearchParams = (
 const isDefaultSpecies = (species: string[]): boolean => {
   if (species.length !== DEFAULT_SPECIES.length) return false;
   return SPECIES.every((item, index) => species[index] === item);
+};
+
+const isDefaultDiet = (diet: string[]): boolean => {
+  if (!diet || diet.length !== PENGUIN_DIETS.length) {
+    return false;
+  }
+  return PENGUIN_DIETS.every((item) => diet.includes(item));
+};
+
+const isDefaultYearRange = (range: readonly [number, number]): boolean => {
+  return (
+    range[0] === DEFAULT_YEAR_RANGE[0] && range[1] === DEFAULT_YEAR_RANGE[1]
+  );
 };
 
 export const buildShareSearchParams = (state: URLState): ShareSearchParams => {
@@ -241,6 +339,18 @@ export const buildShareSearchParams = (state: URLState): ShareSearchParams => {
     params.sex = filters.sex;
   }
 
+  if (!isDefaultDiet(filters.diet)) {
+    params.diet = filters.diet;
+  }
+
+  if (filters.lifeStage !== DEFAULT_LIFE_STAGE) {
+    params.lifeStage = filters.lifeStage;
+  }
+
+  if (!isDefaultYearRange(filters.yearRange)) {
+    params.years = `${filters.yearRange[0]}-${filters.yearRange[1]}`;
+  }
+
   return params;
 };
 
@@ -272,6 +382,15 @@ export const buildShareQueryString = (state: URLState): string => {
   if (searchParams.sex) {
     params.set('sex', searchParams.sex);
   }
+  if (searchParams.diet && searchParams.diet.length > 0) {
+    params.set('diet', searchParams.diet.join(','));
+  }
+  if (searchParams.lifeStage) {
+    params.set('lifeStage', searchParams.lifeStage);
+  }
+  if (searchParams.years) {
+    params.set('years', searchParams.years);
+  }
 
   return params.toString();
 };
@@ -301,5 +420,8 @@ export const defaultURLState: URLState = {
     species: DEFAULT_SPECIES,
     island: DEFAULT_ISLAND,
     sex: DEFAULT_SEX,
+    diet: DEFAULT_DIET,
+    lifeStage: DEFAULT_LIFE_STAGE,
+    yearRange: DEFAULT_YEAR_RANGE,
   },
 };
