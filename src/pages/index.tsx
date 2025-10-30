@@ -8,6 +8,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { createFileRoute } from '@tanstack/react-router';
 import { AppLink } from '@/components/AppLink';
 import penguinsImage from '../../images/penguins-image.png';
@@ -139,8 +140,19 @@ function Index() {
                   position: 'relative',
                   borderRadius: 3,
                   overflow: 'hidden',
+                  width: '100%',
+                  maxWidth: { xs: 260, sm: 320, md: 360 },
+                  mx: { xs: 'auto', md: 0 },
                   boxShadow: (theme) =>
-                    `0 20px 40px -24px ${theme.palette.grey[900]}`,
+                    `0 18px 34px -18px ${theme.palette.grey[900]}`,
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.primary.main, 0.25),
+                    mixBlendMode: 'multiply',
+                  },
                 }}
               >
                 <Box
