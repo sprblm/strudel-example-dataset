@@ -34,27 +34,27 @@ function Index() {
     },
     {
       label: 'Research seasons',
-      value: '3',
+      value: '5',
       description:
-        'Observational notes spanning the 2007 – 2009 field seasons.',
+        'Observational notes spanning the 2021 – 2025 field seasons.',
     },
   ];
 
   const FEATURE_SECTIONS = [
     {
-      title: 'Quiet, accessible interface',
+      title: 'Investigate species differences',
       description:
-        'Screen reader cues, restrained motion, and clearly labeled controls keep the focus on the data rather than the tooling.',
+        'Swap between scatter, histogram, and box plots to observe how measurements shift across species, islands, and sex.',
     },
     {
-      title: 'Designed for studio critique',
+      title: 'Surface story starters',
       description:
-        'Bring charts into lectures or reviews with a consistent visual language that echoes research archives rather than product dashboards.',
+        'Contextual callouts highlight notable trends, such as Gentoo body mass or Adelie bill depth, to kick off inquiry-led dialogue.',
     },
     {
-      title: 'Configurable without friction',
+      title: 'Shareable classroom activities',
       description:
-        'Filters, legend toggles, and share links all live within reach so seminar participants can follow along in real time.',
+        'Link directly to data tables or chart studies so students can revisit analysis asynchronously or extend it at home.',
     },
   ];
 
@@ -88,7 +88,7 @@ function Index() {
         <Stack spacing={{ xs: 8, md: 10 }}>
           <Stack spacing={2}>
             <Typography variant="overline" color="text.secondary">
-              Palmer Station • Research archive
+              Palmer Station • 2021–2025 field seasons
             </Typography>
             <Typography variant="h2" component="h1">
               Palmer Penguins Explorer
@@ -98,10 +98,10 @@ function Index() {
               color="text.secondary"
               sx={{ maxWidth: 640 }}
             >
-              A reserved interface for teaching ecology and statistical
-              reasoning. The explorer keeps typography, spacing, and
-              interactions restrained so the original field data remains the
-              central voice.
+              Explore 344 penguins observed at Palmer Station, Antarctica across
+              the 2021–2025 field seasons. Compare Adelie, Chinstrap, and Gentoo
+              colonies to surface questions about habitat, body mass, and
+              seasonal change in your classroom or workshop.
             </Typography>
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
@@ -146,10 +146,10 @@ function Index() {
                     Fieldwork translated for seminar use
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Structured notes, clear typographic hierarchy, and neutral
-                    tones channel the spirit of archival research portals. Data
-                    remains legible on projectors and within printed decks
-                    without extra theming work.
+                    Ground lessons in firsthand Antarctic research with
+                    ready-to-use visuals, guiding prompts, and lightweight
+                    exports for slides or handouts so no extra formatting is
+                    required.
                   </Typography>
                 </Paper>
 
@@ -270,20 +270,20 @@ function Index() {
             <Stack spacing={3}>
               <Stack spacing={1.5}>
                 <Typography variant="overline" color="text.secondary">
-                  Teaching and tooling
+                  Explore the research
                 </Typography>
                 <Typography variant="h3" component="h2">
-                  Quiet support for inquiry-led lessons
+                  Real questions anchored in Antarctic field science
                 </Typography>
                 <Typography
                   variant="body2"
                   color="text.secondary"
                   sx={{ maxWidth: 720 }}
                 >
-                  Use the explorer as a neutral companion in workshops, studio
-                  critiques, and classrooms. Every component favours legibility,
-                  conserving attention for the scientific story instead of the
-                  interface.
+                  Use the explorer to guide discussions about how penguin
+                  species adapt to different islands, how body measurements
+                  correlate with survival strategies, and how climate signals
+                  emerge across five field seasons.
                 </Typography>
               </Stack>
               <Grid container spacing={3} alignItems="stretch">
