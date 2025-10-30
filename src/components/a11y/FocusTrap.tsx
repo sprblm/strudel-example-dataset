@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 
 interface FocusTrapProps {
   children: React.ReactNode;
@@ -6,107 +6,118 @@ interface FocusTrapProps {
   restoreFocus?: boolean;
 }
 
-export const FocusTrap: React.FC<FocusTrapProps> = ({
-  children,
-  active = true,
-  restoreFocus = true,
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const lastActiveElementRef = useRef<Element | null>(null);
+export const FocusTrap = forwardRef<HTMLDivElement, FocusTrapProps>(
+  ({ children, active = true, restoreFocus = true }, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const lastActiveElementRef = useRef<Element | null>(null);
 
-  useEffect(() => {
-    if (!active) return;
+    // Merge refs so the parent can access the container div
+    const mergedRef = (element: HTMLDivElement) => {
+      containerRef.current = element;
+      if (typeof ref === 'function') {
+        ref(element);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current =
+          element;
+      }
+    };
 
-    // Store the currently focused element
-    lastActiveElementRef.current = document.activeElement;
+    useEffect(() => {
+      if (!active) return;
 
-    const focusableElementsSelector = [
-      'a[href]',
-      'button:not([disabled])',
-      'textarea:not([disabled])',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])',
-      '[contenteditable]',
-    ].join(', ');
+      // Store the currently focused element
+      lastActiveElementRef.current = document.activeElement;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Tab' || !containerRef.current) return;
+      const focusableElementsSelector = [
+        'a[href]',
+        'button:not([disabled])',
+        'textarea:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])',
+        '[contenteditable]',
+      ].join(', ');
 
-      const focusableElements = Array.from(
-        containerRef.current.querySelectorAll(focusableElementsSelector)
-      ).filter((element) => {
-        const el = element as HTMLElement;
-        return (
-          el.offsetWidth > 0 &&
-          el.offsetHeight > 0 &&
-          !el.hidden &&
-          el.tabIndex >= 0
-        );
-      }) as HTMLElement[];
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key !== 'Tab' || !containerRef.current) return;
 
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
+        const focusableElements = Array.from(
+          containerRef.current.querySelectorAll(focusableElementsSelector)
+        ).filter((element) => {
+          const el = element as HTMLElement;
+          return (
+            el.offsetWidth > 0 &&
+            el.offsetHeight > 0 &&
+            !el.hidden &&
+            el.tabIndex >= 0
+          );
+        }) as HTMLElement[];
 
-      if (!firstElement) return;
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
 
-      if (event.shiftKey) {
-        // Shift + Tab
-        if (document.activeElement === firstElement) {
-          event.preventDefault();
-          lastElement?.focus();
+        if (!firstElement) return;
+
+        if (event.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement?.focus();
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement?.focus();
+          }
         }
-      } else {
-        // Tab
-        if (document.activeElement === lastElement) {
-          event.preventDefault();
-          firstElement?.focus();
+      };
+
+      // Focus the first focusable element when the trap activates
+      const focusFirstElement = () => {
+        if (!containerRef.current) return;
+
+        const focusableElements = containerRef.current.querySelectorAll(
+          focusableElementsSelector
+        ) as NodeListOf<HTMLElement>;
+
+        const firstElement = Array.from(focusableElements).find((element) => {
+          return (
+            element.offsetWidth > 0 &&
+            element.offsetHeight > 0 &&
+            !element.hidden &&
+            element.tabIndex >= 0
+          );
+        });
+
+        if (firstElement) {
+          firstElement.focus();
         }
-      }
-    };
+      };
 
-    // Focus the first focusable element when the trap activates
-    const focusFirstElement = () => {
-      if (!containerRef.current) return;
+      // Set up event listener and initial focus
+      document.addEventListener('keydown', handleKeyDown);
 
-      const focusableElements = containerRef.current.querySelectorAll(
-        focusableElementsSelector
-      ) as NodeListOf<HTMLElement>;
+      // Small delay to ensure modal is rendered
+      const timeoutId = setTimeout(focusFirstElement, 100);
 
-      const firstElement = Array.from(focusableElements).find((element) => {
-        return (
-          element.offsetWidth > 0 &&
-          element.offsetHeight > 0 &&
-          !element.hidden &&
-          element.tabIndex >= 0
-        );
-      });
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        clearTimeout(timeoutId);
 
-      if (firstElement) {
-        firstElement.focus();
-      }
-    };
+        // Restore focus to the previously focused element
+        if (restoreFocus && lastActiveElementRef.current) {
+          (lastActiveElementRef.current as HTMLElement).focus?.();
+        }
+      };
+    }, [active, restoreFocus]);
 
-    // Set up event listener and initial focus
-    document.addEventListener('keydown', handleKeyDown);
+    return (
+      <div ref={mergedRef} style={{ outline: 'none' }}>
+        {children}
+      </div>
+    );
+  }
+);
 
-    // Small delay to ensure modal is rendered
-    const timeoutId = setTimeout(focusFirstElement, 100);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      clearTimeout(timeoutId);
-
-      // Restore focus to the previously focused element
-      if (restoreFocus && lastActiveElementRef.current) {
-        (lastActiveElementRef.current as HTMLElement).focus?.();
-      }
-    };
-  }, [active, restoreFocus]);
-
-  return (
-    <div ref={containerRef} style={{ outline: 'none' }}>
-      {children}
-    </div>
-  );
-};
+FocusTrap.displayName = 'FocusTrap';

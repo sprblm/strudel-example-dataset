@@ -37,6 +37,7 @@ export const ApiModal: React.FC = () => {
       >
         <FocusTrap active={app.state.apiModalOpen}>
           <Paper
+            tabIndex={-1}
             sx={{
               left: '50%',
               p: 4,
