@@ -137,3 +137,7 @@ This software is licensed under the MIT License. [Read the full license](LICENSE
 This project uses the Palmer Penguins dataset, which was collected by Dr. Kristen Gorman and the Palmer Station Long Term Ecological Research program. The dataset is freely available and has been used in numerous educational and research contexts.
 
 Original data source: https://allisonhorst.github.io/palmerpenguins/
+
+## Repository Information
+
+Note: The default branch of this repository is `main`. If you're cloning or working with this repository, please ensure you're working on the `main` branch which contains the most recent stable version of the code.
