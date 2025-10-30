@@ -1,96 +1,139 @@
-# STRUDEL Kit
+# Palmer Penguins Explorer
 
-STRUDEL Kit is a React and TypeScript-based starter kit for building scientific UIs based on the STRUDEL Design System and Task Flows. Visit [strudel.science](https://strudel.science) for more information about the STRUDEL project.
+Palmer Penguins Explorer is a data visualization and exploration tool for the famous Palmer Penguins dataset. This application allows researchers and data scientists to interactively explore physical measurements and biological attributes of penguin species from the Palmer Archipelago, Antarctica.
 
-This library provides a suite of templates to implement UIs for various different task flows common to the scientific domain. The app is intended to be used as a starting point for building out a modern single-page web app for scientific-type UIs.
+The project demonstrates modern data visualization techniques and filtering capabilities using React, TypeScript, and Material UI.
 
-[Browse the full docs](https://strudel.science/strudel-kit/docs/)
+## Features
 
-## What's included?
+- **Interactive Data Filtering**: Filter penguin data by species, island, sex, diet, life stage, and year range
+- **Data Visualization**: Multiple chart types including scatter plots, histograms, and box plots
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Accessibility**: Full keyboard navigation, screen reader support, and ARIA labels
+- **Shareable Links**: Share filtered views and visualizations with persistent URLs
+- **Real-time Updates**: Live announcements and data-driven summaries
+
+## Dataset Information
+
+The Palmer Penguins dataset contains physical measurements and biological attributes of penguins from three species:
+
+- Adelie
+- Chinstrap
+- Gentoo
+
+Data fields include:
+
+- Species, island, and sex
+- Bill length and depth (mm)
+- Flipper length and body mass (mm/g)
+- Diet and life stage
+- Year of measurement
+
+## Tech Stack
 
 - [**React**](https://react.dev/): A component-based JavaScript library for building UIs.
 - [**TypeScript**](https://www.typescriptlang.org/): A typed superset of JavaScript that compiles to plain JavaScript.
 - [**Vite**](https://vite.dev/): A fast, opinionated frontend build tool.
 - [**Material UI**](https://mui.com/material-ui/getting-started/): Open-source React component library based on Google's Material Design.
 - [**TanStack Router**](https://tanstack.com/router/latest): A fully type-safe router with built-in data fetching, first-class search-param APIs, and more.
-- [**ESLint**](https://eslint.org/): The pluggable linting utility for JavaScript and JSX.
-- [**Prettier**](https://prettier.io/): An opinionated code formatter.
-- [**Husky**](https://typicode.github.io/husky/): Runs a pre-commit hook to lint and style staged code.
-- [**Cypress**](https://www.cypress.io/): End-to-end tests for built-in templates.
-- [**Task Flow Templates**](https://strudel.science/design-system/task-flows/overview/): Six template flows based on common patterns.
-
-![Home page](images/home.png)
-
-![Run Computation results page](images/run-computation-results.png)
+- [**Cypress**](https://www.cypress.io/): End-to-end tests for the application.
 
 ## Getting Started
 
-### Option 1: Use this template
+### Prerequisites
 
-Click the green "Use this template" button on the [strudel-kit GitHub page](https://github.com/strudel-science/strudel-kit). Create your own repository from the strudel-kit code and give it a name.
+- Node.js (v18 or higher)
+- npm or yarn package manager
 
-Clone the strudel-kit repository from your new repo.
+### Installation
 
-### Option 2: degit
-
-Generate a new project from strudel-kit using [degit](https://github.com/Rich-Harris/degit):
+1. Clone the repository:
 
 ```
-npx degit strudel-science/strudel-kit my-app
+git clone https://github.com/sprblm/strudel-example-dataset.git
 ```
 
-### Option 3: Fork this repo
+2. Navigate to the project directory:
 
-Especially if you want to contribute back, you can click the Fork button to create a fork of this repo from the [strudel-kit GitHub page](https://github.com/strudel-science/strudel-kit).
+```
+cd strudel-example-dataset
+```
 
-Clone the strudel-kit repository from your new fork.
-
-### Install and Start
-
-Install the dependencies:
+3. Install dependencies:
 
 ```
 npm install
 ```
 
-### Configure MCP server connections
+### Running the Application
 
-Copy `.env.example` to `.env` and adjust the shared MCP endpoints before activating Claude, Gemini, Quinn, OpenCode, Crush, or Coding agents:
-
-```
-cp .env.example .env
-```
-
-Update the following variables to point at your Serena, Playwright, and GitHub MCP servers (set any `*_ENABLED` flag to `false` when a service
-is unavailable):
-
-- `VITE_MCP_SERVER_SERENA_ENDPOINT`
-- `VITE_MCP_SERVER_PLAYWRIGHT_ENDPOINT`
-- `VITE_MCP_SERVER_GITHUB_ENDPOINT`
-
-Start up the app:
+Start the development server:
 
 ```
 npm start
 ```
 
-Open [http://localhost:5175](http://localhost:5175) to view the app in the browser.
+Open [http://localhost:5175](http://localhost:5175) to view the app in your browser.
 
-Begin modifying the templates in `src/pages`.
+### Running Tests
 
-## Contributions
+Run unit tests:
 
-STRUDEL Kit welcomes contributions of all kinds! Learn how to submit suggestions and changes in [CONTRIBUTING.md](https://github.com/strudel-science/strudel-kit/blob/main/CONTRIBUTING.md).
+```
+npm run test
+```
+
+Run end-to-end tests with Cypress:
+
+```
+npm run cy:test
+```
+
+## Project Structure
+
+- `src/components/`: React components for UI elements
+- `src/components/filters/`: Filter components (species, island, sex, diet, life stage, year)
+- `src/components/visualizations/`: Data visualization components
+- `src/context/`: Global application state using React Context
+- `src/hooks/`: Custom React hooks
+- `src/utils/`: Utility functions and helpers
+- `tests/`: Test files
+- `cypress/`: End-to-end test specifications
+
+## Advanced Features
+
+### Extended Filter Controls
+
+The application includes advanced filtering capabilities:
+
+- **Diet Filter**: Multi-select filter for dietary habits
+- **Life Stage Filter**: Toggle for different life stages (adult, juvenile, chick)
+- **Year Range Filter**: Slider for selecting data collection years (2021-2025)
+
+### Accessibility Features
+
+- Full keyboard navigation support
+- Screen reader announcements via live regions
+- Skip links for easier navigation
+- ARIA labels and roles for all interactive elements
+- High contrast mode compatibility
+
+### Visualization Options
+
+- Scatter plots for exploring correlations between variables
+- Histograms for distribution analysis
+- Box plots for comparing statistical summaries
+
+## Contributing
+
+We welcome contributions to the Palmer Penguins Explorer! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
 
 ## License
 
-This software is licensed through the [Lawrence Berkeley National Lab](https://www.lbl.gov/) and can be used, modified, and shared at absolutely no cost. [Read the full license](https://github.com/strudel-science/strudel-kit/blob/main/LICENSE).
+This software is licensed under the MIT License. [Read the full license](LICENSE).
 
-## Attribution
+## Dataset Attribution
 
-We kindly ask that you take two steps to attribute this repo if you find it useful to your work:
+This project uses the Palmer Penguins dataset, which was collected by Dr. Kristen Gorman and the Palmer Station Long Term Ecological Research program. The dataset is freely available and has been used in numerous educational and research contexts.
 
-1. Give us a star on our GitHub Page
-2. Credit the STRUDEL project and strudel-kit repo in your README.
-
-> This project utilized the [strudel-kit](https://github.com/strudel-science/strudel-kit/tree/main) repository. Read more about [STRUDEL](https://strudel.science).
+Original data source: https://allisonhorst.github.io/palmerpenguins/
