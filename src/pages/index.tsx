@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { createFileRoute } from '@tanstack/react-router';
 import { AppLink } from '@/components/AppLink';
+import penguinsImage from '../../images/penguins-image.png';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -86,47 +87,76 @@ function Index() {
         }}
       >
         <Stack spacing={{ xs: 8, md: 10 }}>
-          <Stack spacing={2}>
-            <Typography variant="overline" color="text.secondary">
-              Palmer Station • 2021–2025 field seasons
-            </Typography>
-            <Typography variant="h2" component="h1">
-              Palmer Penguins Explorer
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ maxWidth: 640 }}
-            >
-              Explore 344 penguins observed at Palmer Station, Antarctica across
-              the 2021–2025 field seasons. Compare Adelie, Chinstrap, and Gentoo
-              colonies to surface questions about habitat, body mass, and
-              seasonal change in your classroom or workshop.
-            </Typography>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              alignItems={{ xs: 'stretch', sm: 'center' }}
-            >
-              <Button
-                component={AppLink}
-                to="/penguins/"
-                variant="contained"
-                size="large"
-                color="primary"
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center">
+            <Grid item xs={12} md={7}>
+              <Stack spacing={2}>
+                <Typography variant="overline" color="text.secondary">
+                  Palmer Station • 2021–2025 field seasons
+                </Typography>
+                <Typography variant="h2" component="h1">
+                  Palmer Penguins Explorer
+                </Typography>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ maxWidth: 640 }}
+                >
+                  Explore 344 penguins observed at Palmer Station, Antarctica
+                  across the 2021–2025 field seasons. Compare Adelie, Chinstrap,
+                  and Gentoo colonies to surface questions about habitat, body
+                  mass, and seasonal change in your classroom or workshop.
+                </Typography>
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  spacing={2}
+                  alignItems={{ xs: 'stretch', sm: 'center' }}
+                >
+                  <Button
+                    component={AppLink}
+                    to="/penguins/"
+                    variant="contained"
+                    size="large"
+                    color="primary"
+                  >
+                    Open data workspace
+                  </Button>
+                  <Button
+                    component={AppLink}
+                    to="/visualizations/"
+                    variant="outlined"
+                    size="large"
+                  >
+                    Launch visualizations
+                  </Button>
+                </Stack>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <Box
+                component="figure"
+                sx={{
+                  m: 0,
+                  position: 'relative',
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  boxShadow: (theme) =>
+                    `0 20px 40px -24px ${theme.palette.grey[900]}`,
+                }}
               >
-                Open data workspace
-              </Button>
-              <Button
-                component={AppLink}
-                to="/visualizations/"
-                variant="outlined"
-                size="large"
-              >
-                Launch visualizations
-              </Button>
-            </Stack>
-          </Stack>
+                <Box
+                  component="img"
+                  src={penguinsImage}
+                  alt="Adelie and Gentoo penguins gathered on the shore at Palmer Station."
+                  sx={{
+                    display: 'block',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </Box>
+            </Grid>
+          </Grid>
 
           <Grid container spacing={4} alignItems="stretch">
             <Grid item xs={12} md={7}>
